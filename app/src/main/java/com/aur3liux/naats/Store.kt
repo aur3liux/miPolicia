@@ -16,6 +16,7 @@ class Store {
         const val NAME = "N44ts.db"
         const val TB_USER = "UsuarioNa44tsTbl"
         const val TB_SESION = "SessionN44tsTbl"
+        const val TB_LOCATIONS = "LocationsN44tsTbl"
     }
 
     object User {
@@ -26,4 +27,10 @@ class Store {
     object SESION {
         const val STATUS = "statusSesion"
     }
+
+    object Locations {
+        const val LATITUD = "latitud"
+        const val LONGITUD = "longitud"
+    }
+
 }

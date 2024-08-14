@@ -62,7 +62,7 @@ fun LoadView(navC: NavController) {
                 popUpTo(navC.graph.id) { inclusive = true }
             }
         }else{
-            navC.navigate(Router.HOME.route) {
+            navC.navigate(Router.CREAR_DENUNCIA_VIEW.route) {
                 popUpTo(navC.graph.id) { inclusive = true }
             }
         }

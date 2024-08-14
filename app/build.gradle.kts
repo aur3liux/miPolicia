@@ -6,6 +6,12 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 android {
     namespace = "com.aur3liux.naats"
     compileSdk = 34
@@ -33,11 +39,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -119,5 +125,11 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-analytics")
+
+    //MANEJO DE MAPAS
+    implementation("com.google.maps.android:maps-compose:4.4.1")
+
+    //Geolocalizacion en los componibles
+    implementation("com.google.android.gms:play-services-location:21.3.0")
 
 }

@@ -49,7 +49,7 @@ import com.aur3liux.naats.view.subviews.BuscaEvento
 import com.aur3liux.naats.view.subviews.BuscaPersona
 import com.aur3liux.naats.view.subviews.BuscaVehiculo
 import com.aur3liux.naats.view.subviews.NavigationDrawer
-import com.aur3liux.naats.view.subviews.PanelSearch
+import com.aur3liux.naats.view.subviews.CreaDenunciaView
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -170,10 +170,10 @@ fun Home(navC: NavController) {
             }) {
              NavHost(
                     navController = navController,
-                    startDestination = Router.PANEL_SEARCH.route,
+                    startDestination = Router.CREAR_DENUNCIA_VIEW.route,
                     modifier = Modifier.padding(5.dp)) {
-                    composable(Router.PANEL_SEARCH.route) {
-                        PanelSearch(
+                    composable(Router.CREAR_DENUNCIA_VIEW.route) {
+                        CreaDenunciaView(
                             navC = navC,
                             nombre = nombre,
                             paterno = paterno,
@@ -192,7 +192,7 @@ fun Home(navC: NavController) {
                             fecha_fin = fechaFin
                         )
                     }
-                    composable(Router.BUSCA_PERSONA.route) {
+                    composable(Router.EXPEDIENTE_VIEW.route) {
                         BuscaPersona(
                             nombre = nombre,
                             paterno = paterno,
@@ -206,7 +206,7 @@ fun Home(navC: NavController) {
                             color = MaterialTheme.colorScheme.surface
                         )
                     }
-                    composable(Router.BUSCA_VEHICULO.route) {
+                    composable(Router.PERFIL_VIEW.route) {
                         BuscaVehiculo(
                             placa = placa,
                             serie = serie,

@@ -5,7 +5,8 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [UserData::class,
-    SesionData::class],
+        SesionData::class,
+        LocationData::class],
     version = 1,
     exportSchema = true
 )
@@ -13,4 +14,5 @@ import androidx.room.RoomDatabase
 abstract class AppDb: RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun sesionDao(): SesionDao
+    abstract fun locationDao(): LocationDao
 }

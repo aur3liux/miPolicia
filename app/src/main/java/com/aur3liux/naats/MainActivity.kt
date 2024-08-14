@@ -1,15 +1,25 @@
 package com.aur3liux.naats
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room.databaseBuilder
+import com.aur3liux.naats.localdatabase.AppDb
+import com.aur3liux.naats.localdatabase.LocationData
 import com.aur3liux.naats.ui.theme.NaatsTheme
 import com.aur3liux.naats.ui.theme.botonColor
 import com.aur3liux.naats.view.AccesoRegistro
@@ -18,10 +28,30 @@ import com.aur3liux.naats.view.CloseSessionConfirmView
 import com.aur3liux.naats.view.Home
 import com.aur3liux.naats.view.LoadView
 import com.aur3liux.naats.view.LoginView
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
+    lateinit var context: Context
+    //Datos de la geolocalizacion
+    private var fusedLocCliente: FusedLocationProviderClient? = null
+    lateinit var mLastLocation: Location
+    internal lateinit var mLocationRequest: LocationRequest
+    private val INTERVAL: Long = 2000
+    private val FASTED_INTERVAL: Long = 1000
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        context = applicationContext
+        mLocationRequest = LocationRequest()
+        fusedLocCliente = LocationServices.getFusedLocationProviderClient(context.applicationContext)
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
@@ -57,7 +87,7 @@ class MainActivity : ComponentActivity() {
                     }//Close session
 
                     //HOME
-                    composable(Router.HOME.route){
+                    composable(Router.CREAR_DENUNCIA_VIEW.route){
                         BackHandler(true) {}
                         Home(navC = navController)
                     }//Home
@@ -70,5 +100,79 @@ class MainActivity : ComponentActivity() {
                 }//NavHost
             }
         }
-    }
+    } //OnCreate
+
+
+    override fun onStart(){
+        super.onStart()
+        startLocationUpdates(context)
+        Log.i("SIRENA", "REINCIANDO")
+    } //onStart
+
+    override fun onResume() {
+        super.onResume()
+        context = applicationContext
+        Log.i("SIRENA", "REANUDANDO")
+        startLocationUpdates(context)
+    } //onResume
+
+    fun startLocationUpdates(context: Context) {
+        mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        mLocationRequest!!.setInterval(INTERVAL)
+        mLocationRequest!!.setFastestInterval(FASTED_INTERVAL)
+
+        val builder = LocationSettingsRequest.Builder()
+        builder.addLocationRequest(mLocationRequest!!)
+        val locationSettingsRequest = builder.build()
+
+        val settingsClient = LocationServices.getSettingsClient(context.applicationContext)
+        settingsClient.checkLocationSettings(locationSettingsRequest)
+
+        fusedLocCliente = LocationServices.getFusedLocationProviderClient(context.applicationContext)
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),2000)
+            //return
+        }
+        Looper.myLooper()?.let {
+            fusedLocCliente!!.requestLocationUpdates(mLocationRequest, mLocationCallback,
+                it
+            )
+        }
+    } //startlocationUpdates
+
+    private val mLocationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            locationResult.lastLocation
+            onLocationChanged(locationResult.lastLocation!!)
+        }
+    } //mLocationCallback
+
+    fun stopLocationUpdates() {
+        fusedLocCliente!!.removeLocationUpdates(mLocationCallback)
+        Log.i("SIRENA", "Location updates removed")
+    } //stopLocationUpdates
+
+    fun onLocationChanged(location: Location) {
+        mLastLocation = location
+        Log.i("SIRENA", "UBICACION ${mLastLocation.latitude},  ${mLastLocation.longitude} ")
+
+        val db = databaseBuilder(context,
+            AppDb::class.java,
+            Store.DB.NAME).build()
+        val locationDb = db.locationDao()
+
+        GlobalScope.launch {
+            var dataLoc = LocationData(
+                id =0,
+                latitud = mLastLocation.latitude,
+                longitud = mLastLocation.longitude)
+            locationDb.updateLocation(dataLoc)
+
+            Log.i("SIRENA", "UBICACION ACTUALIZADA")
+        }
+
+        db.close()
+        stopLocationUpdates()
+    } //onLocationChanges
 }

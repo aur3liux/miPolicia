@@ -16,3 +16,10 @@ data class SesionData(
     @PrimaryKey val id: Int,
     @ColumnInfo(name = Store.SESION.STATUS) val status: Boolean
 )
+
+@Entity(tableName = Store.DB.TB_LOCATIONS)
+data class LocationData(
+    @PrimaryKey val id: Int,
+    @ColumnInfo(name = Store.Locations.LATITUD) val latitud: Double,
+    @ColumnInfo(name = Store.Locations.LONGITUD) val longitud: Double
+)
