@@ -1,4 +1,4 @@
-package com.aur3liux.naats.view.auth
+package com.aur3liux.mipolicia.view.auth
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -19,17 +19,22 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -43,23 +48,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.aur3liux.naats.R
-import com.aur3liux.naats.Router
-import com.aur3liux.naats.ToolBox
-import com.aur3liux.naats.view.bottomsheets.BottomSheetError
-import com.aur3liux.naats.components.RoundedButton
-import com.aur3liux.naats.components.TextFieldData
-import com.aur3liux.naats.model.RequestCurp
-import com.aur3liux.naats.services.CurpRepo
-import com.aur3liux.naats.ui.theme.botonColor
-import com.aur3liux.naats.ui.theme.lGradient1
-import com.aur3liux.naats.viewmodel.ConsultaCurpVM
-import com.aur3liux.naats.viewmodel.ConsultaCurpVMFactory
+import com.aur3liux.mipolicia.R
+import com.aur3liux.mipolicia.Router
+import com.aur3liux.mipolicia.ToolBox
+import com.aur3liux.mipolicia.view.bottomsheets.BottomSheetError
+import com.aur3liux.mipolicia.components.RoundedButton
+import com.aur3liux.mipolicia.components.TextFieldData
+import com.aur3liux.mipolicia.ui.theme.botonColor
+import com.aur3liux.mipolicia.ui.theme.lGradient1
+
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -69,6 +73,8 @@ fun AccesoRegistroView(navC: NavController) {
     val textoBotonLogin = remember{ mutableStateOf("Iniciar sesión") }
 
     //-- DATOS DE ENTRADA
+    val email = rememberSaveable{ mutableStateOf("") }
+    val password = rememberSaveable{ mutableStateOf("") }
     val curp = rememberSaveable{ mutableStateOf("") }
     val nombre = rememberSaveable{ mutableStateOf("") }
     val paterno = rememberSaveable{ mutableStateOf("") }
@@ -79,6 +85,7 @@ fun AccesoRegistroView(navC: NavController) {
 
     //---------
     val focusManager = LocalFocusManager.current
+    var passwordVisibility by remember { mutableStateOf(false) }
     val confirmData = remember{ mutableStateOf(false) }
     val consultandoCurpData = remember{ mutableStateOf(false) }
     val onProccesing = remember{ mutableStateOf(false) }
@@ -88,11 +95,12 @@ fun AccesoRegistroView(navC: NavController) {
     val messageError = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    /*
     val consultaCurpViewModel: ConsultaCurpVM = viewModel(
         factory = ConsultaCurpVMFactory(curpRepository = CurpRepo()))
     val curpData = remember(consultaCurpViewModel) {consultaCurpViewModel.CurpData}.observeAsState() //LiveData
 
-
+*/
     Scaffold(contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -115,42 +123,74 @@ fun AccesoRegistroView(navC: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center) {
 
-                Text(
-                    text = "Naat´s (Cerca de ti)",
-                    fontSize = 25.sp,
-                    letterSpacing = 0.2.sp,
-                    fontFamily = ToolBox.gmxFontRegular,
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                )
 
                 Image(
-                    painter = painterResource(R.drawable.logo_naat),
+                    painter = painterResource(R.drawable.logo_mp),
                     contentDescription = "Circle Image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(100.dp)
                 )
 
-                Text(
-                    modifier = Modifier.padding(vertical = 20.dp),
-                    text = "PREDENUNCIA",
-                    fontSize = 20.sp,
-                    letterSpacing = 0.2.sp,
-                    fontFamily = ToolBox.gmxFontRegular,
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                TextFieldData(
+                    modifier = Modifier.fillMaxWidth(0.9f),
+                    textFieldValue = email,
+                    textLabel = "Correo electrónico",
+                    txColor = MaterialTheme.colorScheme.primary,
+                    maxChar = 80,
+                    enabled = enabledInput.value,
+                    textPlaceHolder = "correo@server.com",
+                    keyboardType = KeyboardType.Text,
+                    capitalization = KeyboardCapitalization.None,
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        },
+                        onDone = {
+                            keyboardController!!.hide()
+                        }
+                    ),
+                    imeAction = ImeAction.Next
                 )
 
-                Text(
-                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp),
-                    text = "Ingresa tu CURP",
-                    fontSize = 14.sp,
-                    fontFamily = ToolBox.montseFont,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Medium
+                TextFieldData(
+                    modifier = Modifier.fillMaxWidth(0.9f),
+                    textFieldValue = password,
+                    textLabel = "Contraseña",
+                    txColor = MaterialTheme.colorScheme.primary,
+                    maxChar = 25,
+                    enabled = enabledInput.value,
+                    keyboardType = KeyboardType.Password,
+                    capitalization = KeyboardCapitalization.None,
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus()
+                        }
+                    ),
+                    imeAction = ImeAction.Done,
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                passwordVisibility = !passwordVisibility
+                            }) {
+                            Icon(
+                                imageVector = if (passwordVisibility) {
+                                    Icons.Default.Visibility
+                                } else {
+                                    Icons.Default.VisibilityOff
+                                },
+                                contentDescription = ""
+                            )
+                        }
+                    },
+                    visualTransformation = if (passwordVisibility) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    }
                 )
 
+                Spacer(modifier = Modifier.height(5.dp))
 
                     TextFieldData(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
@@ -221,7 +261,7 @@ fun AccesoRegistroView(navC: NavController) {
                             }else {
                                 enabledInput.value = false
                                 onProccesing.value = true
-                                consultaCurpViewModel.DoConsultaCurp(context, curp.value)
+                                //consultaCurpViewModel.DoConsultaCurp(context, curp.value)
                                 consultandoCurpData.value = true
                             }
                         } //onClick
@@ -254,14 +294,14 @@ fun AccesoRegistroView(navC: NavController) {
                 }
             }
     } //Scaffold
-
+/*
     if(consultandoCurpData.value) {
         Spacer(modifier = Modifier.padding(horizontal = 16.dp))
         curpData.value?.let {
             when(curpData.value){
                 is RequestCurp.Succes -> {
                     val resultCurp = curpData.value as RequestCurp.Succes
-                    Log.i("NAATS","SUCCES" )
+                    Log.i("Mi policia","SUCCES" )
                     consultandoCurpData.value = false
                     nombre.value = resultCurp.data.nombre
                     paterno.value = resultCurp.data.paterno
@@ -272,7 +312,7 @@ fun AccesoRegistroView(navC: NavController) {
                     consultaCurpViewModel.resetCurp()
                 } //Succes
                 is RequestCurp.Error -> {
-                    Log.i("NAATS","ERROR" )
+                    Log.i("Mi policia","ERROR" )
                     onProccesing.value = false
                     val errorLogin = curpData.value as RequestCurp.Error
                     messageError.value = "${errorLogin.errorMessage}"
@@ -288,6 +328,7 @@ fun AccesoRegistroView(navC: NavController) {
                 }
             }//when
         }//observable let
-
     }//onProccesing
+
+ */
 }

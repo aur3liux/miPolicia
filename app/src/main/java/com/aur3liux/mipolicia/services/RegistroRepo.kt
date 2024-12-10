@@ -1,18 +1,18 @@
-package com.aur3liux.naats.services
+package com.aur3liux.mipolicia.services
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.aur3liux.naats.model.RequestResponse
+import com.aur3liux.mipolicia.model.RequestResponse
 import androidx.room.Room
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.aur3liux.naats.localdatabase.AppDb
-import com.aur3liux.naats.localdatabase.SesionData
-import com.aur3liux.naats.localdatabase.Store
-import com.aur3liux.naats.localdatabase.UserData
+import com.aur3liux.mipolicia.localdatabase.AppDb
+import com.aur3liux.mipolicia.localdatabase.SesionData
+import com.aur3liux.mipolicia.localdatabase.Store
+import com.aur3liux.mipolicia.localdatabase.UserData
 import org.json.JSONObject
 import java.lang.Exception
 import java.net.SocketTimeoutException
@@ -23,7 +23,7 @@ class RegistroRepo @Inject constructor() {
     //-- INICIO DE SESION
     fun doRegistro(context: Context, jsonObj: JSONObject): MutableLiveData<RequestResponse> {
         val _userData: MutableLiveData<RequestResponse> = MutableLiveData<RequestResponse>()
-        val url = "${Store.API_URL.BASE_URL}/api/accounts/register"
+        val url = "${Store.API_URL.BASE_URL}/api/user/create"
 
         //-- DATOS PARA LA BASE DE DATOS LOCAL
         val db = Room.databaseBuilder(context, AppDb::class.java, Store.DB.NAME)
@@ -33,33 +33,28 @@ class RegistroRepo @Inject constructor() {
             var queue = Volley.newRequestQueue(context)
             val jsonObjectRequest =
                 JsonObjectRequest(Request.Method.POST, url, jsonObj, { response ->
-                    Log.i("NAATS", "Response %s".format(response.toString()))
-                    if (response.getBoolean("permitido")) {
-                        //val dataResponse = response.getJSONObject("data")
+                    Log.i("MIPOLICIA", "Response %s".format(response.toString()))
+                    if (response.getBoolean("success")) {
+                        val dataResponse = response.getJSONObject("data")
                         val userData = UserData(
-                            curp = jsonObj.getString("curp"),
-                            userName = response.getString("username"),
-                            tokenAccess = response.getString("token_access"),
-                            nombre = jsonObj.getString("nombre"),
-                            paterno = jsonObj.getString("paterno"),
-                            materno = jsonObj.getString("materno"),
-                            sexo = jsonObj.getString("sexo"),
-                            correo = jsonObj.getString("email"),
-                            telefono = jsonObj.getString("telefono"),
-                            ciudad = "",
-                            localidad = "",
-                            colonia = "",
-                            calle = "",
-                            edoCivil = "",
-                            ocupacion = "",
-                            fNacimiento = ""
+                            email = jsonObj.getString("email"),
+                            nombre = jsonObj.getString("name"),
+                            apellidos = jsonObj.getString("lastname"),
+                            telefono = jsonObj.getString("phone"),
+                            municipio = jsonObj.getString("city"),
+                            localidad = jsonObj.getString("address"),
+                            colonia = jsonObj.getString("address2"),
+                            cp = jsonObj.getString("postal_code"),
+                            tokenAccess = dataResponse.getString("token"),
+                            notificationToken = jsonObj.getString("notificationUserToken"),
+                            device = jsonObj.getString("device")
                         )
                         //De manera local se almacena el inicio de sesion
-                        db.userDao().updateUser(user = userData)
+                        db.userDao().insertUser(user = userData)
                         db.sesionDao().insertSesion(SesionData(1, 1))
                         _userData.postValue(RequestResponse.Succes())
                     } else {
-                        val errMg = response.getString("msg_error")
+                        val errMg = response.getString("message")
                         _userData.postValue(
                             RequestResponse.Error(
                                 estatusCode = -1,

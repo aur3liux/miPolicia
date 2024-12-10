@@ -1,4 +1,4 @@
-package com.aur3liux.mipolicia.view.predenuncia
+package com.aur3liux.mipolicia.view.pred
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -103,7 +103,7 @@ fun DetallesPredenucia(navC: NavController, folio: String) {
     }
 
     val jsonObj = JSONObject()
-    jsonObj.put("username", db.userDao().getUserData().userName)
+    jsonObj.put("username", db.userDao().getUserData().email)
     jsonObj.put("token_access", db.userDao().getUserData().tokenAccess)
     jsonObj.put("folio", folio)
 

@@ -3,6 +3,7 @@ package com.aur3liux.mipolicia.view.bottomsheets
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,8 +13,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.BluetoothDrive
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.EmojiPeople
+import androidx.compose.material.icons.filled.Gavel
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.Newspaper
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Policy
+import androidx.compose.material.icons.filled.QuestionMark
+import androidx.compose.material.icons.filled.RuleFolder
+import androidx.compose.material.icons.filled.ShareLocation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,19 +44,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.aur3liux.mipolicia.Router
+import com.aur3liux.mipolicia.ToolBox
+import com.aur3liux.mipolicia.components.MenuCard
+import com.aur3liux.mipolicia.components.MenuImg
 import com.aur3liux.mipolicia.ui.theme.botonColor
 import com.aur3liux.mipolicia.components.RoundedButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetInfo(
-    title: String,
-    text: String,
+fun BottomSheetMenu(
+    navC:NavController,
+    onCloseSesion: () -> Unit,
     onDismiss: () -> Unit) {
     val modalBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
-        modifier = Modifier.fillMaxHeight(0.9f),
+        modifier = Modifier.fillMaxHeight(0.5f),
         onDismissRequest = { onDismiss() },
         sheetState = modalBottomSheetState,
         dragHandle = {
@@ -49,15 +69,25 @@ fun BottomSheetInfo(
         }) {
         Column(modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface),
+            .background(MaterialTheme.colorScheme.inverseSurface),
             horizontalAlignment = Alignment.CenterHorizontally) {
 
             Row(modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .height(50.dp)
                 .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Mi policía",
+                    fontSize = 15.sp,
+                    letterSpacing = 0.2.sp,
+                    fontFamily = ToolBox.gmxFontRegular,
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                )
+
+                Spacer(modifier = Modifier.width(20.dp))
 
                 Icon(
                     modifier = Modifier
@@ -65,53 +95,96 @@ fun BottomSheetInfo(
                         .clickable { onDismiss() },
                     imageVector = Icons.Filled.Close,
                     contentDescription = "",
-                    tint = MaterialTheme.colorScheme.inverseSurface)
+                    tint = MaterialTheme.colorScheme.primary)
 
-                Text(
-                    modifier = Modifier
-                        .clickable { onDismiss() }
-                        .padding(start = 10.dp),
-                    text = "Cerrar",
-                    textAlign = TextAlign.Center,
-                    fontSize = 15.sp,
-                    color = MaterialTheme.colorScheme.inverseSurface,
-                    fontWeight = FontWeight.Bold
-                )
             } //Row
 
             HorizontalDivider()
             Spacer(modifier = Modifier.height(30.dp))
 
-            Text(
-                modifier = Modifier.padding(start = 20.dp),
-                text = title,
-                textAlign = TextAlign.Center,
-                fontSize = 22.sp,
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            Text(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 30.dp),
-                textAlign = TextAlign.Center,
-                text = text,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold)
-
-            RoundedButton(
-                modifier = Modifier
-                    .padding(horizontal = 30.dp, vertical = 15.dp)
-                    .fillMaxWidth()
-                    .height(50.dp),
-                text = "Aceptar",
-                fSize = 20.sp,
-                backColor = botonColor,
-                textColor = Color.White,
-                onClick = {
+            //Primera fila de opciones
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                MenuCard(
+                    menuOpc = MenuImg(
+                        Icons.Filled.Person,
+                        "Mi perfil"
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .padding(8.dp),
+                    colorBack = MaterialTheme.colorScheme.inverseSurface,
+                    fSize = 14.sp,
+                    w = 150.dp,
+                    h = 80.dp,
+                    colorTx = MaterialTheme.colorScheme.primary
+                ) {
                     onDismiss()
+                    navC.navigate(Router.PERFIL_VIEW.route)
                 }
-            )
+
+
+                MenuCard(
+                        menuOpc = MenuImg(
+                            Icons.Filled.Policy,
+                            "Policía cibernética"
+                        ),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier
+                            .padding(8.dp),
+                        colorBack = MaterialTheme.colorScheme.inverseSurface,
+                        fSize = 14.sp,
+                        w = 150.dp,
+                        h = 80.dp,
+                        colorTx = MaterialTheme.colorScheme.primary
+                    ) {
+                        onDismiss()
+                        navC.navigate(Router.POLICIA_CIBERNETICA.route)
+                    }
+            }//Row primera fila
+
+            //Segunda fila de opciones
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+
+                MenuCard(
+                    menuOpc = MenuImg(
+                        Icons.Filled.ShareLocation,
+                        "Mi sector"
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .padding(8.dp),
+                    colorBack = MaterialTheme.colorScheme.inverseSurface,
+                    fSize = 14.sp,
+                    w = 150.dp,
+                    h = 80.dp,
+                    colorTx = MaterialTheme.colorScheme.primary
+                ) {
+
+                }
+                MenuCard(
+                    menuOpc = MenuImg(
+                        Icons.Filled.EmojiPeople,
+                        "Quejas y felicitaciones"
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .padding(8.dp),
+                    colorBack = MaterialTheme.colorScheme.inverseSurface,
+                    fSize = 14.sp,
+                    w = 150.dp,
+                    h = 80.dp,
+                    colorTx = MaterialTheme.colorScheme.primary
+                ) {
+
+                }
+            }//Row segunda fila
+
 
             Spacer(modifier = Modifier.height(70.dp))
         }

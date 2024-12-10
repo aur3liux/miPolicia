@@ -1,4 +1,4 @@
-package com.aur3liux.mipolicia.view.predenuncia
+package com.aur3liux.mipolicia.view.pred
 
 /****
  * ESTA PANTALLA ES LA SEGUNDA PANTALLA, NO SIEMPRE APARECERÁ

@@ -1,4 +1,4 @@
-package com.aur3liux.naats.view.bottomviews
+package com.aur3liux.mipolicia.view.bottomviews
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -50,19 +50,19 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.room.Room
-import com.aur3liux.naats.localdatabase.Store
-import com.aur3liux.naats.ToolBox
-import com.aur3liux.naats.view.bottomsheets.BottomSheetInfo
-import com.aur3liux.naats.components.InfoDialog
-import com.aur3liux.naats.localdatabase.AppDb
-import com.aur3liux.naats.localdatabase.AvisosData
-import com.aur3liux.naats.model.RequestResponse
-import com.aur3liux.naats.services.DownloadAvisosRepo
-import com.aur3liux.naats.ui.theme.cronosColor
-import com.aur3liux.naats.viewmodel.AvisosVM
-import com.aur3liux.naats.viewmodel.DownloadAvisosVMFactory
+import com.aur3liux.mipolicia.localdatabase.Store
+import com.aur3liux.mipolicia.ToolBox
+import com.aur3liux.mipolicia.view.bottomsheets.BottomSheetInfo
+import com.aur3liux.mipolicia.components.InfoDialog
+import com.aur3liux.mipolicia.localdatabase.AppDb
+import com.aur3liux.mipolicia.localdatabase.AvisosData
+import com.aur3liux.mipolicia.model.RequestResponse
+import com.aur3liux.mipolicia.services.DownloadAvisosRepo
+import com.aur3liux.mipolicia.ui.theme.cronosColor
+import com.aur3liux.mipolicia.viewmodel.AvisosVM
+import com.aur3liux.mipolicia.viewmodel.DownloadAvisosVMFactory
 import org.json.JSONObject
-import com.aur3liux.naats.R
+import com.aur3liux.mipolicia.R
 
 
 data class notificationData(val id:  Int,  val content: String)
@@ -94,7 +94,7 @@ fun BuzonView(navC: NavController) {
     var isDonwloading = remember { mutableStateOf(true) }
 
     val jsonObj = JSONObject()
-    jsonObj.put("username", db.userDao().getUserData().userName)
+    jsonObj.put("username", db.userDao().getUserData().email)
     jsonObj.put("token_access", db.userDao().getUserData().tokenAccess)
     jsonObj.put("ref", 0)
 

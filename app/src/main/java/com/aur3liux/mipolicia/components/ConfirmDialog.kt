@@ -1,4 +1,4 @@
-package com.aur3liux.naats.components
+package com.aur3liux.mipolicia.components
 
 
 import androidx.compose.foundation.background
@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
@@ -32,9 +33,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.aur3liux.naats.ToolBox
-import com.aur3liux.naats.ui.theme.botonColor
-import com.aur3liux.naats.ui.theme.btnPredColorButton
+import com.aur3liux.mipolicia.ToolBox
+import com.aur3liux.mipolicia.ui.theme.botonColor
+import com.aur3liux.mipolicia.ui.theme.btnPredColorButton
 
 @Composable
 fun ConfirmDialog(
@@ -63,7 +64,7 @@ fun ConfirmDialog(
                             .padding(top = 30.dp) // this is the empty space at the top
                             .fillMaxWidth()
                             .background(
-                                color = Color(0xFFBCA986),
+                                color = MaterialTheme.colorScheme.surface,
                                 shape = RoundedCornerShape(percent = 10)
                             ),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -75,7 +76,7 @@ fun ConfirmDialog(
                             fontSize = 24.sp,
                             fontFamily = ToolBox.quatroSlabFont,
                             fontWeight = FontWeight.Bold,
-                            color = botonColor
+                            color = MaterialTheme.colorScheme.onSurface
                         )
 
                         Spacer(modifier = Modifier.height(height = spaceBetweenElements))
@@ -87,7 +88,7 @@ fun ConfirmDialog(
                             fontFamily = ToolBox.quatroSlabFont,
                             fontWeight = FontWeight.Light,
                             fontSize = 18.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.inverseSurface
                         )
 
                         Spacer(modifier = Modifier.height(height = spaceBetweenElements))
@@ -112,7 +113,7 @@ fun ConfirmDialog(
 
                     //
                     Icon(
-                        imageVector = Icons.Default.Warning,
+                        imageVector = Icons.Default.Close,
                         contentDescription = "",
                         tint = Color.Black,
                         modifier = Modifier
@@ -122,32 +123,13 @@ fun ConfirmDialog(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.surface
                             )
+                            .clickable {onCancelar() }
                             .padding(all = 16.dp)
                             .align(alignment = Alignment.TopCenter)
                     )
                 }
             }
         }
-
-    Box(
-        modifier = Modifier
-            .clickable {
-                //onConfirmation()
-            }
-            .padding(horizontal = 16.dp, vertical = 6.dp)) {
-        Icon(
-            imageVector = Icons.Filled.Info,
-            contentDescription = "",
-            tint = Color.Black,
-            modifier = Modifier
-                .size(30.dp)
-                .background(color = Color.White, shape = CircleShape)
-                .border(
-                    width = 2.dp,
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.surface
-                ))
-    }
 }
 
 

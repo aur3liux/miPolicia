@@ -1,17 +1,17 @@
-package com.aur3liux.naats.services
+package com.aur3liux.mipolicia.services
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.aur3liux.naats.model.RequestResponse
+import com.aur3liux.mipolicia.model.RequestResponse
 import androidx.room.Room
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.aur3liux.naats.localdatabase.AppDb
-import com.aur3liux.naats.localdatabase.AvisosData
-import com.aur3liux.naats.localdatabase.Store
+import com.aur3liux.mipolicia.localdatabase.AppDb
+import com.aur3liux.mipolicia.localdatabase.AvisosData
+import com.aur3liux.mipolicia.localdatabase.Store
 import org.json.JSONObject
 import java.lang.Exception
 import java.net.SocketTimeoutException

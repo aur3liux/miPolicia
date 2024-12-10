@@ -1,4 +1,4 @@
-package com.aur3liux.naats
+package com.aur3liux.mipolicia
 
 import org.junit.Test
 

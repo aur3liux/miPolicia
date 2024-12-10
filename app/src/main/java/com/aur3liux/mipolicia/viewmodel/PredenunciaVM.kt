@@ -1,4 +1,4 @@
-package com.aur3liux.naats.viewmodel
+package com.aur3liux.mipolicia.viewmodel
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,10 +7,8 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.aur3liux.naats.model.RequestPredenuncia
-import com.aur3liux.naats.model.RequestResponse
-import com.aur3liux.naats.services.PredenunciaRepo
-import com.aur3liux.naats.services.RegistroRepo
+import com.aur3liux.mipolicia.model.RequestPredenuncia
+import com.aur3liux.mipolicia.services.PredenunciaRepo
 import org.json.JSONObject
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.aur3liux.naats.viewmodel
+package com.aur3liux.mipolicia.viewmodel
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,13 +7,10 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.aur3liux.naats.model.RequestCurp
-import com.aur3liux.naats.model.RequestResponse
-import com.aur3liux.naats.services.CurpRepo
-import org.json.JSONObject
+import com.aur3liux.mipolicia.model.RequestCurp
 import javax.inject.Inject
 
-
+/*
 class ConsultaCurpVMFactory(private val curpRepository: CurpRepo): ViewModelProvider.Factory{
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(ConsultaCurpVM::class.java)){
@@ -58,3 +55,5 @@ class ConsultaCurpVM @Inject constructor(private val masterRepository: CurpRepo)
 
 
 }
+
+ */

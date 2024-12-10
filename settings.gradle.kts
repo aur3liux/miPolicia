@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Naats"
+rootProject.name = "MiPolicia"
 include(":app")

@@ -1,4 +1,4 @@
-package com.aur3liux.naats.view
+package com.aur3liux.mipolicia.view
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -28,8 +28,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-import com.aur3liux.naats.R
-import com.aur3liux.naats.ui.theme.lGradient1
+import com.aur3liux.mipolicia.R
+import com.aur3liux.mipolicia.ui.theme.lGradient1
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)

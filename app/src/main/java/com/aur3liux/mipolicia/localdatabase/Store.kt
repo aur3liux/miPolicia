@@ -1,49 +1,55 @@
-package com.aur3liux.naats.localdatabase
+package com.aur3liux.mipolicia.localdatabase
+
+/*
+* Variant: debugAndroidTest
+Config: debug
+Store: /Users/aureliolopeztest/.android/debug.keystore
+Alias: AndroidDebugKey
+MD5: 7C:A3:5C:2A:4A:F8:65:7A:AF:BA:14:3F:30:70:EF:7A
+SHA1: 90:1D:93:68:E2:4C:86:19:25:81:B1:DF:42:51:0B:4F:FF:2B:9D:3B
+SHA-256: 1D:0E:D6:47:4B:A2:84:B5:17:80:51:ED:C2:83:0E:61:F6:E2:1D:1C:48:D8:88:7D:8E:1A:A2:F4:1C:66:C7:F5
+Valid until: jueves, 9 de abril de 2054
+* */
 
 class Store {
     object APP {
-        const val name = "Naat´s"
-        const val txDelito = "Tipo de delito"
+        const val name = "Mi policía"
+        const val txCiberDelito = "Ataque del que fuíste víctima"
         const val txsubDelito = "Elegir subcategoría*"
     }
 
     object API_URL {
         const val API_GOOGLE = "AIzaSyCaNrRXeqbx6JvtXHNH_Ai2334c8BWUBcE"
-        //const val BASE_URL = "https://predapi.it-works.mx"
-        const val BASE_URL = "http://187.157.28.108:2024/apip/public"
+        const val BASE_URL = "http://187.141.117.119/mipolicia-api/public"
     }
 
     object DB {
-        const val NAME = "N44ts.db"
-        const val TB_USER = "UsuarioNa44tsTbl"
-        const val TB_SESION = "SessionN44tsTbl"
-        const val TB_TOKEN_PUSH = "Tok3nPushN44tsTbl"
-        const val TB_LOCATIONS = "LocationsN44tsTbl"
-        const val TB_MYPREDENUNCIAS = "MyPredenunciasN44tsTbl"
-        const val TB_PREDENUNCIA_TMP = "PredenunciaTmpN44tsTbl"
-        const val TB_AVISOS = "AvisosN44tsTbl"
+        const val NAME = "Mipolic14.db"
+        const val TB_USER = "UsuarioMipolic14Tbl"
+        const val TB_SESION = "SessionMipolic14Tbl"
+        const val TB_TOKEN_PUSH = "Tok3nPushMipolic14Tbl"
+        const val TB_LOCATIONS = "LocationsMipolic14Tbl"
+        const val TB_MYPREDENUNCIAS = "MyPredenunciasMipolic14Tbl"
+        const val TB_PREDENUNCIA_TMP = "PredenunciaTmpMipolic14Tbl"
+        const val TB_AVISOS = "AvisosMipolic14Tbl"
     }
 
     object User {
-        const val CURP = "curp"
-        const val USER = "userName"
-        const val TOKEN = "tokenAccess"
+        const val EMAIL = "email"
         const val NOMBRE = "nombre"
-        const val PATERNO = "paterno"
-        const val MATERNO = "materno"
-        const val SEXO = "sexo"
-        const val CORREO = "correo"
+        const val APELLIDOS = "apellidos"
         const val TELEFONO = "telefono"
-        const val CIUDAD = "ciudad"
+        const val MUNICIPIO = "municipio"
         const val LOCALIDAD = "localidad"
         const val COLONIA = "colonia"
-        const val CALLE = "calle"
-        const val EDO_CIVIL = "estadoCivil"
-        const val OCUPACION = "ocupacion"
-        const val F_NACIMIENTO = "fNacimiento"
+        const val CP = "cp"
+        const val TOKEN = "tokenAccess"
+        const val NOTIFICATION_TOKEN = "notificationToken"
+        const val DEVICE = "device"
     }
 
     object SESION {
+        //0 Debe iniciar sesion, 1 Sesion iniciada
         const val STATUS = "statusSesion"
     }
 

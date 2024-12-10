@@ -1,4 +1,4 @@
-package com.aur3liux.naats.view.bottomviews
+package com.aur3liux.mipolicia.view.bottomviews
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -40,12 +40,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.room.Room
-import com.aur3liux.naats.R
-import com.aur3liux.naats.localdatabase.Store
-import com.aur3liux.naats.ToolBox
-import com.aur3liux.naats.components.InfoDialog
-import com.aur3liux.naats.localdatabase.AppDb
-import com.aur3liux.naats.ui.theme.lGradient2
+import com.aur3liux.mipolicia.R
+import com.aur3liux.mipolicia.localdatabase.Store
+import com.aur3liux.mipolicia.ToolBox
+import com.aur3liux.mipolicia.components.InfoDialog
+import com.aur3liux.mipolicia.localdatabase.AppDb
+import com.aur3liux.mipolicia.ui.theme.lGradient2
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -106,7 +106,7 @@ fun HelpView(navC: NavController) {
                 )
                 Image(
                     modifier = Modifier.size(60.dp),
-                    painter = painterResource(id = R.drawable.logo_naat),
+                    painter = painterResource(id = R.drawable.logo_mp),
                     contentDescription = "",
                     contentScale = ContentScale.Fit
                 )

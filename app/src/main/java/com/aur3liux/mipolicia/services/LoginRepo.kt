@@ -1,18 +1,18 @@
-package com.aur3liux.naats.services
+package com.aur3liux.mipolicia.services
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.aur3liux.naats.model.RequestResponse
+import com.aur3liux.mipolicia.model.RequestResponse
 import androidx.room.Room
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.aur3liux.naats.localdatabase.AppDb
-import com.aur3liux.naats.localdatabase.SesionData
-import com.aur3liux.naats.localdatabase.Store
-import com.aur3liux.naats.localdatabase.UserData
+import com.aur3liux.mipolicia.localdatabase.AppDb
+import com.aur3liux.mipolicia.localdatabase.SesionData
+import com.aur3liux.mipolicia.localdatabase.Store
+import com.aur3liux.mipolicia.localdatabase.UserData
 import org.json.JSONObject
 import java.lang.Exception
 import java.net.SocketTimeoutException
@@ -23,7 +23,7 @@ class LoginRepo @Inject constructor() {
     //-- INICIO DE SESION
     fun doLogin(context: Context, jsonObj: JSONObject): MutableLiveData<RequestResponse> {
         val _userData: MutableLiveData<RequestResponse> = MutableLiveData<RequestResponse>()
-        val url = "${Store.API_URL.BASE_URL}/api/login"
+        val url = "${Store.API_URL.BASE_URL}/api/user/login"
 
         //-- DATOS PARA LA BASE DE DATOS LOCAL
         val db = Room.databaseBuilder(context, AppDb::class.java, Store.DB.NAME)
@@ -33,26 +33,21 @@ class LoginRepo @Inject constructor() {
             var queue = Volley.newRequestQueue(context)
             val jsonObjectRequest =
                 JsonObjectRequest(Request.Method.POST, url, jsonObj, { response ->
-                    Log.i("NAATS", "Response %s".format(response.toString()))
-                    if (response.getBoolean("permitido")) {
-                       // val dataResponse = response.getJSONObject("data")
+                    Log.i(Store.APP.name, "Response %s".format(response.toString()))
+                    if (response.getBoolean("success")) {
+                       val dataResponse = response.getJSONObject("data")
                         val userData = UserData(
-                            curp = "",
-                            userName = jsonObj.getString("username"),
-                            tokenAccess = response.getString("token_access"),
-                            nombre = response.getString("nombre"),
-                            paterno = response.getString("paterno"),
-                            materno = response.getString("materno"),
-                            sexo = "Pendiente",
-                            correo = response.getString("correo"),
-                            telefono = response.getString("telefono"),
-                            ciudad = "",
-                            localidad = "",
-                            colonia = "",
-                            calle = "",
-                            edoCivil = "",
-                            ocupacion = "",
-                            fNacimiento = ""
+                            email = dataResponse.getJSONObject("user").getString("email"),
+                            nombre = dataResponse.getJSONObject("user").getString("name"),
+                            apellidos = dataResponse.getJSONObject("user").getString("lastname"),
+                            telefono = dataResponse.getJSONObject("user").getString("phone"),
+                            municipio = dataResponse.getJSONObject("user").getString("city"),
+                            localidad = dataResponse.getJSONObject("user").getString("address"),
+                            colonia = dataResponse.getJSONObject("user").getString("address2"),
+                            cp = dataResponse.getJSONObject("user").getString("postal_code"),
+                            tokenAccess = dataResponse.getString("token"),
+                            notificationToken = jsonObj.getString("notificationUserToken"),
+                            device = jsonObj.getString("device")
                         )
                         //De manera local se almacena el inicio de sesion
                         db.userDao().insertUser(user = userData)

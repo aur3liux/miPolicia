@@ -1,4 +1,4 @@
-package com.aur3liux.mipolicia.components
+package com.aur3liux.mipolicia.view.dialogs
 
 
 import android.content.Context
@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +38,7 @@ import com.aur3liux.mipolicia.ToolBox
 import com.aur3liux.mipolicia.ui.theme.botonColor
 
 @Composable
-fun InfoDialog(
+fun ErrorDialog(
     title: String,
     info: AnnotatedString,
     context: Context,
@@ -62,7 +63,7 @@ fun InfoDialog(
                             .padding(top = 30.dp) // this is the empty space at the top
                             .fillMaxWidth()
                             .background(
-                                color = Color(0xFFBCA986),
+                                color = MaterialTheme.colorScheme.surface,
                                 shape = RoundedCornerShape(percent = 10)
                             ),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -71,10 +72,10 @@ fun InfoDialog(
 
                         Text(
                             text = title,
-                            fontSize = 24.sp,
+                            fontSize = 19.sp,
                             fontFamily = ToolBox.quatroSlabFont,
                             fontWeight = FontWeight.Bold,
-                            color = botonColor
+                            color = MaterialTheme.colorScheme.onSurface
                         )
 
                         Spacer(modifier = Modifier.height(height = spaceBetweenElements))
@@ -87,7 +88,7 @@ fun InfoDialog(
                             fontWeight = FontWeight.Light,
                             fontSize = 16.sp,
                             lineHeight = 20.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.inverseSurface
                         )
 
                         Spacer(modifier = Modifier.height(height = spaceBetweenElements))
@@ -102,12 +103,17 @@ fun InfoDialog(
 
                     //
                     Icon(
-                        imageVector = Icons.Default.Info,
+                        imageVector = Icons.Default.Close,
                         contentDescription = "",
                         tint = Color.Black,
                         modifier = Modifier
                             .background(color = Color.White, shape = CircleShape)
-                            .border(width = 2.dp, shape = CircleShape, color = MaterialTheme.colorScheme.surface)
+                            .border(
+                                width = 2.dp,
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.surface
+                            )
+                            .clickable { onConfirmation() }
                             .padding(all = 16.dp)
                             .align(alignment = Alignment.TopCenter)
                     )
@@ -115,21 +121,6 @@ fun InfoDialog(
             }
         }
 
-    Box(
-        modifier = Modifier
-            .clickable {
-                onConfirmation()
-            }
-            .padding(horizontal = 16.dp, vertical = 6.dp)) {
-        Icon(
-            imageVector = Icons.Filled.Info,
-            contentDescription = "",
-            tint = Color.Black,
-            modifier = Modifier
-                .size(30.dp)
-                .background(color = Color.White, shape = CircleShape)
-                .border(width = 2.dp, shape = CircleShape, color = MaterialTheme.colorScheme.surface))
-    }
 }
 
 
@@ -140,9 +131,10 @@ fun DialogButton(
     onDismiss: () -> Unit
 ) {
     Box(
-        modifier = Modifier.width(200.dp)
+        modifier = Modifier
+            .width(200.dp)
             .background(
-                color = botonColor,
+                color = MaterialTheme.colorScheme.inverseSurface,
                 shape = RoundedCornerShape(percent = cornerRadiusPercent)
             )
             .clickable {
@@ -153,7 +145,7 @@ fun DialogButton(
     ) {
         Text(
             text = buttonText,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surfaceVariant,
             fontSize = 18.sp,
             style = MaterialTheme.typography.bodyMedium
         )

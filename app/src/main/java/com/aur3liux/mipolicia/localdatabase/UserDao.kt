@@ -1,4 +1,4 @@
-package com.aur3liux.naats.localdatabase
+package com.aur3liux.mipolicia.localdatabase
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -8,14 +8,14 @@ import androidx.room.Update
 
 @Dao
 interface UserDao {
-    //Insertar un Promotor
+    //Insertar un usuario
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertUser(user: UserData)
 
     @Update
     fun updateUser(user: UserData)
 
-    //Leer datos de un promotor
+    //Leer datos de un usuario
     @Query("SELECT * FROM ${Store.DB.TB_USER} LIMIT 1")
     fun getUserData(): UserData
 

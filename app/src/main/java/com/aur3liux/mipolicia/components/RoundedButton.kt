@@ -1,4 +1,4 @@
-package com.aur3liux.naats.components
+package com.aur3liux.mipolicia.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
@@ -18,8 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aur3liux.naats.ToolBox
-import com.aur3liux.naats.ui.theme.cronosColor
+import com.aur3liux.mipolicia.ToolBox
+import com.aur3liux.mipolicia.ui.theme.cronosColor
 
 @Composable
 fun RoundedButton(modifier: Modifier = Modifier,

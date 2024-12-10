@@ -1,4 +1,4 @@
-package com.aur3liux.naats.view
+package com.aur3liux.mipolicia.view
 
 import androidx.compose.runtime.Composable
 import android.content.Context
@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.aur3liux.naats.view.subviews.ZoomableDocument
+import com.aur3liux.mipolicia.view.subviews.ZoomableDocument
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*

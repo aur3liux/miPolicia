@@ -1,12 +1,4 @@
-package com.aur3liux.naats
-
-/*
-Alias: AndroidDebugKey
-MD5: 7C:A3:5C:2A:4A:F8:65:7A:AF:BA:14:3F:30:70:EF:7A
-SHA1: 90:1D:93:68:E2:4C:86:19:25:81:B1:DF:42:51:0B:4F:FF:2B:9D:3B
-SHA-256: 1D:0E:D6:47:4B:A2:84:B5:17:80:51:ED:C2:83:0E:61:F6:E2:1D:1C:48:D8:88:7D:8E:1A:A2:F4:1C:66:C7:F5
-Valid until: jueves, 9 de abril de 2054
- */
+package com.aur3liux.mipolicia
 
 import android.Manifest
 import android.content.Context
@@ -24,31 +16,37 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room.databaseBuilder
-import com.aur3liux.naats.localdatabase.AppDb
-import com.aur3liux.naats.localdatabase.LocationData
-import com.aur3liux.naats.localdatabase.Store
-import com.aur3liux.naats.ui.theme.NaatsTheme
-import com.aur3liux.naats.ui.theme.botonColor
-import com.aur3liux.naats.view.auth.AccesoRegistroView
-import com.aur3liux.naats.view.AvisoPrivacidad
-import com.aur3liux.naats.view.auth.CloseSessionConfirmView
-import com.aur3liux.naats.view.predenuncia.DetallesPredenucia
-import com.aur3liux.naats.view.predenuncia.FinishPredenuncia
-import com.aur3liux.naats.view.Home
-import com.aur3liux.naats.view.Expediente
-import com.aur3liux.naats.view.LoadView
-import com.aur3liux.naats.view.auth.LoginView
-import com.aur3liux.naats.view.predenuncia.ListSubcategoriaDenuncia
-import com.aur3liux.naats.view.PantallaInicial
-import com.aur3liux.naats.view.auth.RegistroFinishView
-import com.aur3liux.naats.view.bottomviews.BuzonView
-import com.aur3liux.naats.view.predenuncia.PredenunciaEnvio
+import com.aur3liux.mipolicia.localdatabase.AppDb
+import com.aur3liux.mipolicia.localdatabase.LocationData
+import com.aur3liux.mipolicia.localdatabase.Store
+import com.aur3liux.mipolicia.ui.theme.NaatsTheme
+import com.aur3liux.mipolicia.ui.theme.botonColor
+import com.aur3liux.mipolicia.view.auth.AccesoRegistroView
+import com.aur3liux.mipolicia.view.AvisoPrivacidad
+import com.aur3liux.mipolicia.view.auth.CloseSessionConfirmView
+import com.aur3liux.mipolicia.view.pred.DetallesPredenucia
+import com.aur3liux.mipolicia.view.pred.FinishPredenuncia
+import com.aur3liux.mipolicia.view.Home
+import com.aur3liux.mipolicia.view.Expediente
+import com.aur3liux.mipolicia.view.LoadView
+import com.aur3liux.mipolicia.view.auth.LoginView
+import com.aur3liux.mipolicia.view.pred.ListSubcategoriaDenuncia
+import com.aur3liux.mipolicia.view.VideoPlayer
+import com.aur3liux.mipolicia.view.auth.RegistroView
+import com.aur3liux.mipolicia.view.bottomviews.BuzonView
+import com.aur3liux.mipolicia.view.cibernetica.PoliciaCiberneticaView
+import com.aur3liux.mipolicia.view.cibernetica.ReporteCiberneticaView
+import com.aur3liux.mipolicia.view.pred.PredenunciaEnvio
+import com.aur3liux.mipolicia.view.subviews.DetallesMarcoLegal
+import com.aur3liux.mipolicia.view.subviews.MarcoLegalView
+import com.aur3liux.mipolicia.view.subviews.PerfilView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -80,8 +78,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             NaatsTheme {
-                window.statusBarColor = botonColor.toArgb()
-                window.navigationBarColor = botonColor.toArgb()
+                //window.statusBarColor = botonColor.toArgb()
+                window.statusBarColor = Color(0xff691C32).toArgb()
+                //Barra de abajo, botones de navegacion del telefono
+                window.navigationBarColor = Color(0xff691C32).toArgb()
 
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = Router.LOAD_VIEW.route){
@@ -89,13 +89,6 @@ class MainActivity : ComponentActivity() {
                     composable(Router.LOAD_VIEW.route){
                         BackHandler(true) {}
                         LoadView(navC = navController)
-                    }//Load
-
-                    //POLITICA DE PRIVACIDAD INICIAL
-                    composable(
-                        Router.PANTALLA_INICIAL.route){
-                        BackHandler(true) {}
-                        PantallaInicial(navC = navController)
                     }//Load
 
                     //ACCESO REGISTRO
@@ -106,7 +99,7 @@ class MainActivity : ComponentActivity() {
 
                     //FINISH REGISTRO
                     composable(Router.FINISH_REGISTRO.route){
-                        RegistroFinishView(navC = navController)
+                        RegistroView(navC = navController)
                     }//Acceso-registro-finish
 
 
@@ -139,6 +132,57 @@ class MainActivity : ComponentActivity() {
                         BackHandler(true) {}
                         Home(navC = navController)
                     }//Home
+
+                    //PERFIL DE USUARIO
+                    composable(
+                        enterTransition = {
+                            fadeIn(
+                                animationSpec = tween(
+                                    delayMillis = 0,
+                                    durationMillis = 500,
+                                    easing = LinearEasing)) + slideIntoContainer(
+                                animationSpec = tween(200, easing = LinearEasing),
+                                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                                initialOffset = { it }
+                            )},
+                        route = Router.PERFIL_VIEW.route){
+                        PerfilView(navC = navController)
+                    }//Subcategoria
+
+
+                    //MARCO LEGAL
+                    composable(
+                        enterTransition = {
+                            fadeIn(
+                                animationSpec = tween(
+                                    delayMillis = 0,
+                                    durationMillis = 500,
+                                    easing = LinearEasing)) + slideIntoContainer(
+                                animationSpec = tween(200, easing = LinearEasing),
+                                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                                initialOffset = { it }
+                            )},
+                        route = Router.MARCOLEGAL_VIEW.route){
+                        MarcoLegalView(navC = navController)
+                    }//Subcategoria
+
+
+                    //DETALLES MARCO LEGAL
+                    composable(
+                        enterTransition = {
+                            fadeIn(
+                                animationSpec = tween(
+                                    delayMillis = 0,
+                                    durationMillis = 500,
+                                    easing = LinearEasing)) + slideIntoContainer(
+                                animationSpec = tween(200, easing = LinearEasing),
+                                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                                initialOffset = { it }
+                            )},
+                        route = Router.DETALLES_MARCOLEGAL.route){ data ->
+                        var seccion = data.arguments!!.getString("seccion")
+                        DetallesMarcoLegal(navC = navController, seccion = seccion!!)
+                    }//Subcategoria
 
                     //PREDENUNCIA
                     composable(
@@ -237,6 +281,56 @@ class MainActivity : ComponentActivity() {
                         BuzonView(navC = navController)
                     }
 
+                    //POLICIA CIBERNETICA
+                    composable(
+                        enterTransition = { fadeIn(animationSpec = tween(500, easing = LinearEasing)) + slideIntoContainer(
+                            animationSpec = tween(200, easing = LinearEasing),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                            initialOffset = { it }
+                        )},
+                        route = Router.POLICIA_CIBERNETICA.route){
+                        PoliciaCiberneticaView(navC = navController)
+                    }
+
+                    //REPORTE CIBERNETICA
+                    composable(
+                        enterTransition = { fadeIn(animationSpec = tween(500, easing = LinearEasing)) + slideIntoContainer(
+                            animationSpec = tween(200, easing = LinearEasing),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                            initialOffset = { it }
+                        )},
+                        route = Router.REPORTE_CIBERNETICA.route){
+                        ReporteCiberneticaView(navC = navController)
+                    }
+
+                    //POLICIA CIBERNETICA
+                    composable(
+                        enterTransition = {
+                            fadeIn(
+                                animationSpec = tween(
+                                    delayMillis = 0,
+                                    durationMillis = 700,
+                                    easing = LinearEasing)) + slideIntoContainer(
+                                animationSpec = tween(200, easing = LinearEasing),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                                initialOffset = { it }
+                            )},
+                        route = Router.FGECAM_VIEW.route) {
+                        PoliciaCiberneticaView(navC = navController)
+                    }
+
+
+                    //VIDEO PLAYER
+                    composable(
+                        enterTransition = { fadeIn(animationSpec = tween(500, easing = LinearEasing)) + slideIntoContainer(
+                            animationSpec = tween(200, easing = LinearEasing),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                            initialOffset = { it }
+                        )},
+                        route = Router.VIDEO_PLAYER.route) {
+                        VideoPlayer()
+                    }
+
                 }//NavHost
             }
         }
@@ -246,13 +340,13 @@ class MainActivity : ComponentActivity() {
     override fun onStart(){
         super.onStart()
         startLocationUpdates(context)
-        Log.i("SIRENA", "REINCIANDO")
+        Log.i(Store.APP.name, "REINCIANDO")
     } //onStart
 
     override fun onResume() {
         super.onResume()
         context = applicationContext
-        Log.i("SIRENA", "REANUDANDO")
+        Log.i(Store.APP.name, "REANUDANDO")
         startLocationUpdates(context)
     } //onResume
 
@@ -290,12 +384,12 @@ class MainActivity : ComponentActivity() {
 
     fun stopLocationUpdates() {
         fusedLocCliente!!.removeLocationUpdates(mLocationCallback)
-        Log.i("SIRENA", "Location updates removed")
+        Log.i(Store.APP.name, "Location updates removed")
     } //stopLocationUpdates
 
     fun onLocationChanged(location: Location) {
         mLastLocation = location
-        Log.i("SIRENA", "UBICACION ${mLastLocation.latitude},  ${mLastLocation.longitude} ")
+        Log.i(Store.APP.name, "UBICACION ${mLastLocation.latitude},  ${mLastLocation.longitude} ")
 
         val db = databaseBuilder(context,
             AppDb::class.java,
@@ -309,7 +403,7 @@ class MainActivity : ComponentActivity() {
                 longitud = mLastLocation.longitude)
             locationDb.updateLocation(dataLoc)
 
-            Log.i("SIRENA", "UBICACION ACTUALIZADA")
+            Log.i(Store.APP.name, "UBICACION ACTUALIZADA")
         }
 
         db.close()

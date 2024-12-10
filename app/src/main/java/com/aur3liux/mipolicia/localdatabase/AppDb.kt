@@ -1,4 +1,4 @@
-package com.aur3liux.naats.localdatabase
+package com.aur3liux.mipolicia.localdatabase
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

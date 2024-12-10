@@ -1,4 +1,4 @@
-package com.aur3liux.naats.view.auth
+package com.aur3liux.mipolicia.view.auth
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -47,21 +47,21 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.room.Room
-import com.aur3liux.naats.R
-import com.aur3liux.naats.Router
-import com.aur3liux.naats.view.bottomsheets.BottomSheetError
-import com.aur3liux.naats.components.RoundedButton
-import com.aur3liux.naats.localdatabase.AppDb
-import com.aur3liux.naats.localdatabase.Store
-import com.aur3liux.naats.model.RequestResponse
-import com.aur3liux.naats.services.LoginRepo
-import com.aur3liux.naats.ui.theme.botonColor
-import com.aur3liux.naats.ui.theme.dGradient1
-import com.aur3liux.naats.ui.theme.dGradient2
-import com.aur3liux.naats.ui.theme.lGradient1
-import com.aur3liux.naats.ui.theme.lGradient2
-import com.aur3liux.naats.viewmodel.LoginVM
-import com.aur3liux.naats.viewmodel.LoginVMFactory
+import com.aur3liux.mipolicia.R
+import com.aur3liux.mipolicia.Router
+import com.aur3liux.mipolicia.view.bottomsheets.BottomSheetError
+import com.aur3liux.mipolicia.components.RoundedButton
+import com.aur3liux.mipolicia.localdatabase.AppDb
+import com.aur3liux.mipolicia.localdatabase.Store
+import com.aur3liux.mipolicia.model.RequestResponse
+import com.aur3liux.mipolicia.services.LoginRepo
+import com.aur3liux.mipolicia.ui.theme.botonColor
+import com.aur3liux.mipolicia.ui.theme.dGradient1
+import com.aur3liux.mipolicia.ui.theme.dGradient2
+import com.aur3liux.mipolicia.ui.theme.lGradient1
+import com.aur3liux.mipolicia.ui.theme.lGradient2
+import com.aur3liux.mipolicia.viewmodel.LoginVM
+import com.aur3liux.mipolicia.viewmodel.LoginVMFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

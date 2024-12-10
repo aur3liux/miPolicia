@@ -1,12 +1,9 @@
-package com.aur3liux.naats.notifications
+package com.aur3liux.mipolicia.notifications
 
 import android.annotation.SuppressLint
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
-import androidx.compose.ui.platform.LocalContext
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 class NotificationApplication: Application() {
 

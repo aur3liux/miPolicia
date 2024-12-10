@@ -1,9 +1,10 @@
 package com.aur3liux.mipolicia.view.bottomsheets
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,17 +16,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.BluetoothDrive
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EmojiPeople
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Policy
-import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.ShareLocation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -35,10 +33,21 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,19 +56,26 @@ import com.aur3liux.mipolicia.Router
 import com.aur3liux.mipolicia.ToolBox
 import com.aur3liux.mipolicia.components.MenuCard
 import com.aur3liux.mipolicia.components.MenuImg
-import com.aur3liux.mipolicia.ui.theme.botonColor
 import com.aur3liux.mipolicia.components.RoundedButton
+import com.aur3liux.mipolicia.components.TextFieldData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetMenu(
-    navC:NavController,
-    onCloseSesion: () -> Unit,
+fun BottomRecuperarPassword(
+    email: MutableState<String>,
+    onGetNewPassword: () -> Unit,
     onDismiss: () -> Unit) {
     val modalBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    val onProccesing = remember{ mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
+    val enabledInput = remember { mutableStateOf(true) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
+
     ModalBottomSheet(
-        modifier = Modifier.fillMaxHeight(0.6f),
+        modifier = Modifier.fillMaxHeight(0.8f),
         onDismissRequest = { onDismiss() },
         sheetState = modalBottomSheetState,
         dragHandle = {
@@ -86,7 +102,7 @@ fun BottomSheetMenu(
                 Spacer(modifier = Modifier.width(20.dp))
 
                 Text(
-                    text = "Mi policía",
+                    text = "Recuperar contraseña",
                     fontSize = 15.sp,
                     letterSpacing = 0.2.sp,
                     fontFamily = ToolBox.gmxFontRegular,
@@ -99,131 +115,63 @@ fun BottomSheetMenu(
             HorizontalDivider()
             Spacer(modifier = Modifier.height(30.dp))
 
-            //Primera fila de opciones
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
+            Text(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                text = "Ingresa tu correo el correo electrónico con el que creaste tu cuenta y te enviaremos un enlace para restablecer tu contraseña. Despues de hacer esta solicitud revisa tu bandeja de entrada.",
+                fontSize = 15.sp,
+                textAlign = TextAlign.Justify,
+                letterSpacing = 0.2.sp,
+                fontFamily = ToolBox.gmxFontRegular,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
+            )
 
-                    MenuCard(
-                        menuOpc = MenuImg(
-                            Icons.Filled.Newspaper,
-                            "Reporte ciudadano"
-                        ),
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier
-                            .padding(8.dp),
-                        colorBack = MaterialTheme.colorScheme.inverseSurface,
-                        fSize = 14.sp,
-                        w = 150.dp,
-                        h = 80.dp,
-                        colorTx = MaterialTheme.colorScheme.primary
-                    ) {
 
+            //CORREO ELECTRONICO
+            TextFieldData(
+                modifier = Modifier.fillMaxWidth(0.9f),
+                textFieldValue = email,
+                textLabel = "correo electrónico",
+                txColor = MaterialTheme.colorScheme.primary,
+                maxChar = 80,
+                enabled = enabledInput.value,
+                textPlaceHolder = "correo@server.com",
+                keyboardType = KeyboardType.Email,
+                capitalization = KeyboardCapitalization.None,
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    },
+                    onDone = {
+                        keyboardController!!.hide()
                     }
-                    MenuCard(
-                        menuOpc = MenuImg(
-                            Icons.Filled.Policy,
-                            "Policía cibernética"
-                        ),
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier
-                            .padding(8.dp),
-                        colorBack = MaterialTheme.colorScheme.inverseSurface,
-                        fSize = 14.sp,
-                        w = 150.dp,
-                        h = 80.dp,
-                        colorTx = MaterialTheme.colorScheme.primary
-                    ) {
+                ),
+                imeAction = ImeAction.Next
+            )
+
+
+            RoundedButton(
+                modifier = Modifier
+                    .padding(horizontal = 30.dp, vertical = 10.dp)
+                    .fillMaxWidth()
+                    .height(40.dp),
+                text = "Solicitar nueva contraseña",
+                fSize = 15.sp,
+                textColor = Color.White,
+                backColor = MaterialTheme.colorScheme.surface,
+                estatus = onProccesing,
+                onClick = {
+                    if(email.value.isNullOrEmpty() || !ToolBox.isEmailValid(email.value))
+                        Toast.makeText(context, "Correo electrónico no valido", Toast.LENGTH_SHORT).show()
+                    else {
+                        onGetNewPassword()
                         onDismiss()
-                        navC.navigate(Router.POLICIA_CIBERNETICA.route)
                     }
-            }//Row primera fila
-
-            //Segunda fila de opciones
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.ShareLocation,
-                        "Mi sector"
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier
-                        .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.inverseSurface,
-                    fSize = 14.sp,
-                    w = 150.dp,
-                    h = 80.dp,
-                    colorTx = MaterialTheme.colorScheme.primary
-                ) {
-
-                }
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.EmojiPeople,
-                        "Quejas y felicitaciones"
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier
-                        .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.inverseSurface,
-                    fSize = 14.sp,
-                    w = 150.dp,
-                    h = 80.dp,
-                    colorTx = MaterialTheme.colorScheme.primary
-                ) {
-
-                }
-            }//Row segunda fila
-
-            //Tercera fila de opciones
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.Person,
-                        "Mi perfil"
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier
-                        .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.inverseSurface,
-                    fSize = 14.sp,
-                    w = 150.dp,
-                    h = 80.dp,
-                    colorTx = MaterialTheme.colorScheme.primary
-                ) {
-
-                }
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.LockOpen,
-                        "Cerrar sesión"
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier
-                        .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.inverseSurface,
-                    fSize = 14.sp,
-                    w = 150.dp,
-                    h = 80.dp,
-                    colorTx = MaterialTheme.colorScheme.primary
-                ) {
-                    onCloseSesion()
-                    onDismiss()
-                }
-
-            }//Row evidencias
-
+                } //onClick
+            )
 
             Spacer(modifier = Modifier.height(70.dp))
         }
+
     }
 }

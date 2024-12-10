@@ -1,9 +1,9 @@
-package com.aur3liux.naats.notifications
+package com.aur3liux.mipolicia.notifications
 
 import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationCompat
-import com.aur3liux.naats.R
+import com.aur3liux.mipolicia.R
 import kotlin.random.Random
 
 class NotificationHandler(private val context: Context) {

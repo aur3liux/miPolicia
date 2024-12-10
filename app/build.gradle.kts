@@ -13,11 +13,11 @@ java {
 }
 
 android {
-    namespace = "com.aur3liux.naats"
+    namespace = "com.aur3liux.mipolicia"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.aur3liux.naats"
+        applicationId = "com.aur3liux.mipolicia"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -36,6 +36,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -132,4 +133,18 @@ dependencies {
     //Geolocalizacion en los componibles
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
+    //Crear QR
+    implementation("com.google.zxing:core:3.5.3")
+
+    //Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging-ktx:24.1.0")
+
+    // ExoPlayer
+    implementation("androidx.media3:media3-exoplayer:1.4.1")
+    implementation("androidx.media3:media3-ui:1.4.1")
+
+    //Imagenes
+    implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01")
 }

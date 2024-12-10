@@ -1,4 +1,4 @@
-package com.aur3liux.mipolicia.view.bottomsheets
+package com.aur3liux.mipolicia.view.cibernetica
 
 /****
  * ESTA PANTALLA ES EL PRIMER PUNTO AL INCIIAR EL PROCESO DE
@@ -34,6 +34,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,8 +56,9 @@ data class DelitoInfo(val id:Int, val delito: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetDelitosSheet(
-    navC: NavController,
+fun BottomSheetCiberCrimenList(
+    ciberDelito: MutableState<String>,
+    indexCiberDelito: MutableState<Int>,
     onDismiss: () -> Unit) {
     val modalBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -64,26 +66,18 @@ fun BottomSheetDelitosSheet(
 
     //CATEGORIA DELITOS
     val delitosList = mutableListOf(
-        DelitoInfo(1, "Abuso de confianza"),
-        DelitoInfo(2,"Abuso sexual"),
-        DelitoInfo(3,"Acoso sexual"),
-        DelitoInfo(4,"Allanamiento de morada"),
-        DelitoInfo(5,"Alteración y daños al ambiente"),
-        DelitoInfo(6,"Amenazas"),
-        DelitoInfo(7,"Calumnias"),
-        DelitoInfo(8,"Daño en propiedad ajena"),
-        DelitoInfo(9,"Venta ilícita de bebidas alcohólicas"),
-        DelitoInfo(10,"Delitos de odio"),
-        DelitoInfo(11,"Delitos en contra de animales"),
-        DelitoInfo(12,"Delitos en contra de obligación alimentaria"),
-        DelitoInfo(13,"Despojo"),
-        DelitoInfo(14,"Extorsión"),
-        DelitoInfo(15,"Fraude"),
-        DelitoInfo(16,"Hostigamiento sexual"),
-        DelitoInfo(17,"Lesiones"),
-        DelitoInfo(18,"Robo"),
-        DelitoInfo(19,"Violación"), //18
-        DelitoInfo(20,"Violencia familiar")
+        DelitoInfo(1, "Ciberbullyng"),
+        DelitoInfo(2,"Cibergrooming"),
+        DelitoInfo(3,"Robo de identidad"),
+        DelitoInfo(4,"Sexting"),
+        DelitoInfo(5,"Pornografía infantil"),
+        DelitoInfo(6,"Engaño telefónico"),
+        DelitoInfo(7,"Ciberacoso"),
+        DelitoInfo(8,"Me robaron mis cuentas de redes sociales"),
+        DelitoInfo(9,"Venta en línea de estupefacientes"),
+        DelitoInfo(10,"Ventas fraudulentas en linea"),
+        DelitoInfo(11,"Sextorción"),
+        DelitoInfo(12,"Ciberterrorismo")
     )
 
     val db = Room.databaseBuilder(context, AppDb::class.java, Store.DB.NAME)
@@ -139,12 +133,12 @@ fun BottomSheetDelitosSheet(
                 modifier = Modifier
                     .padding(horizontal = 20.dp, vertical = 20.dp)
                     .wrapContentHeight(align = Alignment.CenterVertically),
-                text = "Como primer paso seleccione de la lista el delito del que usted considera ha sido víctima.",
+                text = "Si no sabe a cuál categoría pertenece su problema puede consultar la sección de ayuda y corregir las veces que necesite antes de enviar el reporte",
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Justify,
                 lineHeight = 20.0.sp,
                 fontSize = 15.sp,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.inverseSurface
             )
 
             Surface(
@@ -163,38 +157,15 @@ fun BottomSheetDelitosSheet(
                     ) {
 
                         itemsIndexed(delitosList) { pos, data ->
-
                             Row(
                                 modifier = Modifier
                                     .height(50.dp)
                                     .fillMaxWidth()
                                     .clickable {
+                                        ciberDelito.value = data.delito
+                                        indexCiberDelito.value = data.id
                                         onDismiss()
-                                        //ACTUALIZAMOS LOS DATOS DE LA PREDENUNCIA HASTA EL PRIMER PASO
-                                        db.predenunciaTmpDao().updatePredenunciaTmp(
-                                                PredenunciaTmpData(
-                                                    0,
-                                                    data.id,
-                                                    data.delito,
-                                                    "",
-                                                    0,
-                                                    "",
-                                                    loc.latitud,
-                                                    loc.longitud
-                                                )
-                                            )
-                                        when (data.id) {
-                                            8, 17, 18, 19 -> {
-                                                navC.navigate(
-                                                    Router.SUBCATEGORIA_DELITOS.createRoute(
-                                                        data.id
-                                                    )
-                                                )
-                                            }
-                                            else -> {
-                                                navC.navigate(Router.PREDENUNCIA.route)
-                                            }
-                                        }
+
                                     },
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -208,16 +179,6 @@ fun BottomSheetDelitosSheet(
                                     fontWeight = FontWeight.Normal,
                                     lineHeight = 20.sp,
                                     color = MaterialTheme.colorScheme.primary
-                                )
-
-                                Icon(
-                                    modifier = Modifier
-                                        .size(20.dp)
-                                        .weight(0.1f)
-                                        .padding(end = 10.dp),
-                                    imageVector = Icons.Filled.ArrowForwardIos,
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             } //Row
                             HorizontalDivider(modifier = Modifier.height(1.dp), color = Color.Black)

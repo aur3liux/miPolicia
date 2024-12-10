@@ -1,4 +1,4 @@
-package com.aur3liux.naats.view.subviews
+package com.aur3liux.mipolicia.view.subviews
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*

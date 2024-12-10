@@ -1,4 +1,4 @@
-package com.aur3liux.naats.model
+package com.aur3liux.mipolicia.model
 
 sealed class RequestCurp {
     class Succes(val data: CurpData): RequestCurp()

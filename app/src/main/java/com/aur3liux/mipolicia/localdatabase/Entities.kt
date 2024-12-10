@@ -1,4 +1,4 @@
-package com.aur3liux.naats.localdatabase
+package com.aur3liux.mipolicia.localdatabase
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -6,22 +6,19 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = Store.DB.TB_USER)
 data class UserData(
-    @PrimaryKey @ColumnInfo(name = Store.User.CURP) val curp: String,
-    @ColumnInfo(name = Store.User.USER) val userName: String,
-    @ColumnInfo(name = Store.User.TOKEN) val tokenAccess: String,
+    @PrimaryKey @ColumnInfo(name = Store.User.EMAIL) val email: String,
     @ColumnInfo(name = Store.User.NOMBRE) val nombre: String,
-    @ColumnInfo(name = Store.User.PATERNO) val paterno: String,
-    @ColumnInfo(name = Store.User.MATERNO) val materno: String,
-    @ColumnInfo(name = Store.User.SEXO) val sexo: String,
-    @ColumnInfo(name = Store.User.CORREO) val correo: String,
+    @ColumnInfo(name = Store.User.APELLIDOS) val apellidos: String,
     @ColumnInfo(name = Store.User.TELEFONO) val telefono: String,
-    @ColumnInfo(name = Store.User.CIUDAD) val ciudad: String,
+    @ColumnInfo(name = Store.User.MUNICIPIO) val municipio: String,
     @ColumnInfo(name = Store.User.LOCALIDAD) val localidad: String,
     @ColumnInfo(name = Store.User.COLONIA) val colonia: String,
-    @ColumnInfo(name = Store.User.CALLE) val calle: String,
-    @ColumnInfo(name = Store.User.EDO_CIVIL) val edoCivil: String,
-    @ColumnInfo(name = Store.User.OCUPACION) val ocupacion: String,
-    @ColumnInfo(name = Store.User.F_NACIMIENTO) val fNacimiento: String)
+    @ColumnInfo(name = Store.User.CP) val cp: String,
+    @ColumnInfo(name = Store.User.TOKEN) val tokenAccess: String,
+    @ColumnInfo(name = Store.User.NOTIFICATION_TOKEN) val notificationToken: String,
+    @ColumnInfo(name = Store.User.DEVICE) val device: String)
+
+
 
 @Entity(tableName = Store.DB.TB_SESION)
 data class SesionData(

@@ -2,12 +2,18 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ec7abf393114966c4fad7b023b3c1220",
+    "identityHash": "0b6c4911010e0562114d6f81a2dc8fc9",
     "entities": [
       {
         "tableName": "UsuarioNa44tsTbl",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userName` TEXT NOT NULL, `tokenAccess` TEXT NOT NULL, PRIMARY KEY(`userName`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`curp` TEXT NOT NULL, `userName` TEXT NOT NULL, `tokenAccess` TEXT NOT NULL, `nombre` TEXT NOT NULL, `paterno` TEXT NOT NULL, `materno` TEXT NOT NULL, `sexo` TEXT NOT NULL, `correo` TEXT NOT NULL, `telefono` TEXT NOT NULL, `ciudad` TEXT NOT NULL, `localidad` TEXT NOT NULL, `colonia` TEXT NOT NULL, `calle` TEXT NOT NULL, `estadoCivil` TEXT NOT NULL, `ocupacion` TEXT NOT NULL, `fNacimiento` TEXT NOT NULL, PRIMARY KEY(`curp`))",
         "fields": [
+          {
+            "fieldPath": "curp",
+            "columnName": "curp",
+            "affinity": "TEXT",
+            "notNull": true
+          },
           {
             "fieldPath": "userName",
             "columnName": "userName",
@@ -19,12 +25,90 @@
             "columnName": "tokenAccess",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "nombre",
+            "columnName": "nombre",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "paterno",
+            "columnName": "paterno",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "materno",
+            "columnName": "materno",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sexo",
+            "columnName": "sexo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "correo",
+            "columnName": "correo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "telefono",
+            "columnName": "telefono",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ciudad",
+            "columnName": "ciudad",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localidad",
+            "columnName": "localidad",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "colonia",
+            "columnName": "colonia",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calle",
+            "columnName": "calle",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "edoCivil",
+            "columnName": "estadoCivil",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ocupacion",
+            "columnName": "ocupacion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fNacimiento",
+            "columnName": "fNacimiento",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "userName"
+            "curp"
           ]
         },
         "indices": [],
@@ -44,6 +128,32 @@
             "fieldPath": "status",
             "columnName": "statusSesion",
             "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Tok3nPushN44tsTbl",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `token` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tokenPush",
+            "columnName": "token",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -87,12 +197,198 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "PredenunciaTmpN44tsTbl",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`indice` INTEGER NOT NULL, `indexDelito` INTEGER NOT NULL, `delitoPred` TEXT NOT NULL, `subdelitoPred` TEXT NOT NULL, `indexSubdelito` INTEGER NOT NULL, `descripcionPred` TEXT NOT NULL, `latitudPred` REAL NOT NULL, `longitudtudPred` REAL NOT NULL, PRIMARY KEY(`indice`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "indice",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "indexDelito",
+            "columnName": "indexDelito",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "delito",
+            "columnName": "delitoPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subDelito",
+            "columnName": "subdelitoPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "indexSubdelito",
+            "columnName": "indexSubdelito",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descripcion",
+            "columnName": "descripcionPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitud",
+            "columnName": "latitudPred",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitud",
+            "columnName": "longitudtudPred",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "indice"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MyPredenunciasN44tsTbl",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`folioPred` TEXT NOT NULL, `estatusPred` TEXT NOT NULL, `delitoPred` TEXT NOT NULL, `subdelitoPred` TEXT NOT NULL, `moduloPred` TEXT NOT NULL, `ciudad` TEXT NOT NULL, `descripcionPred` TEXT NOT NULL, `fechaPred` TEXT NOT NULL, `horaPred` TEXT NOT NULL, `fechaLastCreaPred` TEXT NOT NULL, `horaLastCreaPred` TEXT NOT NULL, PRIMARY KEY(`folioPred`))",
+        "fields": [
+          {
+            "fieldPath": "folio",
+            "columnName": "folioPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "estatus",
+            "columnName": "estatusPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "delito",
+            "columnName": "delitoPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subDelito",
+            "columnName": "subdelitoPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modulo",
+            "columnName": "moduloPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ciudad",
+            "columnName": "ciudad",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descripcion",
+            "columnName": "descripcionPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fecha",
+            "columnName": "fechaPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hora",
+            "columnName": "horaPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fechaModif",
+            "columnName": "fechaLastCreaPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "horaModif",
+            "columnName": "horaLastCreaPred",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "folioPred"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "AvisosN44tsTbl",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ref` INTEGER NOT NULL, `folio` INTEGER NOT NULL, `descripcion` TEXT NOT NULL, `tipo` TEXT NOT NULL, `fecha` TEXT NOT NULL, PRIMARY KEY(`ref`))",
+        "fields": [
+          {
+            "fieldPath": "ref",
+            "columnName": "ref",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "folio",
+            "columnName": "folio",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descripcion",
+            "columnName": "descripcion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tipo",
+            "columnName": "tipo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fecha",
+            "columnName": "fecha",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "ref"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ec7abf393114966c4fad7b023b3c1220')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0b6c4911010e0562114d6f81a2dc8fc9')"
     ]
   }
 }

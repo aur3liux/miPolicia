@@ -1,16 +1,18 @@
-package com.aur3liux.naats.services
+package com.aur3liux.mipolicia.services
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.aur3liux.naats.model.RequestResponse
+import com.aur3liux.mipolicia.model.RequestResponse
 import androidx.room.Room
+import com.android.volley.AuthFailureError
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
+import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.aur3liux.naats.localdatabase.AppDb
-import com.aur3liux.naats.localdatabase.Store
+import com.aur3liux.mipolicia.localdatabase.AppDb
+import com.aur3liux.mipolicia.localdatabase.Store
 import org.json.JSONObject
 import java.lang.Exception
 import java.net.SocketTimeoutException
@@ -19,21 +21,25 @@ import javax.inject.Inject
 class LogOutRepo @Inject constructor() {
 
     //-- INICIO DE SESION
-    fun doLogOut(context: Context, jsonObj: JSONObject): MutableLiveData<RequestResponse> {
+    fun doLogOut(context: Context): MutableLiveData<RequestResponse> {
         val _userData: MutableLiveData<RequestResponse> = MutableLiveData<RequestResponse>()
-        val url = "${Store.API_URL.BASE_URL}/api/logout"
+        val url = "${Store.API_URL.BASE_URL}/api/user/logout"
 
         //-- DATOS PARA LA BASE DE DATOS LOCAL
         val db = Room.databaseBuilder(context, AppDb::class.java, Store.DB.NAME)
             .allowMainThreadQueries()
             .build()
+
+        val dataUser = db.userDao().getUserData()
+        val credentials = dataUser.tokenAccess
         try {
             var queue = Volley.newRequestQueue(context)
-            val jsonObjectRequest =
-                JsonObjectRequest(Request.Method.POST, url, jsonObj, { response ->
-                    Log.i("NAATS", "Response %s".format(response.toString()))
-                    if (response.getBoolean("permitido")) {
-                        //De manera local se almacena el inicio de sesion
+            val jsonObjectRequest = DoRequestCloseSession(
+                method = Request.Method.POST,
+                url = url, { response ->
+                    Log.i("MI POLICIA", "Response %s".format(response.toString()))
+                    if (response.getBoolean("success")) {
+                        //De manera local se eliminan los datos
                         db.predenunciaTmpDao().clearPredenunciasTmp()
                         db.myPredenunciaDao().clearPredenuncias()
                         db.avisosDao().clearAvisos()
@@ -43,7 +49,7 @@ class LogOutRepo @Inject constructor() {
                         db.tokenPushDao().deleteToken()
                         _userData.postValue(RequestResponse.Succes())
                     } else {
-                        val errMg = response.getString("msg_error")
+                        val errMg = response.getString("message")
                         _userData.postValue(
                             RequestResponse.Error(
                                 estatusCode = -1,
@@ -96,7 +102,8 @@ class LogOutRepo @Inject constructor() {
                             } //else del when
                         }// when
                     } // else
-                })
+                },
+                credentials = credentials)
             jsonObjectRequest.setRetryPolicy(
                 DefaultRetryPolicy(
                     60000,
@@ -120,7 +127,29 @@ class LogOutRepo @Inject constructor() {
             )
         }
         return _userData
-    } // INICIO DE SESION
+    } // CIERRE DE SESION
+
+
+    class DoRequestCloseSession(
+        method:Int,
+        url: String,
+        listener: Response.Listener<JSONObject>,
+        errorListener: Response.ErrorListener,
+        credentials:String
+    ) : JsonObjectRequest(method,url, null, listener, errorListener) {
+
+        private var mCredentials:String = credentials
+
+        @Throws(AuthFailureError::class)
+        override fun getHeaders(): Map<String, String> {
+            val headers = HashMap<String, String>()
+            headers["Content-Type"] = "application/json"
+            val auth = "Bearer $mCredentials"
+            headers["Authorization"] = auth
+            return headers
+        }
+    }
+
 
 }
 

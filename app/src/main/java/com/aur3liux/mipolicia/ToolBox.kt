@@ -1,4 +1,4 @@
-package com.aur3liux.naats
+package com.aur3liux.mipolicia
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 object ToolBox {
 
@@ -32,11 +34,31 @@ object ToolBox {
         Font(R.font.quatros_regular, weight = FontWeight.Normal)
     )
 
+    fun validatePassword(passwordInput: String): Int {
+        var evaluatePassword = 0
+
+        if (!passwordInput.matches(".*[0-9].*".toRegex())) {
+            evaluatePassword = 1 //Al menos un digito
+        } else if (!passwordInput.matches(".*[a-z].*".toRegex())) {
+            evaluatePassword = 2 //Al menos una minúscula
+        } else if (!passwordInput.matches(".*[A-Z].*".toRegex())) {
+            evaluatePassword = 3 //Al menos una mayúscula
+        } else if (!passwordInput.matches(".*[@#\$%^&+=].*".toRegex())) {
+            evaluatePassword = 4 //Al menos un caracter especial
+        }else if (!passwordInput.matches("\\S+\$".toRegex())) {
+            evaluatePassword = 5 //No espacios en blanco
+        } else if (!passwordInput.matches(".{8,25}".toRegex())) {
+            evaluatePassword = 6 //Mino 6 maximo 25 caracteres
+        }
+        return evaluatePassword
+    }
+
     fun isValidCurp(curp: String): Boolean {
         val curpRegex = "([A-Z][AEIOUX][A-Z]{2}\\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\\d])(\\d)\$".toRegex()
         return curp.matches(curpRegex)
     }
 
+    //Retorna verdadero si el numero de teléfono cumple con las reglas
     fun isPhoneNumberValid(phone: String): Boolean {
         val phoneRegex = "^\\d{10}$"
         return phoneRegex.toRegex().matches(phone)
@@ -46,6 +68,7 @@ object ToolBox {
         val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})"
         return emailRegex.toRegex().matches(email)
     }
+
 
     //Eejecuta un efecto de sonido recibido como parámetro
     fun soundEffect(context: Context, soundFile: Int) {

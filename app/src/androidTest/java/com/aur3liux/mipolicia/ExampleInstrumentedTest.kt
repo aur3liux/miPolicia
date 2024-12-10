@@ -1,4 +1,4 @@
-package com.aur3liux.naats
+package com.aur3liux.mipolicia
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

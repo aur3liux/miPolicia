@@ -18,12 +18,12 @@ import java.lang.Exception
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 
-class LoginRepo @Inject constructor() {
+class RenewRepo @Inject constructor() {
 
     //-- INICIO DE SESION
-    fun doLogin(context: Context, jsonObj: JSONObject): MutableLiveData<RequestResponse> {
+    fun doRenew(context: Context, jsonObj: JSONObject): MutableLiveData<RequestResponse> {
         val _userData: MutableLiveData<RequestResponse> = MutableLiveData<RequestResponse>()
-        val url = "${Store.API_URL.BASE_URL}/api/user/login"
+        val url = "${Store.API_URL.BASE_URL}/api/user/password/renew"
 
         //-- DATOS PARA LA BASE DE DATOS LOCAL
         val db = Room.databaseBuilder(context, AppDb::class.java, Store.DB.NAME)
@@ -35,23 +35,7 @@ class LoginRepo @Inject constructor() {
                 JsonObjectRequest(Request.Method.POST, url, jsonObj, { response ->
                     Log.i(Store.APP.name, "Response %s".format(response.toString()))
                     if (response.getBoolean("success")) {
-                       val dataResponse = response.getJSONObject("data")
-                        val userData = UserData(
-                            email = dataResponse.getJSONObject("user").getString("email"),
-                            nombre = dataResponse.getJSONObject("user").getString("name"),
-                            apellidos = dataResponse.getJSONObject("user").getString("lastname"),
-                            telefono = dataResponse.getJSONObject("user").getString("phone"),
-                            municipio = dataResponse.getJSONObject("user").getString("city"),
-                            localidad = dataResponse.getJSONObject("user").getString("address"),
-                            colonia = dataResponse.getJSONObject("user").getString("address2"),
-                            cp = dataResponse.getJSONObject("user").getString("postal_code"),
-                            tokenAccess = dataResponse.getString("token"),
-                            notificationToken = jsonObj.getString("notificationUserToken"),
-                            device = jsonObj.getString("device")
-                        )
-                        //De manera local se almacena el inicio de sesion
-                        db.userDao().insertUser(user = userData)
-                        db.sesionDao().insertSesion(SesionData(1, 1))
+                        //La solicitud fue exitosa
                         _userData.postValue(RequestResponse.Succes())
                     } else {
                         val errMg = response.getString("msg_error")
@@ -93,7 +77,7 @@ class LoginRepo @Inject constructor() {
                                 _userData.postValue(
                                     RequestResponse.Error(
                                         estatusCode = errorCode,
-                                        errorMessage = "El recurso solicitado no existe, repórtalo a soporte técnico"
+                                        errorMessage = "No fue posible procesar la solicitud, verifica tus datos."
                                     )
                                 )
                             }//RECURSO NO ENCONTRADO
@@ -101,7 +85,7 @@ class LoginRepo @Inject constructor() {
                                 _userData.postValue(
                                     RequestResponse.Error(
                                         estatusCode = errorCode,
-                                        errorMessage = "El recurso solicitado no fue encontrado en el servidor"
+                                        errorMessage = "No fue posible procesar la solicitud, verifica tus datos."
                                     )
                                 )
                             } //else del when

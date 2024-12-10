@@ -1,4 +1,4 @@
-package com.aur3liux.naats.view
+package com.aur3liux.mipolicia.view
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -47,12 +47,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.room.Room
-import com.aur3liux.naats.Router
-import com.aur3liux.naats.localdatabase.Store
-import com.aur3liux.naats.ToolBox
-import com.aur3liux.naats.components.InfoDialog
-import com.aur3liux.naats.localdatabase.AppDb
-import com.aur3liux.naats.localdatabase.MyPredenunciaData
+import com.aur3liux.mipolicia.Router
+import com.aur3liux.mipolicia.localdatabase.Store
+import com.aur3liux.mipolicia.ToolBox
+import com.aur3liux.mipolicia.components.InfoDialog
+import com.aur3liux.mipolicia.localdatabase.AppDb
+import com.aur3liux.mipolicia.localdatabase.MyPredenunciaData
 
 
 @OptIn(ExperimentalMaterial3Api::class)

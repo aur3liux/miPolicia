@@ -1,4 +1,4 @@
-package com.aur3liux.naats.components
+package com.aur3liux.mipolicia.components
 
 
 import android.content.Context
@@ -25,16 +25,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.aur3liux.naats.R
-import com.aur3liux.naats.ToolBox
-import com.aur3liux.naats.ui.theme.botonColor
+import com.aur3liux.mipolicia.R
+import com.aur3liux.mipolicia.ToolBox
+import com.aur3liux.mipolicia.ui.theme.botonColor
 
 @Composable
 fun InfoDialogErrorLocation(

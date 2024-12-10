@@ -1,4 +1,4 @@
-package com.aur3liux.naats.model
+package com.aur3liux.mipolicia.model
 
 data class CurpData(
     val curp: String = "",

@@ -1,11 +1,11 @@
-package com.aur3liux.naats.notifications
+package com.aur3liux.mipolicia.notifications
 
 import android.app.NotificationManager
 import android.content.Context
 import android.graphics.BitmapFactory
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
-import com.aur3liux.naats.R
+import com.aur3liux.mipolicia.R
 import kotlin.random.Random
 
 class NaatsNotificationService(

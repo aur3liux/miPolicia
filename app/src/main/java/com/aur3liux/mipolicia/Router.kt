@@ -1,17 +1,23 @@
-package com.aur3liux.naats
+package com.aur3liux.mipolicia
 
 
 sealed class Router(val route: String) {
     //Estos Graph estan en Home
-    object MAP_HOME_VIEW: Router("MapHome")
     object FGECAM_VIEW: Router("FichaFgecamView")
     object PERFIL_VIEW: Router("PerfilView")
+    object MARCOLEGAL_VIEW: Router("MarcoLegalView")
+    object DETALLES_MARCOLEGAL: Router("DetallesMarcoLegal/{seccion}"){
+        fun detallesMarcoLegal(seccion: String) = "DetallesMarcoLegal/$seccion"
+    }
     object BUZON_VIEW: Router("BuzonView")
+
+    object VIDEO_PLAYER: Router("VideoPlayer")
+    object POLICIA_CIBERNETICA: Router("PoliciaCiberneticaView")
+    object REPORTE_CIBERNETICA: Router("ReporteCiberneticaView")
 
     //Estos están en MainActivity
     object HOME: Router("Home")
     object LOAD_VIEW: Router("LoadView")
-    object PANTALLA_INICIAL: Router("PantallaInicial")
     object LOGIN: Router("LoginView")
     object ACCESO_REGISTRO: Router("AccesoRegistroView")
     object FINISH_REGISTRO: Router("RegistroFinishView")

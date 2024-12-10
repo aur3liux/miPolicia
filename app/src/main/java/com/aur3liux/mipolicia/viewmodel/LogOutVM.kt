@@ -1,4 +1,4 @@
-package com.aur3liux.naats.viewmodel
+package com.aur3liux.mipolicia.viewmodel
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,8 +7,8 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.aur3liux.naats.model.RequestResponse
-import com.aur3liux.naats.services.LogOutRepo
+import com.aur3liux.mipolicia.model.RequestResponse
+import com.aur3liux.mipolicia.services.LogOutRepo
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -27,11 +27,10 @@ class LogOutVM @Inject constructor(private val masterRepository: LogOutRepo): Vi
     var UserData: LiveData<RequestResponse> = _userLogOut
 
     //******************  Iniciar sesion
-    fun DoLogOutUser(context: Context, jsonObject: JSONObject): RequestResponse {
+    fun DoLogOutUser(context: Context): RequestResponse {
         try {
             val result = masterRepository.doLogOut(
-                context = context,
-                jsonObj = jsonObject
+                context = context
             )
             MediatorLiveData<RequestResponse>().apply {
                 addSource(result) {

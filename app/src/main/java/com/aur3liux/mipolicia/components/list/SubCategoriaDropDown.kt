@@ -1,4 +1,4 @@
-package com.aur3liux.naats.components.list
+package com.aur3liux.mipolicia.components.list
 
 import android.util.Log
 import androidx.compose.foundation.background

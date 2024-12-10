@@ -1,4 +1,4 @@
-package com.aur3liux.mipolicia.view.predenuncia
+package com.aur3liux.mipolicia.view.pred
 
 /****
  * ESTA PANTALLA ES LA QUE PERMITE AL USUARIO DECIDIR SI ENVÍA
@@ -369,7 +369,7 @@ fun PredenunciaEnvio(navC: NavController) {
             onPrepareSend.value = false
             onProccesing.value = true
             val jsonObj = JSONObject()
-            jsonObj.put("username", currentUser.userName)
+            jsonObj.put("username", currentUser.email)
             jsonObj.put("token_access", currentUser.tokenAccess)
             jsonObj.put("crime_id", currentPredTmp.indexDelito)
             jsonObj.put("description", descripcion.value)

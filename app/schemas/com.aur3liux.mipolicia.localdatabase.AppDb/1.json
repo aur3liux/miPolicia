@@ -2,15 +2,57 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "366164aab72ddd3d8a5129f435bc5932",
+    "identityHash": "94a64a318d48c8b7a54ff33eb25daa7f",
     "entities": [
       {
-        "tableName": "UsuarioM1p0l1c14DbTbl",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userName` TEXT NOT NULL, `tokenAccess` TEXT NOT NULL, PRIMARY KEY(`userName`))",
+        "tableName": "UsuarioMipolic14Tbl",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`email` TEXT NOT NULL, `nombre` TEXT NOT NULL, `apellidos` TEXT NOT NULL, `telefono` TEXT NOT NULL, `municipio` TEXT NOT NULL, `localidad` TEXT NOT NULL, `colonia` TEXT NOT NULL, `cp` TEXT NOT NULL, `tokenAccess` TEXT NOT NULL, `notificationToken` TEXT NOT NULL, `device` TEXT NOT NULL, PRIMARY KEY(`email`))",
         "fields": [
           {
-            "fieldPath": "userName",
-            "columnName": "userName",
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nombre",
+            "columnName": "nombre",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "apellidos",
+            "columnName": "apellidos",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "telefono",
+            "columnName": "telefono",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "municipio",
+            "columnName": "municipio",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localidad",
+            "columnName": "localidad",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "colonia",
+            "columnName": "colonia",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cp",
+            "columnName": "cp",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -19,19 +61,31 @@
             "columnName": "tokenAccess",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "notificationToken",
+            "columnName": "notificationToken",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "device",
+            "columnName": "device",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "userName"
+            "email"
           ]
         },
         "indices": [],
         "foreignKeys": []
       },
       {
-        "tableName": "SessionM1p0l1c14DbTbl",
+        "tableName": "SessionMipolic14Tbl",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `statusSesion` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -55,12 +109,256 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "Tok3nPushMipolic14Tbl",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `token` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tokenPush",
+            "columnName": "token",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "LocationsMipolic14Tbl",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `latitud` REAL NOT NULL, `longitud` REAL NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitud",
+            "columnName": "latitud",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitud",
+            "columnName": "longitud",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "PredenunciaTmpMipolic14Tbl",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`indice` INTEGER NOT NULL, `indexDelito` INTEGER NOT NULL, `delitoPred` TEXT NOT NULL, `subdelitoPred` TEXT NOT NULL, `indexSubdelito` INTEGER NOT NULL, `descripcionPred` TEXT NOT NULL, `latitudPred` REAL NOT NULL, `longitudtudPred` REAL NOT NULL, PRIMARY KEY(`indice`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "indice",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "indexDelito",
+            "columnName": "indexDelito",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "delito",
+            "columnName": "delitoPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subDelito",
+            "columnName": "subdelitoPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "indexSubdelito",
+            "columnName": "indexSubdelito",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descripcion",
+            "columnName": "descripcionPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitud",
+            "columnName": "latitudPred",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitud",
+            "columnName": "longitudtudPred",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "indice"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MyPredenunciasMipolic14Tbl",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`folioPred` TEXT NOT NULL, `estatusPred` TEXT NOT NULL, `delitoPred` TEXT NOT NULL, `subdelitoPred` TEXT NOT NULL, `moduloPred` TEXT NOT NULL, `ciudad` TEXT NOT NULL, `descripcionPred` TEXT NOT NULL, `fechaPred` TEXT NOT NULL, `horaPred` TEXT NOT NULL, `fechaLastCreaPred` TEXT NOT NULL, `horaLastCreaPred` TEXT NOT NULL, PRIMARY KEY(`folioPred`))",
+        "fields": [
+          {
+            "fieldPath": "folio",
+            "columnName": "folioPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "estatus",
+            "columnName": "estatusPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "delito",
+            "columnName": "delitoPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subDelito",
+            "columnName": "subdelitoPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modulo",
+            "columnName": "moduloPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ciudad",
+            "columnName": "ciudad",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descripcion",
+            "columnName": "descripcionPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fecha",
+            "columnName": "fechaPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hora",
+            "columnName": "horaPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fechaModif",
+            "columnName": "fechaLastCreaPred",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "horaModif",
+            "columnName": "horaLastCreaPred",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "folioPred"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "AvisosMipolic14Tbl",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ref` INTEGER NOT NULL, `folio` INTEGER NOT NULL, `descripcion` TEXT NOT NULL, `tipo` TEXT NOT NULL, `fecha` TEXT NOT NULL, PRIMARY KEY(`ref`))",
+        "fields": [
+          {
+            "fieldPath": "ref",
+            "columnName": "ref",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "folio",
+            "columnName": "folio",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descripcion",
+            "columnName": "descripcion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tipo",
+            "columnName": "tipo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fecha",
+            "columnName": "fecha",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "ref"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '366164aab72ddd3d8a5129f435bc5932')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '94a64a318d48c8b7a54ff33eb25daa7f')"
     ]
   }
 }

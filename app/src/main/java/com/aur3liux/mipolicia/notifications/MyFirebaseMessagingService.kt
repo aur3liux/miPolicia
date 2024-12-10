@@ -1,4 +1,4 @@
-package com.aur3liux.naats.notifications
+package com.aur3liux.mipolicia.notifications
 
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService

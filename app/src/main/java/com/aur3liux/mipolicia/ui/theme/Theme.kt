@@ -1,4 +1,4 @@
-package com.aur3liux.naats.ui.theme
+package com.aur3liux.mipolicia.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -16,9 +16,10 @@ private val DarkColorScheme = darkColorScheme(
     secondary = Color(0xFFAAA1A1),
     tertiary = Color(0xFF009688),
     background = Color(0xff6D1A32),
-    surface = Color(0xFF7C273A),
+    surface = Color(0xFF947C83),
     surfaceVariant = Color(0xFFBBA68B),
-    inverseSurface = Color(0xFFBBA68B)
+    inverseSurface = Color(0xFF7C273A),
+    onSurface = Color(0xFF1A0A52)
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -26,9 +27,10 @@ private val LightColorScheme = lightColorScheme(
     secondary = Color(0xFF947C83),
     tertiary = Color(0xFF235B4E),
     background = Color(0xffFFFFFF),
-    surface = Color(0xFFBBA68B),
+    surface = Color(0xFF6D1A32),
     surfaceVariant = Color(0xFF7C273A),
-    inverseSurface = Color(0xFF7C273A)
+    inverseSurface = Color(0xFFBBA68B),
+    onSurface = Color(0xFFEFEEF3)
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

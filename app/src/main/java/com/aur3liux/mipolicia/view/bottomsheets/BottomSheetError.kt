@@ -1,4 +1,4 @@
-package com.aur3liux.naats.view.bottomsheets
+package com.aur3liux.mipolicia.view.bottomsheets
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,8 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aur3liux.naats.ui.theme.botonColor
-import com.aur3liux.naats.components.RoundedButton
+import com.aur3liux.mipolicia.ui.theme.botonColor
+import com.aur3liux.mipolicia.components.RoundedButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
