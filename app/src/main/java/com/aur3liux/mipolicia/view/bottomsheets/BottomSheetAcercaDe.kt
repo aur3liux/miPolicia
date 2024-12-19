@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,58 +35,74 @@ import com.aur3liux.mipolicia.components.RoundedButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetError(
-    title: String,
-    text: String,
+fun BottomSheetAcercaDe(
     onDismiss: () -> Unit) {
-    val modalBottomSheetState = rememberModalBottomSheetState()
+    val modalBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
+        modifier = Modifier.fillMaxHeight(0.9f),
         onDismissRequest = { onDismiss() },
         sheetState = modalBottomSheetState,
         dragHandle = {
 
         }) {
         Column(modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
             horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(modifier = Modifier.height(30.dp))
 
-            Row(modifier = Modifier.fillMaxWidth().clickable { onDismiss() },
+            Row(modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .height(50.dp)
+                .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically) {
 
                 Icon(
-                    modifier = Modifier.size(50.dp).padding(start = 20.dp),
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable { onDismiss() },
                     imageVector = Icons.Filled.Close,
-                    contentDescription = "", tint = MaterialTheme.colorScheme.background)
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.inverseSurface)
 
                 Text(
-                    modifier = Modifier.padding(start = 20.dp),
-                    text = title,
+                    modifier = Modifier
+                        .clickable { onDismiss() }
+                        .padding(start = 10.dp),
+                    text = "Cerrar",
                     textAlign = TextAlign.Center,
-                    fontSize = 22.sp,
-                    color = MaterialTheme.colorScheme.background,
-                    style = MaterialTheme.typography.titleLarge
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.inverseSurface,
+                    fontWeight = FontWeight.Bold
                 )
-            }
+            } //Row
 
             HorizontalDivider()
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Text(
+                modifier = Modifier.padding(start = 20.dp),
+                text = "Gobierno del Estado De Campeche",
+                textAlign = TextAlign.Center,
+                fontSize = 22.sp,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge
+            )
 
             Text(modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 30.dp),
                 textAlign = TextAlign.Center,
-                text = text,
-                color = MaterialTheme.colorScheme.background,
+                text = "OK",
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold)
 
             RoundedButton(
                 modifier = Modifier
                     .padding(horizontal = 30.dp, vertical = 15.dp)
                     .fillMaxWidth()
-                    .height(70.dp),
+                    .height(50.dp),
                 text = "Aceptar",
                 fSize = 20.sp,
                 shape =   RoundedCornerShape(15.dp),

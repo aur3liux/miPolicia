@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
@@ -251,6 +252,7 @@ fun AccesoRegistroView(navC: NavController) {
                             .height(50.dp),
                         text = "Verificar datos",
                         fSize = 15.sp,
+                        shape =   RoundedCornerShape(15.dp),
                         textColor = Color.White,
                         backColor = botonColor,
                         estatus = onProccesing ,
@@ -276,6 +278,7 @@ fun AccesoRegistroView(navC: NavController) {
                         fSize = 15.sp,
                         textColor = Color.White,
                         backColor = botonColor,
+                        shape =   RoundedCornerShape(15.dp),
                         estatus = consultandoCurpData ,
                         onClick = {
                             navC.navigate(Router.FINISH_REGISTRO.route)

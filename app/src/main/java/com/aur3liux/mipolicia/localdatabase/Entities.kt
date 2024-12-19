@@ -18,8 +18,6 @@ data class UserData(
     @ColumnInfo(name = Store.User.NOTIFICATION_TOKEN) val notificationToken: String,
     @ColumnInfo(name = Store.User.DEVICE) val device: String)
 
-
-
 @Entity(tableName = Store.DB.TB_SESION)
 data class SesionData(
     @PrimaryKey val id: Int,

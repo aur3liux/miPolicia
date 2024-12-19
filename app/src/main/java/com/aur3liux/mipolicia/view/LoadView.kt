@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -24,22 +25,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.room.Room
 import com.aur3liux.mipolicia.R
 import com.aur3liux.mipolicia.Router
+import com.aur3liux.mipolicia.ToolBox
 import com.aur3liux.mipolicia.localdatabase.Store
 import com.aur3liux.mipolicia.localdatabase.AppDb
 import com.aur3liux.mipolicia.localdatabase.TokenPushData
+import com.aur3liux.mipolicia.ui.theme.botonColor
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.delay
+import java.text.BreakIterator
+import java.text.StringCharacterIterator
 
 @Composable
 fun LoadView(navC: NavController) {
     val scale = remember { Animatable(0f) }
     val sesionState = remember { mutableStateOf(0) }
     val context = LocalContext.current
+
+    val text = "Mi policía"
+    val breakIterator = remember{BreakIterator.getCharacterInstance()}
+    val mainText = remember { mutableStateOf("") }
 
     //-- DATOS PARA LA BASE DE DATOS LOCAL
     val dbAuth = Room.databaseBuilder(context, AppDb::class.java, Store.DB.NAME)
@@ -57,7 +68,6 @@ fun LoadView(navC: NavController) {
         if(dbAuth.tokenPushDao().getTokenPushNotif() == null)
             getNotificationToken(dbAuth)
 
-
         scale.animateTo(
             targetValue = 0.9f,
             animationSpec = tween(durationMillis = 800,
@@ -67,6 +77,17 @@ fun LoadView(navC: NavController) {
         )
 
         delay(300L)
+
+        //*** Texto animado
+        breakIterator.text = StringCharacterIterator(text)
+        var nextIndex = breakIterator.next()
+
+        while (nextIndex != BreakIterator.DONE){
+            mainText.value = text.substring(0, nextIndex).toString()
+            nextIndex = breakIterator.next()
+            delay(65L)
+        }
+        //***
 
        if(sesionState.value < 0){ //Debe iniciar sesion
             navC.navigate(Router.LOGIN.route) {
@@ -88,7 +109,8 @@ fun LoadView(navC: NavController) {
         //Contenido del splash Screen
         Column(
             modifier = Modifier
-                .fillMaxSize().background(Color.White),
+                .fillMaxSize()
+                .background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -101,6 +123,11 @@ fun LoadView(navC: NavController) {
                     .scale(scale.value),
                 contentScale = ContentScale.Crop
             )
+            Text(text = mainText.value,
+                fontSize = 24.sp,
+                fontFamily = ToolBox.quatroSlabFont,
+                fontWeight = FontWeight.Bold,
+                color = botonColor)
         }//Column
     }//Surface
 }

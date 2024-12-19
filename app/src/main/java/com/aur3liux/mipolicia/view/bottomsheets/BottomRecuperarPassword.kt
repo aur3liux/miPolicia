@@ -75,7 +75,7 @@ fun BottomRecuperarPassword(
     val context = LocalContext.current
 
     ModalBottomSheet(
-        modifier = Modifier.fillMaxHeight(0.8f),
+        modifier = Modifier.fillMaxHeight(0.6f),
         onDismissRequest = { onDismiss() },
         sheetState = modalBottomSheetState,
         dragHandle = {
@@ -83,7 +83,7 @@ fun BottomRecuperarPassword(
         }) {
         Column(modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.inverseSurface),
+            .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally) {
 
             Row(modifier = Modifier
@@ -117,8 +117,8 @@ fun BottomRecuperarPassword(
 
             Text(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                text = "Ingresa tu correo el correo electrónico con el que creaste tu cuenta y te enviaremos un enlace para restablecer tu contraseña. Despues de hacer esta solicitud revisa tu bandeja de entrada.",
-                fontSize = 15.sp,
+                text = "Ingresa tu correo el correo electrónico con el que creaste tu cuenta y te enviaremos un enlace para restablecer tu contraseña. \n\nDespues de hacer esta solicitud revisa la bandeja de entrada del correo que ingresaste.",
+                fontSize = 13.sp,
                 textAlign = TextAlign.Justify,
                 letterSpacing = 0.2.sp,
                 fontFamily = ToolBox.gmxFontRegular,
@@ -126,6 +126,7 @@ fun BottomRecuperarPassword(
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
             )
 
+            Spacer(modifier = Modifier.height(20.dp))
 
             //CORREO ELECTRONICO
             TextFieldData(
@@ -149,14 +150,16 @@ fun BottomRecuperarPassword(
                 imeAction = ImeAction.Next
             )
 
+            Spacer(modifier = Modifier.height(10.dp))
 
             RoundedButton(
                 modifier = Modifier
                     .padding(horizontal = 30.dp, vertical = 10.dp)
                     .fillMaxWidth()
-                    .height(40.dp),
+                    .height(60.dp),
                 text = "Solicitar nueva contraseña",
-                fSize = 15.sp,
+                fSize = 13.sp,
+                shape =   RoundedCornerShape(15.dp),
                 textColor = Color.White,
                 backColor = MaterialTheme.colorScheme.surface,
                 estatus = onProccesing,

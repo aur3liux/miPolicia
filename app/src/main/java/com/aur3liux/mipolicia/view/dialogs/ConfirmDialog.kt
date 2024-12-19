@@ -1,4 +1,4 @@
-package com.aur3liux.mipolicia.components
+package com.aur3liux.mipolicia.view.dialogs
 
 
 import androidx.compose.foundation.background
@@ -11,14 +11,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -61,10 +58,10 @@ fun ConfirmDialog(
                     // text and buttons
                     Column(
                         modifier = Modifier
-                            .padding(top = 30.dp) // this is the empty space at the top
+                            .padding(top = 30.dp)
                             .fillMaxWidth()
                             .background(
-                                color = MaterialTheme.colorScheme.surface,
+                                color = MaterialTheme.colorScheme.background,
                                 shape = RoundedCornerShape(percent = 10)
                             ),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -73,22 +70,23 @@ fun ConfirmDialog(
 
                         Text(
                             text = title,
-                            fontSize = 24.sp,
+                            fontSize = 21.sp,
                             fontFamily = ToolBox.quatroSlabFont,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.primary
                         )
 
                         Spacer(modifier = Modifier.height(height = spaceBetweenElements))
 
                         Text(
-                            modifier = Modifier.padding(horizontal = 16.dp),
+                            modifier = Modifier.padding(horizontal = 20.dp),
                             textAlign = TextAlign.Justify,
                             text = info,
                             fontFamily = ToolBox.quatroSlabFont,
                             fontWeight = FontWeight.Light,
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.inverseSurface
+                            fontSize = 15.sp,
+                            lineHeight = 17.sp,
+                            color = MaterialTheme.colorScheme.primary
                         )
 
                         Spacer(modifier = Modifier.height(height = spaceBetweenElements))
@@ -96,13 +94,13 @@ fun ConfirmDialog(
                         Row(modifier = Modifier.fillMaxWidth()) {
                             DialogConfirmButton(
                                 buttonText = titleCancelar,
-                                color = btnPredColorButton) {
+                                color = MaterialTheme.colorScheme.tertiary) {
                                 onCancelar()
                             }
 
                             DialogConfirmButton(
                                 buttonText = titleAceptar,
-                                color = botonColor) {
+                                color = MaterialTheme.colorScheme.surface) {
                                 onAceptar()
                             }
                         }//Row
@@ -142,7 +140,7 @@ fun DialogConfirmButton(
 ) {
     Box(
         modifier = Modifier
-            .width(160.dp)
+            .width(150.dp)
             .padding(horizontal = 10.dp)
             .background(
                 color = color,

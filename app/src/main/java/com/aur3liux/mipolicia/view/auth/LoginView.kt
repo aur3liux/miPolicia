@@ -79,6 +79,8 @@ import com.aur3liux.mipolicia.services.LoginRepo
 import com.aur3liux.mipolicia.services.RenewRepo
 import com.aur3liux.mipolicia.ui.theme.botonColor
 import com.aur3liux.mipolicia.ui.theme.lGradient2
+import com.aur3liux.mipolicia.ui.theme.shapePrincipalColor
+import com.aur3liux.mipolicia.ui.theme.textShapePrincipalColor
 import com.aur3liux.mipolicia.view.bottomsheets.BottomRecuperarPassword
 import com.aur3liux.mipolicia.view.bottomsheets.BottomSheetMenu
 import com.aur3liux.mipolicia.view.dialogs.ErrorDialog
@@ -160,7 +162,7 @@ fun LoginView(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface),
+            .background(shapePrincipalColor),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top) {
 
@@ -187,7 +189,7 @@ fun LoginView(
                 fontSize = 24.sp,
                 letterSpacing = 0.3.sp,
                 fontFamily = ToolBox.gmxFontRegular,
-                color = MaterialTheme.colorScheme.background,
+                color = textShapePrincipalColor,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
             )
             Text(
@@ -195,7 +197,7 @@ fun LoginView(
                 fontSize = 14.sp,
                 letterSpacing = 0.2.sp,
                 fontFamily = ToolBox.gmxFontRegular,
-                color = MaterialTheme.colorScheme.background,
+                color = textShapePrincipalColor,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
             )
         } //Column encabezado titulos
@@ -221,7 +223,7 @@ fun LoginView(
                         modifier = Modifier
                             .size(60.dp)
                             .background(Color.Transparent),
-                        color = botonColor,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
                         strokeWidth = 4.dp
                     )
                     Text(
@@ -314,6 +316,7 @@ fun LoginView(
                                 .height(40.dp),
                             text = "Iniciar sesión",
                             fSize = 15.sp,
+                            shape = RoundedCornerShape(15),
                             textColor = Color.White,
                             backColor = MaterialTheme.colorScheme.surface,
                             estatus = onProccesing,

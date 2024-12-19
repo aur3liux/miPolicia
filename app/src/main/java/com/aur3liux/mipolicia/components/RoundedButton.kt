@@ -13,6 +13,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
@@ -28,6 +29,7 @@ fun RoundedButton(modifier: Modifier = Modifier,
                   estatus: MutableState<Boolean> = mutableStateOf(false),
                   backColor: Color = MaterialTheme.colorScheme.surface,
                   textColor: Color = Color(0xFFF5AC3E),
+                  shape: Shape,
                   onClick: () -> Unit){
 
     if(estatus.value){
@@ -48,7 +50,7 @@ fun RoundedButton(modifier: Modifier = Modifier,
                 pressedElevation = 0.dp,
                 disabledElevation = 0.dp
             ),
-            shape = RoundedCornerShape(15),
+            shape = shape,
         ) {
             Text(
                 text = text,

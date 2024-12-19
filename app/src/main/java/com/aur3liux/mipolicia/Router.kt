@@ -5,10 +5,15 @@ sealed class Router(val route: String) {
     //Estos Graph estan en Home
     object FGECAM_VIEW: Router("FichaFgecamView")
     object PERFIL_VIEW: Router("PerfilView")
+    object SECTOR_VIEW: Router("SectorView")
     object MARCOLEGAL_VIEW: Router("MarcoLegalView")
     object DETALLES_MARCOLEGAL: Router("DetallesMarcoLegal/{seccion}"){
         fun detallesMarcoLegal(seccion: String) = "DetallesMarcoLegal/$seccion"
     }
+    object AVISO_PRIVACIDAD: Router("AvisoPrivacidad")
+    object REGLAMENTO_TRANSITO: Router("ReglamentoTransito")
+    object REPORTE_CIUDADANO: Router("ReporteCiudadano")
+
     object BUZON_VIEW: Router("BuzonView")
 
     object VIDEO_PLAYER: Router("VideoPlayer")
@@ -22,7 +27,7 @@ sealed class Router(val route: String) {
     object ACCESO_REGISTRO: Router("AccesoRegistroView")
     object FINISH_REGISTRO: Router("RegistroFinishView")
     object CLOSE_SESSION: Router("CloseSessionConfirm")
-    object AVISO_PRIVACIDAD: Router("AvisoPrivacidad")
+
     object PREDENUNCIA: Router("Predenuncia")
     object HELP_VIEW: Router("HelpView")
     object EXPEDIENTE_LIST: Router("Expediente")

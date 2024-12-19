@@ -5,10 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,7 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,13 +39,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -62,37 +57,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.aur3liux.mipolicia.R
 import com.aur3liux.mipolicia.Router
 import com.aur3liux.mipolicia.ToolBox
-import com.aur3liux.mipolicia.components.ConfirmDialog
-import com.aur3liux.mipolicia.components.MenuCard
-import com.aur3liux.mipolicia.components.MenuImg
+import com.aur3liux.mipolicia.view.dialogs.ConfirmDialog
 import com.aur3liux.mipolicia.localdatabase.AppDb
 import com.aur3liux.mipolicia.localdatabase.Store
 import com.aur3liux.mipolicia.model.RequestResponse
 import com.aur3liux.mipolicia.services.LogOutRepo
+import com.aur3liux.mipolicia.services.IntentollamadaRepo
 import com.aur3liux.mipolicia.ui.theme.botonColor
-import com.aur3liux.mipolicia.ui.theme.lGradient2
+import com.aur3liux.mipolicia.ui.theme.shapePrincipalColor
+import com.aur3liux.mipolicia.ui.theme.textShapePrincipalColor
+import com.aur3liux.mipolicia.ui.theme.titleShapePrincipalColor
+import com.aur3liux.mipolicia.view.bottomsheets.BottomSheetAcercaDe
 import com.aur3liux.mipolicia.view.bottomsheets.BottomSheetMenu
-import com.aur3liux.mipolicia.view.cibernetica.PoliciaCiberneticaView
 import com.aur3liux.mipolicia.view.dialogs.ErrorDialog
+import com.aur3liux.mipolicia.viewmodel.IntentoLlamadaVM
+import com.aur3liux.mipolicia.viewmodel.IntentoLlamadaVMFactory
 import com.aur3liux.mipolicia.viewmodel.LogOutVM
 import com.aur3liux.mipolicia.viewmodel.LogOutVMFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
-import kotlinx.coroutines.delay
 import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -102,6 +94,7 @@ fun Home(navC: NavController) {
     val context = LocalContext.current
 
     val showMenuPrincipal = rememberSaveable { mutableStateOf(false) }
+    val showAcercaDe = rememberSaveable { mutableStateOf(false) }
     val db = Room.databaseBuilder(
         context,
         AppDb::class.java,
@@ -110,15 +103,21 @@ fun Home(navC: NavController) {
         .allowMainThreadQueries()
         .build()
 
+    val user = db.userDao().getUserData()
+
     val locationDb = db.locationDao()
     val selectLocation = remember { mutableStateOf(LatLng(locationDb.getLocationData().latitud, locationDb.getLocationData().longitud)) }
-    val selectDelito = remember { mutableStateOf(false) }
     val showSheetError = remember { mutableStateOf(false) }
     val messageError = remember { mutableStateOf("") }
 
+    val confirmCall911 = rememberSaveable { mutableStateOf(false) }
+
     val confirmCloseSession = rememberSaveable { mutableStateOf(false) }
     val onCloseSession = rememberSaveable { mutableStateOf(false) }
-    //viewmodel
+    val onPrepareCall = rememberSaveable { mutableStateOf(false) }
+    val onRegistraLlamada = rememberSaveable { mutableStateOf(false) }
+
+    //viewmodel CERRAR SESION
     val logoutViewModel: LogOutVM = viewModel(
         factory = LogOutVMFactory(logoutRepository = LogOutRepo())
     )
@@ -128,10 +127,19 @@ fun Home(navC: NavController) {
         logoutViewModel.UserData
     }.observeAsState()
 
+    //viewmodel REGISTRAR INTENTO LLAMADA
+    val intentoLlamadaViewModel: IntentoLlamadaVM = viewModel(
+        factory = IntentoLlamadaVMFactory(itentoRepository = IntentollamadaRepo())
+    )
+
+    //LiveData
+    val intentoState = remember(intentoLlamadaViewModel) {
+        intentoLlamadaViewModel.CallData
+    }.observeAsState()
+
     val info = buildAnnotatedString {
         append(messageError.value)
     }
-
 
     var darkTheme = isSystemInDarkTheme()
 
@@ -140,7 +148,8 @@ fun Home(navC: NavController) {
             MapProperties(
                 isMyLocationEnabled = true,
                 mapType = MapType.NORMAL,
-                mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, if(darkTheme) R.raw.dark_maps else R.raw.light_map)
+               // mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, if(darkTheme) R.raw.dark_maps else R.raw.light_map)
+               // mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, if(darkTheme) R.raw.dark_maps else R.raw.light_map)
             )
         )
     }
@@ -160,7 +169,7 @@ fun Home(navC: NavController) {
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = shapePrincipalColor,
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
             //BOTON PARA EL MENU PRINCIPAL DESPLEGABLE
@@ -180,115 +189,120 @@ fun Home(navC: NavController) {
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface),
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Image(
-                modifier = Modifier
-                    .background(lGradient2)
-                    .padding(top = 20.dp)
-                    .fillMaxWidth(),
-                painter = painterResource(id = R.drawable.banner_feet),
-                contentDescription = "",
-                contentScale = ContentScale.FillWidth
-            )
-            Spacer(modifier = Modifier.height(30.dp))
-            //Column encabezado titulos
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Text(
-                    text = "MI POLICIA",
-                    fontSize = 24.sp,
-                    letterSpacing = 0.3.sp,
-                    fontFamily = ToolBox.gmxFontRegular,
-                    color = MaterialTheme.colorScheme.background,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(60.dp))
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape),
+                    painter = painterResource(id = R.drawable.logo_mp),
+                    contentDescription = "",
+                    contentScale = ContentScale.FillWidth
                 )
-                Text(
-                    text = "CAMPECHE",
-                    fontSize = 14.sp,
-                    letterSpacing = 0.2.sp,
-                    fontFamily = ToolBox.gmxFontRegular,
-                    color = MaterialTheme.colorScheme.background,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                )
-                Row(modifier = Modifier.fillMaxWidth(0.9f).padding(top = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween){
-                    //Reporte ciudadano
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 5.dp)
-                            .height(60.dp)
-                            .clickable {
+                Column(
+                    modifier = Modifier
+                        .padding(start = 10.dp),
+                      //  .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
-                            },
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(30.dp),
-                            imageVector = Icons.Filled.Newspaper,
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.inverseSurface
-                        )
-                        Text(
-                            text = "Reporte ciudadano",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.inverseSurface,
-                            lineHeight = 15.sp,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Medium
-                        )
-                    } // Row
+                    Text(
+                        text = "MI POLICIA",
+                        fontSize = 24.sp,
+                        letterSpacing = 0.3.sp,
+                        fontFamily = ToolBox.gmxFontRegular,
+                        color = textShapePrincipalColor,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Text(
+                        text = "Gobierno del estado de Campeche",
+                        fontSize = 10.sp,
+                        letterSpacing = 0.2.sp,
+                        fontFamily = ToolBox.gmxFontRegular,
+                        color = MaterialTheme.colorScheme.background,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                } //Column encabezado titulos
 
-                    //Marco legal
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 5.dp)
-                            .height(60.dp)
-                            .clickable {
-                                navC.navigate(Router.MARCOLEGAL_VIEW.route)
-                            },
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(30.dp),
-                            imageVector = Icons.Filled.Gavel,
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.inverseSurface
-                        )
-                        Text(
-                                text = "Marco legal",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.inverseSurface,
-                            lineHeight = 15.sp,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Medium
-                        )
-                    } // Row
-                }
-            } //Column encabezado titulos
+            } //Row encabezado titulos
+            Row(modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .padding(top = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween){
+                //Llamada 911
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 5.dp)
+                        .height(60.dp)
+                        .clickable {
+                            confirmCall911.value = true
+                        },
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(30.dp),
+                        imageVector = Icons.Filled.Call,
+                        contentDescription = "",
+                        tint = titleShapePrincipalColor
+                    )
+                    Text(
+                        text = "Emergencias 911",
+                        fontSize = 12.sp,
+                        color = titleShapePrincipalColor,
+                        lineHeight = 15.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Medium
+                    )
+                } // Row
 
-            Spacer(modifier = Modifier.height(30.dp))
+                //Marco legal
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 5.dp)
+                        .height(60.dp)
+                        .clickable {
+                            navC.navigate(Router.MARCOLEGAL_VIEW.route)
+                        },
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(30.dp),
+                        imageVector = Icons.Filled.Gavel,
+                        contentDescription = "",
+                        tint = titleShapePrincipalColor
+                    )
+                    Text(
+                        text = "Reglamento vial",
+                        fontSize = 12.sp,
+                        color = titleShapePrincipalColor,
+                        lineHeight = 15.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Medium
+                    )
+                } // Row
+            }
 
-            Card(
-                modifier = Modifier
-                    .fillMaxSize(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background),
-                shape = RoundedCornerShape(15.dp)
-            ) {
+            Spacer(modifier = Modifier.height(20.dp))
 
-                Box(modifier = Modifier
-                    .fillMaxSize(),
-                    contentAlignment = Alignment.Center){
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background),
+                    shape = RoundedCornerShape(15.dp)
+                ) {
+                    Box(modifier = Modifier
+                        .fillMaxWidth(),
+                        contentAlignment = Alignment.Center){
                         if(onCloseSession.value){
                             CircularProgressIndicator(
                                 modifier = Modifier
@@ -320,37 +334,25 @@ fun Home(navC: NavController) {
                                 cameraPositionState = cameraPositionState
                             ) {} //Maps
 
-                            //911
-                            MenuCard(
-                                menuOpc = MenuImg(Icons.Filled.Call, "911"),
-                                modifier = Modifier
-                                    .offset(x = 0.dp, y = 100.dp),
-                                colorBack =MaterialTheme.colorScheme.surface,
-                                colorTx = MaterialTheme.colorScheme.inverseSurface,
-                                fSize = 25.sp,
-                                shape = CircleShape,
-                                w = 120.dp,
-                                h = 120.dp
-                            ) {
-                                ToolBox.soundEffect(context, R.raw.tap)
-                                val u = Uri.parse("tel:911")
-                                val i = Intent(Intent.ACTION_DIAL, u)
-                                try {
-                                    context.startActivity(i)
-                                } catch (s: SecurityException) {
-                                    Toast
-                                        .makeText(
-                                            context,
-                                            "No se pudo realizar la llamada",
-                                            Toast.LENGTH_LONG
-                                        )
-                                        .show()
-                                }
+                            Box(modifier = Modifier
+                                     .offset(x = -130.dp, y = 170.dp),
+                                contentAlignment = Alignment.Center) {
+                                Icon(
+                                    modifier = Modifier
+                                        .width(100.dp)
+                                        .height(100.dp)
+                                        .clip(CircleShape),
+                                    painter = painterResource(id = R.drawable.ic_gob),
+                                    contentDescription = "",
+                                    tint = Color.Gray
+                                )
                             }
-                    }
-                } //Box para el boton 911 y el mapa
-            }//Card
-        } //Column
+                        }
+                    } //Box para el boton 911 y el mapa
+                }//Card
+
+            Spacer(modifier = Modifier.height(80.dp))
+        } //Column principal
 
 
         if (showSheetError.value) {
@@ -409,6 +411,35 @@ fun Home(navC: NavController) {
             }//observable let
         }//onProccesing
 
+        //LIVEDATA PARA REGISTRAR LA LLAMADA
+        if(onRegistraLlamada.value) {
+            intentoState.value?.let {
+                when(intentoState.value){
+                    is RequestResponse.Succes -> {
+                        Log.i("MIPOLICIA","INTENTO LLAMADA" )
+                        onRegistraLlamada.value = false
+                        intentoLlamadaViewModel.resetIntentoLlamada()
+                    } //Succes
+                    is RequestResponse.Error -> {
+                        Log.i("MIPOLICIA","ERROR INTENTO LLAMADA" )
+                        onRegistraLlamada.value = false
+                        intentoLlamadaViewModel.resetIntentoLlamada()
+                    }//Error
+                    else -> {
+                        intentoLlamadaViewModel.resetIntentoLlamada()
+                        onRegistraLlamada.value = false
+                    }
+                }//when
+            }//observable let
+        }//onProccesing
+
+        if(showAcercaDe.value){
+            BottomSheetAcercaDe(){
+                showAcercaDe.value = false
+            }
+        }
+
+
         if(showMenuPrincipal.value){
             BottomSheetMenu(
                 onCloseSesion = {
@@ -419,5 +450,56 @@ fun Home(navC: NavController) {
                 },
                 navC = navC)
         }
+
+
+        if(confirmCall911.value){
+            ConfirmDialog(
+                title = "Confirmación",
+                info = "Será redirigido a la aplicacion de llamadas de su dispositivo.\n\nConfirme que desea salir y llamar al 911",
+                titleAceptar = "Si",
+                titleCancelar = "No",
+                onAceptar = {
+                    //Registramos el intento de la llamada
+                    onPrepareCall.value = true
+
+                    //Redirigimos a la llamada
+                    confirmCall911.value = false
+                    ToolBox.soundEffect(context, R.raw.tap)
+                    val u = Uri.parse("tel:911")
+                    val i = Intent(Intent.ACTION_DIAL, u)
+                    try {
+                        context.startActivity(i)
+                    } catch (s: SecurityException) {
+                        Toast
+                            .makeText(
+                                context,
+                                "No se pudo realizar la llamada",
+                                Toast.LENGTH_LONG
+                            )
+                            .show()
+                    }
+                },
+                onCancelar = {
+                    confirmCall911.value = false
+                })
+        }
+
     } //Scaffold
+
+    if (onPrepareCall.value) {
+        if (ToolBox.testConectivity(context)) {
+            onPrepareCall.value = false
+            onRegistraLlamada.value = true
+            val jsonObj = JSONObject()
+            jsonObj.put("phone", user.telefono)
+            jsonObj.put("latitude", selectLocation.value.latitude)
+            jsonObj.put("longitude", selectLocation.value.longitude)
+            jsonObj.put("sector", 0)
+            jsonObj.put("device", user.device)
+            intentoLlamadaViewModel.DoIntentoLlamada(context, jsonObj)
+        } else {
+            onPrepareCall.value = false
+        }
+    }
+
 }

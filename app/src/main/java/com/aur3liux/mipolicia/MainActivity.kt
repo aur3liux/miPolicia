@@ -16,6 +16,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
@@ -28,6 +29,7 @@ import com.aur3liux.mipolicia.localdatabase.LocationData
 import com.aur3liux.mipolicia.localdatabase.Store
 import com.aur3liux.mipolicia.ui.theme.NaatsTheme
 import com.aur3liux.mipolicia.ui.theme.botonColor
+import com.aur3liux.mipolicia.ui.theme.shapePrincipalColor
 import com.aur3liux.mipolicia.view.auth.AccesoRegistroView
 import com.aur3liux.mipolicia.view.AvisoPrivacidad
 import com.aur3liux.mipolicia.view.auth.CloseSessionConfirmView
@@ -36,6 +38,7 @@ import com.aur3liux.mipolicia.view.pred.FinishPredenuncia
 import com.aur3liux.mipolicia.view.Home
 import com.aur3liux.mipolicia.view.Expediente
 import com.aur3liux.mipolicia.view.LoadView
+import com.aur3liux.mipolicia.view.ReglamentoTransito
 import com.aur3liux.mipolicia.view.auth.LoginView
 import com.aur3liux.mipolicia.view.pred.ListSubcategoriaDenuncia
 import com.aur3liux.mipolicia.view.VideoPlayer
@@ -47,6 +50,8 @@ import com.aur3liux.mipolicia.view.pred.PredenunciaEnvio
 import com.aur3liux.mipolicia.view.subviews.DetallesMarcoLegal
 import com.aur3liux.mipolicia.view.subviews.MarcoLegalView
 import com.aur3liux.mipolicia.view.subviews.PerfilView
+import com.aur3liux.mipolicia.view.subviews.ReporteCiudadano
+import com.aur3liux.mipolicia.view.subviews.SectorView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -79,9 +84,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             NaatsTheme {
                 //window.statusBarColor = botonColor.toArgb()
-                window.statusBarColor = Color(0xff691C32).toArgb()
+                window.statusBarColor = shapePrincipalColor.toArgb()
                 //Barra de abajo, botones de navegacion del telefono
-                window.navigationBarColor = Color(0xff691C32).toArgb()
+                window.navigationBarColor = shapePrincipalColor.toArgb()
 
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = Router.LOAD_VIEW.route){
@@ -147,7 +152,40 @@ class MainActivity : ComponentActivity() {
                             )},
                         route = Router.PERFIL_VIEW.route){
                         PerfilView(navC = navController)
-                    }//Subcategoria
+                    }//Perfil de usuario
+
+                    //REPORTE CIUDADANO
+                    composable(
+                        enterTransition = {
+                            fadeIn(
+                                animationSpec = tween(
+                                    delayMillis = 0,
+                                    durationMillis = 500,
+                                    easing = LinearEasing)) + slideIntoContainer(
+                                animationSpec = tween(200, easing = LinearEasing),
+                                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                                initialOffset = { it }
+                            )},
+                        route = Router.REPORTE_CIUDADANO.route){
+                        ReporteCiudadano(navC = navController)
+                    }//Datos del sector
+
+
+                    //DATOS DEL SECTOR
+                    composable(
+                        enterTransition = {
+                            fadeIn(
+                                animationSpec = tween(
+                                    delayMillis = 0,
+                                    durationMillis = 500,
+                                    easing = LinearEasing)) + slideIntoContainer(
+                                animationSpec = tween(200, easing = LinearEasing),
+                                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                                initialOffset = { it }
+                            )},
+                        route = Router.SECTOR_VIEW.route){
+                        SectorView(navC = navController)
+                    }//Datos del sector
 
 
                     //MARCO LEGAL
@@ -205,6 +243,12 @@ class MainActivity : ComponentActivity() {
                     composable(Router.AVISO_PRIVACIDAD.route){
                         AvisoPrivacidad(navC = navController)
                     }//Close session
+
+                    //REGLAMENTO TRANSITO
+                    composable(Router.REGLAMENTO_TRANSITO.route){
+                        ReglamentoTransito(navC = navController)
+                    }//Close session
+
 
 
                     //LISTADO DE SUBCATEGORIAS

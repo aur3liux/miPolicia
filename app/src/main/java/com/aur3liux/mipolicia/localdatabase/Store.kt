@@ -15,7 +15,7 @@ class Store {
     object APP {
         const val name = "Mi policía"
         const val txCiberDelito = "Ataque del que fuíste víctima"
-        const val txsubDelito = "Elegir subcategoría*"
+        const val txReportes = "Seleccione el tipo de reporte"
     }
 
     object API_URL {
@@ -29,6 +29,8 @@ class Store {
         const val TB_SESION = "SessionMipolic14Tbl"
         const val TB_TOKEN_PUSH = "Tok3nPushMipolic14Tbl"
         const val TB_LOCATIONS = "LocationsMipolic14Tbl"
+        const val TB_CALLS = "Llamadas911Tbl"
+
         const val TB_MYPREDENUNCIAS = "MyPredenunciasMipolic14Tbl"
         const val TB_PREDENUNCIA_TMP = "PredenunciaTmpMipolic14Tbl"
         const val TB_AVISOS = "AvisosMipolic14Tbl"
@@ -61,6 +63,8 @@ class Store {
         const val LATITUD = "latitud"
         const val LONGITUD = "longitud"
     }
+
+    //-----------------------------------
 
     object AVISOS{
         const val ref = "ref"

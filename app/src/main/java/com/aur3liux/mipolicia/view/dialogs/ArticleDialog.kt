@@ -1,22 +1,24 @@
-package com.aur3liux.mipolicia.components
+package com.aur3liux.mipolicia.view.dialogs
 
 
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -34,10 +36,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.aur3liux.mipolicia.R
 import com.aur3liux.mipolicia.ToolBox
-import com.aur3liux.mipolicia.ui.theme.botonColor
+import com.aur3liux.mipolicia.components.DialogButton
 
 @Composable
-fun InfoDialog(
+fun ArticleDialog(
     title: String,
     info: AnnotatedString,
     context: Context,
@@ -48,46 +50,44 @@ fun InfoDialog(
             onConfirmation()
         }) {
             Surface(
-                modifier = Modifier.fillMaxWidth(0.92f),
                 color = Color.Transparent // dialog background
             ) {
-                ToolBox.soundEffect(context, R.raw.help)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()) {
+                ToolBox.soundEffect(context, R.raw.flash)
+                Box() {
 
                     // text and buttons
                     Column(
                         modifier = Modifier
                             .padding(top = 30.dp) // this is the empty space at the top
-                            .fillMaxWidth()
+                            .verticalScroll(state = rememberScrollState())
                             .background(
-                                color = Color(0xFFBCA986),
+                                color = MaterialTheme.colorScheme.background,
                                 shape = RoundedCornerShape(percent = 10)
                             ),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Spacer(modifier = Modifier.height(height = 36.dp))
-
+                        //N
                         Text(
                             text = title,
-                            fontSize = 24.sp,
+                            fontSize = 19.sp,
                             fontFamily = ToolBox.quatroSlabFont,
                             fontWeight = FontWeight.Bold,
-                            color = botonColor
+                            color = MaterialTheme.colorScheme.primary
                         )
 
                         Spacer(modifier = Modifier.height(height = spaceBetweenElements))
-
+                        //Articulo completo
                         Text(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             textAlign = TextAlign.Justify,
                             text = info,
                             fontFamily = ToolBox.quatroSlabFont,
                             fontWeight = FontWeight.Light,
-                            fontSize = 16.sp,
-                            lineHeight = 20.sp,
-                            color = Color.Black
+                            fontSize = 14.sp,
+                            lineHeight = 18.sp,
+                            color = MaterialTheme.colorScheme.primary
                         )
 
                         Spacer(modifier = Modifier.height(height = spaceBetweenElements))
@@ -102,61 +102,22 @@ fun InfoDialog(
 
                     //
                     Icon(
-                        imageVector = Icons.Default.Info,
+                        imageVector = Icons.Default.Close,
                         contentDescription = "",
                         tint = Color.Black,
                         modifier = Modifier
                             .background(color = Color.White, shape = CircleShape)
-                            .border(width = 2.dp, shape = CircleShape, color = MaterialTheme.colorScheme.surface)
+                            .border(
+                                width = 2.dp,
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.surface
+                            )
+                            .clickable { onConfirmation() }
                             .padding(all = 16.dp)
                             .align(alignment = Alignment.TopCenter)
                     )
                 }
             }
         }
-
-    Box(
-        modifier = Modifier
-            .clickable {
-                onConfirmation()
-            }
-            .padding(horizontal = 16.dp, vertical = 6.dp)) {
-        Icon(
-            imageVector = Icons.Filled.Info,
-            contentDescription = "",
-            tint = Color.Black,
-            modifier = Modifier
-                .size(30.dp)
-                .background(color = Color.White, shape = CircleShape)
-                .border(width = 2.dp, shape = CircleShape, color = MaterialTheme.colorScheme.surface))
-    }
 }
 
-/*
-@Composable
-fun DialogButton(
-    cornerRadiusPercent: Int = 26,
-    buttonText: String,
-    onDismiss: () -> Unit
-) {
-    Box(
-        modifier = Modifier.width(200.dp)
-            .background(
-                color = botonColor,
-                shape = RoundedCornerShape(percent = cornerRadiusPercent)
-            )
-            .clickable {
-                onDismiss()
-            }
-            .padding(horizontal = 16.dp, vertical = 6.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = buttonText,
-            color = Color.White,
-            fontSize = 18.sp,
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
-}
-*/

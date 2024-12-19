@@ -70,7 +70,7 @@ import com.aur3liux.mipolicia.Router
 import com.aur3liux.mipolicia.localdatabase.Store
 import com.aur3liux.mipolicia.ToolBox
 import com.aur3liux.mipolicia.view.bottomsheets.BottomSheetError
-import com.aur3liux.mipolicia.components.ConfirmDialog
+import com.aur3liux.mipolicia.view.dialogs.ConfirmDialog
 import com.aur3liux.mipolicia.components.InfoDialog
 import com.aur3liux.mipolicia.components.RoundedButton
 import com.aur3liux.mipolicia.localdatabase.AppDb
@@ -334,6 +334,7 @@ fun PredenunciaEnvio(navC: NavController) {
                                 .height(40.dp),
                             text = "Cancelar",
                             fSize = 15.sp,
+                            shape =   RoundedCornerShape(15.dp),
                             textColor = Color.White,
                             backColor = btnPredColorButton,
                             estatus = onCancel,
@@ -350,6 +351,7 @@ fun PredenunciaEnvio(navC: NavController) {
                                 .height(40.dp),
                             text = "Enviar",
                             fSize = 15.sp,
+                            shape =   RoundedCornerShape(15.dp),
                             textColor = Color.White,
                             backColor = botonColor,
                             estatus = onProccesing,

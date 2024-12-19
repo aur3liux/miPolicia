@@ -5,7 +5,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,23 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -43,8 +33,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -52,13 +40,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.aur3liux.mipolicia.R
-import com.aur3liux.mipolicia.Router
 import com.aur3liux.mipolicia.ToolBox
-import com.aur3liux.mipolicia.components.RoundedButton
 import com.aur3liux.mipolicia.localdatabase.Art
 import com.aur3liux.mipolicia.localdatabase.Vial
-import com.aur3liux.mipolicia.view.PdfViewer
+import com.aur3liux.mipolicia.ui.theme.shapePrincipalColor
+import com.aur3liux.mipolicia.ui.theme.textShapePrincipalColor
+import com.aur3liux.mipolicia.view.dialogs.ArticleDialog
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -69,11 +56,22 @@ fun DetallesMarcoLegal(
     val topic = remember {
         mutableStateOf("")
     }
-    val openDocument = remember{ mutableStateOf(false) }
-    var lstAux = Art("", buildAnnotatedString { append(" ")}
-        )
+
+    var lstAux = Art("", buildAnnotatedString { append(" ")}, "")
     var currentList = remember { mutableListOf(lstAux) }
     val seccionContenido = seccion.toInt()
+
+    val context = LocalContext.current
+
+    val numArticle = remember { mutableStateOf("") }
+    val detailArticle = remember { mutableStateOf("") }
+
+    var currentInfo = buildAnnotatedString {
+        append(detailArticle.value)
+    }
+
+    val showDetallesArticle = remember { mutableStateOf(false) }
+
     when (seccionContenido) {
         1 -> {
             topic.value = "Peatones"
@@ -85,7 +83,7 @@ fun DetallesMarcoLegal(
             topic.value = "Permisos para conducir"
             currentList = Vial.permisos.contentArt.toMutableList()}
         4 -> {
-            topic.value = "Uso de cinturón de seguridad"
+            topic.value = "Cinturón de seguridad"
             currentList = Vial.cinturon.contentArt.toMutableList()}
         5 -> {
             topic.value = "Estacionarse"
@@ -94,17 +92,17 @@ fun DetallesMarcoLegal(
             topic.value = "Uso de móviles"
             currentList = Vial.moviles.contentArt.toMutableList()}
         7 -> {
-            topic.value = "Exceso de velocidad"
+            topic.value = "Regular la velocidad"
             currentList = Vial.velocidad.contentArt.toMutableList()}
         8 -> {
-            topic.value = "Uso de casos motociclistas"
-            currentList = Vial.cascos.contentArt.toMutableList()}
+            topic.value = "Motociclistas"
+            currentList = Vial.motociclistas.contentArt.toMutableList()}
         9 -> {
             topic.value = "Manejo de luces"
             currentList = Vial.luces.contentArt.toMutableList()}
         10 -> {
-            topic.value = "Señales de tránsito"
-            currentList = Vial.senales.contentArt.toMutableList()}
+            topic.value = "Polarizados"
+            currentList = Vial.polarizado.contentArt.toMutableList()}
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp),
@@ -117,40 +115,18 @@ fun DetallesMarcoLegal(
                         fontSize = 15.sp,
                         letterSpacing = 0.3.sp,
                         fontFamily = ToolBox.gmxFontRegular,
-                        color = MaterialTheme.colorScheme.background,
+                        color = textShapePrincipalColor,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = shapePrincipalColor),
                 navigationIcon = {
                     Icon(
                         modifier = Modifier
                             .clickable { navC.popBackStack() }
                             .size(30.dp),
                         imageVector = Icons.Filled.ArrowBackIosNew,
-                        contentDescription = "", tint = Color.White)
-                },
-                actions = {
-                    Row(
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .clickable {navC.navigate(Router.AVISO_PRIVACIDAD.route) },
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                        ){
-                        Icon(
-                            imageVector = Icons.Filled.Gavel,
-                            tint = MaterialTheme.colorScheme.inverseSurface,
-                            contentDescription = "")
-                        Text(
-                            text = "Ley de vialidad",
-                            fontSize = 10.sp,
-                            fontFamily = ToolBox.gmxFontRegular,
-                            color = MaterialTheme.colorScheme.inverseSurface,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-
-                    }//card
+                        contentDescription = "", tint = textShapePrincipalColor)
                 })
         }) {
         Column(
@@ -177,16 +153,43 @@ fun DetallesMarcoLegal(
                 verticalArrangement = Arrangement.Center) {
                 itemsIndexed(currentList) { posicion, info ->
 
-                    Text(
-                        info.articulo,
-                        modifier = Modifier
-                            .padding(horizontal = 5.dp, vertical = 10.dp)
-                            .fillMaxWidth(),
-                        fontSize = 17.sp,
-                        textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
+                    Row(modifier = Modifier
+                        .padding(horizontal = 5.dp, vertical = 10.dp)
+                        .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly) {
+                        //Nombre de la tematica
+                        Text(
+                            info.articulo,
+                            modifier = Modifier
+                                .weight(0.8f)
+                                .padding(horizontal = 5.dp, vertical = 10.dp),
+                            fontSize = 17.sp,
+                            textAlign = TextAlign.Start,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Row(modifier = Modifier
+                            .clickable {
+                                numArticle.value = info.articulo
+                                detailArticle.value = info.content
+                                showDetallesArticle.value = true
+                            }
+                            .weight(0.2f)) {
+                            Text(
+                                "Ver",
+                                fontSize = 15.sp,
+                                textAlign = TextAlign.Start,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.surfaceVariant
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.PlayArrow,
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.surfaceVariant)
+                        }
+
+                    }
+                    //Descripcion del articulo
                     Text(
                         info.descripcion,
                         modifier = Modifier
@@ -195,18 +198,26 @@ fun DetallesMarcoLegal(
                         fontSize = 17.sp,
                         textAlign = TextAlign.Justify,
                         fontWeight = FontWeight.Normal,
-                        color = Color.Black
+                        lineHeight = 17.sp,
+                        color = MaterialTheme.colorScheme.primary
                     )
 
-                    Divider(color = Color.Black, modifier = Modifier
+                    Divider(color = MaterialTheme.colorScheme.surfaceVariant,
+                        modifier = Modifier.padding(vertical = 10.dp)
                         .fillMaxWidth())
                 }
             }//LazyColumn
 
             Spacer(modifier = Modifier.height(60.dp))
-
         } //Column
     }//Scaffold
 
+    if(showDetallesArticle.value){
+        ArticleDialog(
+            title = numArticle.value,
+            info = currentInfo,
+            context = context,
+            onConfirmation = { showDetallesArticle.value = false })
+    }
 
 }

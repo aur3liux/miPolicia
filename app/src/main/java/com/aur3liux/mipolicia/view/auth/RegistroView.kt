@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -74,6 +75,8 @@ import com.aur3liux.mipolicia.localdatabase.Store
 import com.aur3liux.mipolicia.model.RequestResponse
 import com.aur3liux.mipolicia.services.RegistroRepo
 import com.aur3liux.mipolicia.ui.theme.botonColor
+import com.aur3liux.mipolicia.ui.theme.shapePrincipalColor
+import com.aur3liux.mipolicia.ui.theme.textShapePrincipalColor
 import com.aur3liux.mipolicia.view.dialogs.ErrorDialog
 import com.aur3liux.mipolicia.viewmodel.RegistroVM
 import com.aur3liux.mipolicia.viewmodel.RegistroVMFactory
@@ -142,11 +145,11 @@ fun RegistroView(navC: NavController) {
                         fontSize = 15.sp,
                         letterSpacing = 0.3.sp,
                         fontFamily = ToolBox.gmxFontRegular,
-                        color = MaterialTheme.colorScheme.background,
+                        color = textShapePrincipalColor,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = shapePrincipalColor),
                 navigationIcon = {
                     Icon(
                         modifier = Modifier
@@ -158,324 +161,310 @@ fun RegistroView(navC: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface),
+                .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top) {
+            Box(modifier = Modifier
+                .background(shapePrincipalColor)
+                .fillMaxWidth()
+                .height(60.dp), contentAlignment = Alignment.Center){
+                Text(
+                    modifier = Modifier.padding(bottom = 10.dp),
+                    text = "Ingresa tus datos",
+                    fontSize = 17.sp,
+                    letterSpacing = 0.3.sp,
+                    fontFamily = ToolBox.gmxFontRegular,
+                    color = textShapePrincipalColor,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            //NOMBRE
+            TextFieldData(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                textFieldValue = nombre,
+                textLabel = "Nombre *",
+                txColor = MaterialTheme.colorScheme.primary,
+                maxChar = 50,
+                enabled = enabledInput.value,
+                keyboardType = KeyboardType.Text,
+                capitalization = KeyboardCapitalization.Words,
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    },
+                    onDone = {
+                        keyboardController!!.hide()
+                    }
+                ),
+                imeAction = ImeAction.Next
+            )
+
+            //APELLIDOS
+            TextFieldData(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                textFieldValue = apellidos,
+                textLabel = "Apellidos *",
+                txColor = MaterialTheme.colorScheme.primary,
+                maxChar = 50,
+                enabled = enabledInput.value,
+                keyboardType = KeyboardType.Text,
+                capitalization = KeyboardCapitalization.Words,
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    },
+                    onDone = {
+                        keyboardController!!.hide()
+                    }
+                ),
+                imeAction = ImeAction.Next
+            )
+
+            Row {
+                //TELEFONO
+                TextFieldData(
+                    modifier = Modifier
+                        .weight(0.6f)
+                        .padding(start = 20.dp, end = 5.dp),
+                    textFieldValue = telefono,
+                    textLabel = "Teléfono *",
+                    txColor = MaterialTheme.colorScheme.primary,
+                    maxChar = 10,
+                    enabled = enabledInput.value,
+                    keyboardType = KeyboardType.Phone,
+                    capitalization = KeyboardCapitalization.None,
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        },
+                        onDone = {
+                            keyboardController!!.hide()
+                        }
+                    ),
+                    imeAction = ImeAction.Next
+                )
+
+                //C Postal
+                TextFieldData(
+                    modifier = Modifier
+                        .weight(0.4f)
+                        .padding(start = 5.dp, end = 20.dp),
+                    textFieldValue = cPostal,
+                    textLabel = "C.Postal",
+                    txColor = MaterialTheme.colorScheme.primary,
+                    maxChar = 5,
+                    enabled = enabledInput.value,
+                    keyboardType = KeyboardType.Number,
+                    capitalization = KeyboardCapitalization.None,
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        },
+                        onDone = {
+                            keyboardController!!.hide()
+                        }
+                    ),
+                    imeAction = ImeAction.Next
+                )
+            } //Row
+
+            Spacer(modifier = Modifier.height(7.dp))
+
+            //CORREO
+            TextFieldData(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                textFieldValue = email,
+                textLabel = "Correo electrónico*",
+                txColor = MaterialTheme.colorScheme.primary,
+                maxChar = 60,
+                enabled = enabledInput.value,
+                keyboardType = KeyboardType.Email,
+                capitalization = KeyboardCapitalization.None,
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    },
+                    onDone = {
+                        keyboardController!!.hide()
+                    }
+                ),
+                imeAction = ImeAction.Next
+            )
+
+            //CONTRASEÑA
+            TextFieldData(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                textFieldValue = password,
+                textLabel = "Contraseña*",
+                txColor = Color.Black,
+                maxChar = 25,
+                enabled = enabledInput.value,
+                keyboardType = KeyboardType.Password,
+                capitalization = KeyboardCapitalization.None,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                ),
+                imeAction = ImeAction.Done,
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            passwordVisibility = !passwordVisibility
+                        }) {
+                        Icon(
+                            imageVector = if (passwordVisibility) {
+                                Icons.Default.Visibility
+                            } else {
+                                Icons.Default.VisibilityOff
+                            },
+                            contentDescription = ""
+                        )
+                    }
+                },
+                visualTransformation = if (passwordVisibility) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                }
+            )
 
             Text(
                 modifier = Modifier.padding(bottom = 10.dp),
-                text = "Ingresa tus datos",
-                fontSize = 17.sp,
-                letterSpacing = 0.3.sp,
-                fontFamily = ToolBox.gmxFontRegular,
-                color = MaterialTheme.colorScheme.background,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                text = if(password.value.length > 0) checkPassword(password.value) else "Ingrese contraseña",
+                fontSize = 10.sp,
+                fontFamily = ToolBox.montseFont,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Light
             )
 
-            Card(
+            //CONTRASEÑA CONFIRMACION
+            TextFieldData(
                 modifier = Modifier
-                    .fillMaxSize(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background),
-                shape = RoundedCornerShape(15.dp)
-            ) {
-                Spacer(modifier = Modifier.height(10.dp))
-                Column(
-                    modifier = Modifier
-                        .verticalScroll(state = rememberScrollState())
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                        .imePadding(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    //NOMBRE
-                    TextFieldData(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        textFieldValue = nombre,
-                        textLabel = "Nombre*",
-                        txColor = MaterialTheme.colorScheme.primary,
-                        maxChar = 50,
-                        enabled = enabledInput.value,
-                        keyboardType = KeyboardType.Text,
-                        capitalization = KeyboardCapitalization.Words,
-                        keyboardActions = KeyboardActions(
-                            onNext = {
-                                focusManager.moveFocus(FocusDirection.Down)
-                            },
-                            onDone = {
-                                keyboardController!!.hide()
-                            }
-                        ),
-                        imeAction = ImeAction.Next
-                    )
-
-                    //APELLIDOS
-                    TextFieldData(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        textFieldValue = apellidos,
-                        textLabel = "Apellidos*",
-                        txColor = MaterialTheme.colorScheme.primary,
-                        maxChar = 50,
-                        enabled = enabledInput.value,
-                        keyboardType = KeyboardType.Text,
-                        capitalization = KeyboardCapitalization.Words,
-                        keyboardActions = KeyboardActions(
-                            onNext = {
-                                focusManager.moveFocus(FocusDirection.Down)
-                            },
-                            onDone = {
-                                keyboardController!!.hide()
-                            }
-                        ),
-                        imeAction = ImeAction.Next
-                    )
-
-                    Row {
-                        //TELEFONO
-                        TextFieldData(
-                            modifier = Modifier
-                                .weight(0.6f)
-                                .padding(start = 20.dp, end = 5.dp),
-                            textFieldValue = telefono,
-                            textLabel = "Teléfono*",
-                            txColor = MaterialTheme.colorScheme.primary,
-                            maxChar = 10,
-                            enabled = enabledInput.value,
-                            keyboardType = KeyboardType.Phone,
-                            capitalization = KeyboardCapitalization.None,
-                            keyboardActions = KeyboardActions(
-                                onNext = {
-                                    focusManager.moveFocus(FocusDirection.Down)
-                                },
-                                onDone = {
-                                    keyboardController!!.hide()
-                                }
-                            ),
-                            imeAction = ImeAction.Next
-                        )
-
-                        //C Postal
-                        TextFieldData(
-                            modifier = Modifier
-                                .weight(0.4f)
-                                .padding(start = 5.dp, end = 20.dp),
-                            textFieldValue = cPostal,
-                            textLabel = "C.Postal",
-                            txColor = MaterialTheme.colorScheme.primary,
-                            maxChar = 5,
-                            enabled = enabledInput.value,
-                            keyboardType = KeyboardType.Number,
-                            capitalization = KeyboardCapitalization.None,
-                            keyboardActions = KeyboardActions(
-                                onNext = {
-                                    focusManager.moveFocus(FocusDirection.Down)
-                                },
-                                onDone = {
-                                    keyboardController!!.hide()
-                                }
-                            ),
-                            imeAction = ImeAction.Next
-                        )
-                    } //Row
-
-                    Spacer(modifier = Modifier.height(7.dp))
-
-                    //CORREO
-                    TextFieldData(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        textFieldValue = email,
-                        textLabel = "Correo electrónico*",
-                        txColor = MaterialTheme.colorScheme.primary,
-                        maxChar = 60,
-                        enabled = enabledInput.value,
-                        keyboardType = KeyboardType.Email,
-                        capitalization = KeyboardCapitalization.None,
-                        keyboardActions = KeyboardActions(
-                            onNext = {
-                                focusManager.moveFocus(FocusDirection.Down)
-                            },
-                            onDone = {
-                                keyboardController!!.hide()
-                            }
-                        ),
-                        imeAction = ImeAction.Next
-                    )
-
-                    //CONTRASEÑA
-                    TextFieldData(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        textFieldValue = password,
-                        textLabel = "Contraseña*",
-                        txColor = Color.Black,
-                        maxChar = 25,
-                        enabled = enabledInput.value,
-                        keyboardType = KeyboardType.Password,
-                        capitalization = KeyboardCapitalization.None,
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        imeAction = ImeAction.Done,
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    passwordVisibility = !passwordVisibility
-                                }) {
-                                Icon(
-                                    imageVector = if (passwordVisibility) {
-                                        Icons.Default.Visibility
-                                    } else {
-                                        Icons.Default.VisibilityOff
-                                    },
-                                    contentDescription = ""
-                                )
-                            }
-                        },
-                        visualTransformation = if (passwordVisibility) {
-                            VisualTransformation.None
-                        } else {
-                            PasswordVisualTransformation()
-                        }
-                    )
-
-                    Text(
-                        modifier = Modifier.padding(bottom = 10.dp),
-                        text = if(password.value.length > 0) checkPassword(password.value) else "Ingrese contraseña",
-                        fontSize = 10.sp,
-                        fontFamily = ToolBox.montseFont,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Light
-                    )
-
-                    //CONTRASEÑA CONFIRMACION
-                    TextFieldData(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        textFieldValue = passwordConfirm,
-                        textLabel = "Confirmar contraseña*",
-                        txColor = Color.Black,
-                        maxChar = 25,
-                        enabled = enabledInput.value,
-                        keyboardType = KeyboardType.Password,
-                        capitalization = KeyboardCapitalization.None,
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        imeAction = ImeAction.Done,
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    passwordConfirmVisibility = !passwordConfirmVisibility
-                                }) {
-                                Icon(
-                                    imageVector = if (passwordConfirmVisibility) {
-                                        Icons.Default.Visibility
-                                    } else {
-                                        Icons.Default.VisibilityOff
-                                    },
-                                    contentDescription = ""
-                                )
-                            }
-                        },
-                        visualTransformation = if (passwordConfirmVisibility) {
-                            VisualTransformation.None
-                        } else {
-                            PasswordVisualTransformation()
-                        }
-                    )
-
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    RoundedButton(
-                        modifier = Modifier
-                            .padding(horizontal = 30.dp, vertical = 10.dp)
-                            .fillMaxWidth()
-                            .height(50.dp),
-                        text = "Crear cuenta",
-                        fSize = 15.sp,
-                        textColor = Color.White,
-                        backColor = botonColor,
-                        estatus = onProccesing,
-                        onClick = {
-                            if (hasRead.value)
-                                prepareCreateAccount.value = true
-                            else {
-                                showSheetError.value = true
-                                messageError.value = "Debe aceptar la política de privacidad"
-                            }
-                        } //onClick
-                    )
-
-                    //AVISO DE PRIVACIDAD CHECK
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                            .height(50.dp)
-                            .clickable {
-                                hasRead.value = !hasRead.value
-                            },
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-
-                        Checkbox(
-                            modifier = Modifier.size(20.dp),
-                            checked = hasRead.value,
-                            onCheckedChange = {
-                                hasRead.value = !hasRead.value
-                            },
-                            colors = CheckboxDefaults.colors()
-                        )
-
-                        Text(
-                            modifier = Modifier.padding(start = 10.dp),
-                            text = "He leido y acepto la ",
-                            textAlign = TextAlign.Start,
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Normal
-                        )
-
-                        Text(
-                            modifier = Modifier
-                                .clickable {
-                                    //navC.navigate(Router.AVISO_PRIVACIDAD.route)
-                                },
-                            text = "política de privacidad",
-                            fontSize = 13.sp,
-                            textAlign = TextAlign.Start,
-                            fontFamily = ToolBox.quatroSlabFont,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                    } //Check politica privacidad
-
-                    Spacer(modifier = Modifier.height(60.dp))
-
-                    if (onProccesing.value) {
-                        Text(text = "Creando cuenta", style = MaterialTheme.typography.bodyLarge)
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                textFieldValue = passwordConfirm,
+                textLabel = "Confirmar contraseña*",
+                txColor = Color.Black,
+                maxChar = 25,
+                enabled = enabledInput.value,
+                keyboardType = KeyboardType.Password,
+                capitalization = KeyboardCapitalization.None,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
                     }
-                }//Column
-            }//Card
+                ),
+                imeAction = ImeAction.Done,
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            passwordConfirmVisibility = !passwordConfirmVisibility
+                        }) {
+                        Icon(
+                            imageVector = if (passwordConfirmVisibility) {
+                                Icons.Default.Visibility
+                            } else {
+                                Icons.Default.VisibilityOff
+                            },
+                            contentDescription = ""
+                        )
+                    }
+                },
+                visualTransformation = if (passwordConfirmVisibility) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                }
+            )
+
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            RoundedButton(
+                modifier = Modifier
+                    .padding(horizontal = 30.dp, vertical = 10.dp)
+                    .fillMaxWidth()
+                    .height(50.dp),
+                text = "Crear cuenta",
+                fSize = 15.sp,
+                textColor = Color.White,
+                backColor = botonColor,
+                shape =   RoundedCornerShape(15.dp),
+                estatus = onProccesing,
+                onClick = {
+                    if (hasRead.value)
+                        prepareCreateAccount.value = true
+                    else {
+                        showSheetError.value = true
+                        messageError.value = "Debe aceptar la política de privacidad"
+                    }
+                } //onClick
+            )
+
+            //AVISO DE PRIVACIDAD CHECK
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .height(50.dp)
+                    .clickable {
+                        hasRead.value = !hasRead.value
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+
+                Checkbox(
+                    modifier = Modifier.size(20.dp),
+                    checked = hasRead.value,
+                    onCheckedChange = {
+                        hasRead.value = !hasRead.value
+                    },
+                    colors = CheckboxDefaults.colors()
+                )
+
+                Text(
+                    modifier = Modifier.padding(start = 10.dp),
+                    text = "He leido y acepto la ",
+                    textAlign = TextAlign.Start,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Normal
+                )
+
+                Text(
+                    modifier = Modifier
+                        .clickable {
+                            //navC.navigate(Router.AVISO_PRIVACIDAD.route)
+                        },
+                    text = "política de privacidad",
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Start,
+                    fontFamily = ToolBox.quatroSlabFont,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    fontWeight = FontWeight.Bold
+                )
+
+            } //Check politica privacidad
+
+            Spacer(modifier = Modifier.height(60.dp))
+
+            if (onProccesing.value) {
+                Text(text = "Creando cuenta", style = MaterialTheme.typography.bodyLarge)
+            }
+
         }//Column
 
         if(prepareCreateAccount.value) {

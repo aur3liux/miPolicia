@@ -12,7 +12,9 @@ val Pink40 = Color(0xFF7D5260)
 
 val TitleColor = Color(0xFF6D167C)
 val cronosColor = Color(0xFFFF81E5)
-val cronosShape = Color(0xFF691526)
+val shapePrincipalColor = Color(0xFF6D1A32)
+val textShapePrincipalColor = Color(0xFFFFFFFF)
+val titleShapePrincipalColor = Color(0xFFCFB89A)
 
 //Colores de fondo - combinacion dark
 var lGradient2 = Color(0xFF841c37)

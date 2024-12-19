@@ -241,6 +241,7 @@ fun ListSubcategoriaDenuncia(navc: NavController, indexSubcategoria: Int) {
                     .height(50.dp),
                 text = "Omitir",
                 fSize = 15.sp,
+                shape =   RoundedCornerShape(15.dp),
                 textColor = Color.White,
                 backColor = botonColor,
                 estatus = onProccesing,

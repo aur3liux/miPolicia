@@ -190,6 +190,7 @@ fun FinishPredenuncia(navc: NavController, folio: String) {
                             .height(40.dp),
                         text = "Cerrar",
                         fSize = 17.sp,
+                        shape =   RoundedCornerShape(15.dp),
                         textColor = Color.White,
                         backColor = botonColor,
                         estatus = onProccesing,

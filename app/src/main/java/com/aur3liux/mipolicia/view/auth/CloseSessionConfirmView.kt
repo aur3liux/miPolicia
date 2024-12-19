@@ -130,14 +130,7 @@ fun CloseSessionConfirmView(navC: NavController){
             ),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(top = 20.dp),
-                painter = painterResource(id = R.drawable.logo_h),
-                contentDescription = "",
-                contentScale = ContentScale.FillWidth
-            )
+
             Box(
                 modifier = Modifier
                     .navigationBarsPadding()
@@ -206,6 +199,7 @@ fun CloseSessionConfirmView(navC: NavController){
                             fSize = 20.sp,
                             textColor = Color.White,
                             backColor = botonColor,
+                            shape =   RoundedCornerShape(15.dp),
                             estatus = onProccesing,
                             onClick = {
                                 prepareCloseSession.value = true

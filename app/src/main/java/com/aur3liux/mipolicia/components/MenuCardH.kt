@@ -2,18 +2,14 @@ package com.aur3liux.mipolicia.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,8 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -33,13 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
-data class MenuImg(
-    val imageRes: ImageVector,
-    val texto: String,
-)
-
 @Composable
-fun MenuCard(menuOpc: MenuImg,
+fun MenuCardH(menuOpc: MenuImg,
              modifier: Modifier,
              colorTx:Color,
              colorBack: Color,
@@ -49,51 +38,48 @@ fun MenuCard(menuOpc: MenuImg,
              h: Dp,
              onClick: () -> Unit) {
     val onTapCard = remember { mutableStateOf(false) }
-    Column(
+    Card(
         modifier = modifier
-            .width(w * 2)
             .clickable {
                 onClick()
                 onTapCard.value = true
             },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 5.dp),
         shape = shape,
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
         colors = CardDefaults.cardColors(
             containerColor = colorBack,
         )
     ) {
-        Box(modifier = Modifier
-            .width(w)
-            .height(h), contentAlignment = Alignment.Center){
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 5.dp)
+                .width(w)
+                .height(h),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(
                 modifier = Modifier.size(30.dp),
                 imageVector = menuOpc.imageRes,
                 contentDescription = "",
                 tint = colorTx
             )
-            }
-        } // Card
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            text = menuOpc.texto,
-            fontSize = fSize,
-            color = colorTx,
-            lineHeight = 15.sp,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Medium
-        )
-    }// Column
+            Text(
+                text = menuOpc.texto,
+                fontSize = fSize,
+                color = colorTx,
+                lineHeight = 15.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Medium
+            )
+        } // Column
 
-    if (onTapCard.value) {
-        LaunchedEffect(key1 = true) {
-            delay(100)
-            onTapCard.value = false
+        if (onTapCard.value) {
+            LaunchedEffect(key1 = true) {
+                delay(100)
+                onTapCard.value = false
+            }
         }
-    }
+    }// Card
+
 }
