@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -114,6 +115,8 @@ fun RegistroView(navC: NavController) {
     val enabledInput = remember { mutableStateOf(true) }
     val messageError = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val localUriHandler = LocalUriHandler.current
 
     val info = buildAnnotatedString {
         append(messageError.value)
@@ -447,7 +450,7 @@ fun RegistroView(navC: NavController) {
                 Text(
                     modifier = Modifier
                         .clickable {
-                            //navC.navigate(Router.AVISO_PRIVACIDAD.route)
+                            localUriHandler.openUri("http://www.segobcampeche.gob.mx/index.php/aviso-de-privacidad")
                         },
                     text = "política de privacidad",
                     fontSize = 13.sp,

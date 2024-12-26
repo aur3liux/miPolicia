@@ -1,8 +1,11 @@
 package com.aur3liux.mipolicia.view.bottomsheets
 
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -31,31 +35,40 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.aur3liux.mipolicia.Router
 import com.aur3liux.mipolicia.ToolBox
 import com.aur3liux.mipolicia.components.MenuCard
 import com.aur3liux.mipolicia.components.MenuImg
 import com.aur3liux.mipolicia.components.RoundedButton
+import com.aur3liux.mipolicia.view.dialogs.AddEvienciaDialog
+import com.aur3liux.mipolicia.view.dialogs.ConfirmDialog
+import com.aur3liux.mipolicia.view.dialogs.SelectQuejaFelicitacionDialog
+import com.aur3liux.mipolicia.view.subviews.createImageFile
+import com.aur3liux.mipolicia.view.subviews.getUri
 import com.google.maps.android.compose.Circle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetMenu(
     navC:NavController,
-    onCloseSesion: () -> Unit,
+    onConfirmQuejaReporte: MutableState<Boolean>,
     onDismiss: () -> Unit) {
     val modalBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
         modifier = Modifier
-            .fillMaxHeight(0.5f),
+            .fillMaxHeight(0.3f),
         onDismissRequest = { onDismiss() },
         containerColor = Color.Transparent,
         sheetState = modalBottomSheetState,
@@ -71,21 +84,20 @@ fun BottomSheetMenu(
                 .padding(horizontal = 20.dp)
                 .height(50.dp)
                 .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Mi policía",
-                    fontSize = 15.sp,
-                    letterSpacing = 0.2.sp,
-                    fontFamily = ToolBox.gmxFontRegular,
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                )
-
-                Spacer(modifier = Modifier.width(20.dp))
+                    modifier = Modifier
+                        .weight(0.8f)
+                        .wrapContentHeight(align = Alignment.CenterVertically),
+                    text = "Secretaría de Protección y Seguridad Ciudadana",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.primary)
 
                 Icon(
                     modifier = Modifier
+                        .weight(0.2f)
                         .size(30.dp)
                         .clickable { onDismiss() },
                     imageVector = Icons.Filled.Close,
@@ -94,12 +106,10 @@ fun BottomSheetMenu(
 
             } //Row
 
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(30.dp))
-
+            Spacer(modifier = Modifier.height(10.dp))
             //Primera fila de opciones
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 MenuCard(
@@ -109,63 +119,18 @@ fun BottomSheetMenu(
                     ),
                     shape = CircleShape,
                     modifier = Modifier
-                        .weight(0.3f)
+                        .weight(0.33f)
                         .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.inverseSurface,
+                    colorBack = MaterialTheme.colorScheme.surface,
                     fSize = 12.sp,
                     w = 60.dp,
                     h = 60.dp,
-                    colorTx = MaterialTheme.colorScheme.surfaceVariant
+                    colorTx = MaterialTheme.colorScheme.surface,
+                    colorTint = MaterialTheme.colorScheme.background
                 ) {
                     onDismiss()
                     navC.navigate(Router.REPORTE_CIUDADANO.route)
                 }
-
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.Policy,
-                        "Policía cibernética"
-                    ),
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .weight(0.3f)
-                        .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.inverseSurface,
-                    fSize = 12.sp,
-                    w = 60.dp,
-                    h = 60.dp,
-                    colorTx = MaterialTheme.colorScheme.surfaceVariant
-                ) {
-                    onDismiss()
-                    navC.navigate(Router.POLICIA_CIBERNETICA.route)
-                }
-
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.ShareLocation,
-                        "Consulta tu sector"
-                    ),
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .weight(0.3f)
-                        .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.inverseSurface,
-                    fSize = 12.sp,
-                    w = 60.dp,
-                    h = 60.dp,
-                    colorTx = MaterialTheme.colorScheme.surfaceVariant
-                ) {
-
-                }
-            }//Row primera fila
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            //Segunda fila de opciones
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
 
                 MenuCard(
                     menuOpc = MenuImg(
@@ -174,35 +139,40 @@ fun BottomSheetMenu(
                     ),
                     shape = CircleShape,
                     modifier = Modifier
+                        .weight(0.33f)
                         .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.inverseSurface,
+                    colorBack = MaterialTheme.colorScheme.surface,
                     fSize = 12.sp,
                     w = 60.dp,
                     h = 60.dp,
-                    colorTx = MaterialTheme.colorScheme.surfaceVariant
+                    colorTx = MaterialTheme.colorScheme.surface,
+                    colorTint = MaterialTheme.colorScheme.background
                 ) {
-
+                    onConfirmQuejaReporte.value = true
+                    onDismiss()
                 }
 
                 MenuCard(
                     menuOpc = MenuImg(
                         Icons.Filled.Person,
-                        "Datos del usuario"
+                        "Perfil del usuario"
                     ),
                     shape = CircleShape,
                     modifier = Modifier
+                        .weight(0.33f)
                         .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.inverseSurface,
+                    colorBack = MaterialTheme.colorScheme.surface,
                     fSize = 12.sp,
                     w = 60.dp,
                     h = 60.dp,
-                    colorTx = MaterialTheme.colorScheme.surfaceVariant
+                    colorTx = MaterialTheme.colorScheme.surface,
+                    colorTint = MaterialTheme.colorScheme.background
                 ) {
                     onDismiss()
                     navC.navigate(Router.PERFIL_VIEW.route)
                 }
-            }//Row segunda fila
 
+            }//Row segunda fila
             Spacer(modifier = Modifier.height(70.dp))
         }
     }

@@ -29,6 +29,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Report
+import androidx.compose.material.icons.filled.ShareLocation
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,6 +64,9 @@ import androidx.room.Room
 import com.aur3liux.mipolicia.R
 import com.aur3liux.mipolicia.Router
 import com.aur3liux.mipolicia.ToolBox
+import com.aur3liux.mipolicia.components.MenuCard
+import com.aur3liux.mipolicia.components.MenuImg
+import com.aur3liux.mipolicia.components.RoundedButtonH
 import com.aur3liux.mipolicia.view.dialogs.ConfirmDialog
 import com.aur3liux.mipolicia.localdatabase.AppDb
 import com.aur3liux.mipolicia.localdatabase.Store
@@ -74,6 +80,7 @@ import com.aur3liux.mipolicia.ui.theme.titleShapePrincipalColor
 import com.aur3liux.mipolicia.view.bottomsheets.BottomSheetAcercaDe
 import com.aur3liux.mipolicia.view.bottomsheets.BottomSheetMenu
 import com.aur3liux.mipolicia.view.dialogs.ErrorDialog
+import com.aur3liux.mipolicia.view.dialogs.SelectQuejaFelicitacionDialog
 import com.aur3liux.mipolicia.viewmodel.IntentoLlamadaVM
 import com.aur3liux.mipolicia.viewmodel.IntentoLlamadaVMFactory
 import com.aur3liux.mipolicia.viewmodel.LogOutVM
@@ -112,10 +119,12 @@ fun Home(navC: NavController) {
 
     val confirmCall911 = rememberSaveable { mutableStateOf(false) }
 
+    val onConfirmQuejaReporte = rememberSaveable { mutableStateOf(false) }
     val confirmCloseSession = rememberSaveable { mutableStateOf(false) }
     val onCloseSession = rememberSaveable { mutableStateOf(false) }
     val onPrepareCall = rememberSaveable { mutableStateOf(false) }
     val onRegistraLlamada = rememberSaveable { mutableStateOf(false) }
+
 
     //viewmodel CERRAR SESION
     val logoutViewModel: LogOutVM = viewModel(
@@ -201,18 +210,16 @@ fun Home(navC: NavController) {
                     modifier = Modifier
                         .size(80.dp)
                         .clip(CircleShape),
-                    painter = painterResource(id = R.drawable.logo_mp),
+                    painter = painterResource(id = R.drawable.mipolicia_logo_app),
                     contentDescription = "",
                     contentScale = ContentScale.FillWidth
                 )
                 Column(
                     modifier = Modifier
                         .padding(start = 10.dp),
-                      //  .fillMaxWidth(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
                     Text(
                         text = "MI POLICIA",
                         fontSize = 24.sp,
@@ -226,70 +233,78 @@ fun Home(navC: NavController) {
                         fontSize = 10.sp,
                         letterSpacing = 0.2.sp,
                         fontFamily = ToolBox.gmxFontRegular,
-                        color = MaterialTheme.colorScheme.background,
+                        color = Color.White,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 } //Column encabezado titulos
 
             } //Row encabezado titulos
+
+            //FILA DE BOTONES
             Row(modifier = Modifier
                 .fillMaxWidth(0.9f)
-                .padding(top = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween){
+                .height(120.dp),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceEvenly){
                 //Llamada 911
-                Row(
+                MenuCard(
+                    menuOpc = MenuImg(
+                        Icons.Filled.Call,
+                        "Emergencias 911"
+                    ),
+                    shape = CircleShape,
                     modifier = Modifier
-                        .padding(horizontal = 5.dp)
-                        .height(60.dp)
-                        .clickable {
-                            confirmCall911.value = true
-                        },
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
+                        .weight(0.33f)
+                        .padding(8.dp),
+                    colorBack = titleShapePrincipalColor,
+                    fSize = 12.sp,
+                    w = 60.dp,
+                    h = 60.dp,
+                    colorTx = textShapePrincipalColor,
+                    colorTint = shapePrincipalColor
                 ) {
-                    Icon(
-                        modifier = Modifier.size(30.dp),
-                        imageVector = Icons.Filled.Call,
-                        contentDescription = "",
-                        tint = titleShapePrincipalColor
-                    )
-                    Text(
-                        text = "Emergencias 911",
-                        fontSize = 12.sp,
-                        color = titleShapePrincipalColor,
-                        lineHeight = 15.sp,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Medium
-                    )
-                } // Row
+                    confirmCall911.value = true
+                }
 
-                //Marco legal
-                Row(
+                MenuCard(
+                    menuOpc = MenuImg(
+                        Icons.Filled.Gavel,
+                        "Reglamento y ley de  vialidad"
+                    ),
+                    shape = CircleShape,
                     modifier = Modifier
-                        .padding(horizontal = 5.dp)
-                        .height(60.dp)
-                        .clickable {
-                            navC.navigate(Router.MARCOLEGAL_VIEW.route)
-                        },
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
+                        .weight(0.33f)
+                        .padding(8.dp),
+                    colorBack = titleShapePrincipalColor,
+                    fSize = 12.sp,
+                    w = 60.dp,
+                    h = 60.dp,
+                    colorTx = textShapePrincipalColor,
+                    colorTint = shapePrincipalColor
                 ) {
-                    Icon(
-                        modifier = Modifier.size(30.dp),
-                        imageVector = Icons.Filled.Gavel,
-                        contentDescription = "",
-                        tint = titleShapePrincipalColor
-                    )
-                    Text(
-                        text = "Reglamento vial",
-                        fontSize = 12.sp,
-                        color = titleShapePrincipalColor,
-                        lineHeight = 15.sp,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Medium
-                    )
-                } // Row
-            }
+                    navC.navigate(Router.MARCOLEGAL_VIEW.route)
+                }
+
+                MenuCard(
+                    menuOpc = MenuImg(
+                        Icons.Filled.ShareLocation,
+                        "Consulta tu sector"
+                    ),
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .weight(0.33f)
+                        .padding(8.dp),
+                    colorBack = titleShapePrincipalColor,
+                    fSize = 12.sp,
+                    w = 60.dp,
+                    h = 60.dp,
+                    colorTx = textShapePrincipalColor,
+                    colorTint = shapePrincipalColor
+                ) {
+                    navC.navigate(Router.SECTOR_VIEW.route)
+                }
+
+            } //Primera fila de botones
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -335,12 +350,12 @@ fun Home(navC: NavController) {
                             ) {} //Maps
 
                             Box(modifier = Modifier
-                                     .offset(x = -130.dp, y = 170.dp),
+                                     .offset(x = -130.dp, y = 140.dp),
                                 contentAlignment = Alignment.Center) {
                                 Icon(
                                     modifier = Modifier
-                                        .width(100.dp)
-                                        .height(100.dp)
+                                        .width(120.dp)
+                                        .height(120.dp)
                                         .clip(CircleShape),
                                     painter = painterResource(id = R.drawable.ic_gob),
                                     contentDescription = "",
@@ -442,9 +457,7 @@ fun Home(navC: NavController) {
 
         if(showMenuPrincipal.value){
             BottomSheetMenu(
-                onCloseSesion = {
-                     confirmCloseSession.value = true
-                },
+                onConfirmQuejaReporte = onConfirmQuejaReporte,
                 onDismiss = {
                     showMenuPrincipal.value = false
                 },
@@ -452,10 +465,25 @@ fun Home(navC: NavController) {
         }
 
 
+        //DIALOGO PARA CONFIRMAR SI QUIERE ENVIAR QUEJA O FELICITACION
+        if(onConfirmQuejaReporte.value){
+            SelectQuejaFelicitacionDialog(
+                title = "Elija opción",
+                sendQueja = {
+                    onConfirmQuejaReporte.value = false
+                    navC.navigate(Router.QUEJAS_FELICITACIONES.route)
+                },
+                sendFelicitacion = {
+                    onConfirmQuejaReporte.value = false
+                    navC.navigate(Router.QUEJAS_FELICITACIONES.route)
+                },
+                onCancelar = { onConfirmQuejaReporte.value = false})
+        } //  if queja o felicitacion dialog
+
         if(confirmCall911.value){
             ConfirmDialog(
                 title = "Confirmación",
-                info = "Será redirigido a la aplicacion de llamadas de su dispositivo.\n\nConfirme que desea salir y llamar al 911",
+                info = "Será redirigido a la aplicacion de llamadas de su dispositivo.\n\nConfirme que desea llamar al 911",
                 titleAceptar = "Si",
                 titleCancelar = "No",
                 onAceptar = {

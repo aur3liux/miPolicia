@@ -116,10 +116,9 @@ fun LoadView(navC: NavController) {
         ) {
 
             Image(
-                painter = painterResource(id = R.drawable.logo_policia_campeche),
+                painter = painterResource(id = R.drawable.logo_splash),
                 contentDescription = "",
                 modifier = Modifier
-                    .clip(CircleShape)
                     .scale(scale.value),
                 contentScale = ContentScale.Crop
             )

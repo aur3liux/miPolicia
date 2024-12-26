@@ -93,14 +93,15 @@ fun MarcoLegalView(navC: NavController) {
             verticalArrangement = Arrangement.Top
         ) {
             Box(modifier =  Modifier
-                .weight(0.2f),
-                contentAlignment = Alignment.Center) {
-                Column(
+                .weight(0.8f)){
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(state = rememberScrollState()),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                    horizontalAlignment = Alignment.CenterHorizontally){
+
                     Text(
-                        text = "Guía rápida de la ley de vialidad",
+                        text = "Guía rápida",
                         fontSize = 14.sp,
                         letterSpacing = 0.3.sp,
                         textAlign = TextAlign.Justify,
@@ -108,36 +109,7 @@ fun MarcoLegalView(navC: NavController) {
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
-                    Row(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .clickable { navC.navigate(Router.REGLAMENTO_TRANSITO.route) },
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Gavel,
-                            tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = ""
-                        )
-                        Text(
-                            text = "Reglamento y ley de vialidad",
-                            fontSize = 10.sp,
-                            fontFamily = ToolBox.gmxFontRegular,
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                    }//Row lectura completa  de vialidad
-                } //Column
-            } //Box
 
-            Box(modifier =  Modifier
-                .weight(0.8f)){
-                Column(modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(state = rememberScrollState()),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally){
                     //PRIMERA FILA
                     Row(
                         modifier = Modifier
@@ -156,11 +128,12 @@ fun MarcoLegalView(navC: NavController) {
                             modifier = Modifier
                                 .weight(0.5f)
                                 .padding(8.dp),
-                            colorBack = MaterialTheme.colorScheme.onSurface,
+                            colorBack = MaterialTheme.colorScheme.surface,
                             fSize = 14.sp,
                             w = 60.dp,
                             h = 60.dp,
-                            colorTx = MaterialTheme.colorScheme.primary
+                            colorTx = MaterialTheme.colorScheme.surface,
+                            colorTint = MaterialTheme.colorScheme.background
                         ) {
                             navC.navigate(Router.DETALLES_MARCOLEGAL.detallesMarcoLegal("1"))
                         }
@@ -174,17 +147,18 @@ fun MarcoLegalView(navC: NavController) {
                             modifier = Modifier
                                 .weight(0.5f)
                                 .padding(8.dp),
-                            colorBack = MaterialTheme.colorScheme.onSurface,
+                            colorBack = MaterialTheme.colorScheme.surface,
                             fSize = 14.sp,
                             w = 60.dp,
                             h = 60.dp,
-                            colorTx = MaterialTheme.colorScheme.primary
+                            colorTx = MaterialTheme.colorScheme.surface,
+                            colorTint = MaterialTheme.colorScheme.background
                         ) {
                             navC.navigate(Router.DETALLES_MARCOLEGAL.detallesMarcoLegal("2"))
                         }
                     }//ROW PRIMERA FILA
 
-                    HorizontalDivider()
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(0.8f))
                     Spacer(modifier = Modifier.height(10.dp))
 
                     //SEGUNDA FILA
@@ -205,11 +179,12 @@ fun MarcoLegalView(navC: NavController) {
                             modifier = Modifier
                                 .weight(0.5f)
                                 .padding(8.dp),
-                            colorBack = MaterialTheme.colorScheme.onSurface,
+                            colorBack = MaterialTheme.colorScheme.surface,
                             fSize = 14.sp,
                             w = 60.dp,
                             h = 60.dp,
-                            colorTx = MaterialTheme.colorScheme.primary
+                            colorTx = MaterialTheme.colorScheme.surface,
+                            colorTint = MaterialTheme.colorScheme.background
                         ) {
                             navC.navigate(Router.DETALLES_MARCOLEGAL.detallesMarcoLegal("3"))
                         }
@@ -223,17 +198,18 @@ fun MarcoLegalView(navC: NavController) {
                             modifier = Modifier
                                 .weight(0.5f)
                                 .padding(8.dp),
-                            colorBack = MaterialTheme.colorScheme.onSurface,
+                            colorBack = MaterialTheme.colorScheme.surface,
                             fSize = 14.sp,
                             w = 60.dp,
                             h = 60.dp,
-                            colorTx = MaterialTheme.colorScheme.primary
+                            colorTx = MaterialTheme.colorScheme.surface,
+                            colorTint = MaterialTheme.colorScheme.background
                         ) {
                             navC.navigate(Router.DETALLES_MARCOLEGAL.detallesMarcoLegal("4"))
                         }
                     }//SEGUNDA FILA
 
-                    HorizontalDivider()
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(0.8f))
                     Spacer(modifier = Modifier.height(10.dp))
 
                     //TERCERA FILA
@@ -254,11 +230,12 @@ fun MarcoLegalView(navC: NavController) {
                             modifier = Modifier
                                 .weight(0.5f)
                                 .padding(8.dp),
-                            colorBack = MaterialTheme.colorScheme.onSurface,
+                            colorBack = MaterialTheme.colorScheme.surface,
                             fSize = 14.sp,
                             w = 60.dp,
                             h = 60.dp,
-                            colorTx = MaterialTheme.colorScheme.primary
+                            colorTx = MaterialTheme.colorScheme.surface,
+                            colorTint = MaterialTheme.colorScheme.background
                         ) {
                             navC.navigate(Router.DETALLES_MARCOLEGAL.detallesMarcoLegal("5"))
                         }
@@ -272,17 +249,18 @@ fun MarcoLegalView(navC: NavController) {
                             modifier = Modifier
                                 .weight(0.5f)
                                 .padding(8.dp),
-                            colorBack = MaterialTheme.colorScheme.onSurface,
+                            colorBack = MaterialTheme.colorScheme.surface,
                             fSize = 14.sp,
                             w = 60.dp,
                             h = 60.dp,
-                            colorTx = MaterialTheme.colorScheme.primary
+                            colorTx = MaterialTheme.colorScheme.surface,
+                            colorTint = MaterialTheme.colorScheme.background
                         ) {
                             navC.navigate(Router.DETALLES_MARCOLEGAL.detallesMarcoLegal("6"))
                         }
                     }//TERCERA FILA
 
-                    HorizontalDivider()
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(0.8f))
                     Spacer(modifier = Modifier.height(10.dp))
 
                     //CUARTA FILA
@@ -302,11 +280,12 @@ fun MarcoLegalView(navC: NavController) {
                             modifier = Modifier
                                 .weight(0.5f)
                                 .padding(8.dp),
-                            colorBack = MaterialTheme.colorScheme.onSurface,
+                            colorBack = MaterialTheme.colorScheme.surface,
                             fSize = 14.sp,
                             w = 60.dp,
                             h = 60.dp,
-                            colorTx = MaterialTheme.colorScheme.primary
+                            colorTx = MaterialTheme.colorScheme.surface,
+                            colorTint = MaterialTheme.colorScheme.background
                         ) {
                             navC.navigate(Router.DETALLES_MARCOLEGAL.detallesMarcoLegal("7"))
                         }
@@ -319,17 +298,18 @@ fun MarcoLegalView(navC: NavController) {
                             modifier = Modifier
                                 .weight(0.5f)
                                 .padding(8.dp),
-                            colorBack = MaterialTheme.colorScheme.onSurface,
+                            colorBack = MaterialTheme.colorScheme.surface,
                             fSize = 14.sp,
                             w = 60.dp,
                             h = 60.dp,
-                            colorTx = MaterialTheme.colorScheme.primary
+                            colorTx = MaterialTheme.colorScheme.surface,
+                            colorTint = MaterialTheme.colorScheme.background
                         ) {
                             navC.navigate(Router.DETALLES_MARCOLEGAL.detallesMarcoLegal("8"))
                         }
                     }//CUARTA FILA
 
-                    HorizontalDivider()
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(0.8f))
                     Spacer(modifier = Modifier.height(10.dp))
 
                     //QUINTA FILA
@@ -349,11 +329,12 @@ fun MarcoLegalView(navC: NavController) {
                             modifier = Modifier
                                 .weight(0.5f)
                                 .padding(8.dp),
-                            colorBack = MaterialTheme.colorScheme.onSurface,
+                            colorBack = MaterialTheme.colorScheme.surface,
                             fSize = 14.sp,
                             w = 60.dp,
                             h = 60.dp,
-                            colorTx = MaterialTheme.colorScheme.primary
+                            colorTx = MaterialTheme.colorScheme.surface,
+                            colorTint = MaterialTheme.colorScheme.background
                         ) {
                             navC.navigate(Router.DETALLES_MARCOLEGAL.detallesMarcoLegal("9"))
                         }
@@ -366,17 +347,58 @@ fun MarcoLegalView(navC: NavController) {
                             modifier = Modifier
                                 .weight(0.5f)
                                 .padding(8.dp),
-                            colorBack = MaterialTheme.colorScheme.onSurface,
+                            colorBack = MaterialTheme.colorScheme.surface,
                             fSize = 14.sp,
                             w = 60.dp,
                             h = 60.dp,
-                            colorTx = MaterialTheme.colorScheme.primary
+                            colorTx = MaterialTheme.colorScheme.surface,
+                            colorTint = MaterialTheme.colorScheme.background
                         ) {
                             navC.navigate(Router.DETALLES_MARCOLEGAL.detallesMarcoLegal("10"))
                         }
                     }//QUINTA FILA
                 } //Contenedor de los botones
             } //Box menu
+
+            HorizontalDivider(color = MaterialTheme.colorScheme.primary, thickness = 1.dp)
+            Box(modifier =  Modifier
+                .weight(0.1f),
+                contentAlignment = Alignment.Center) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Gobierno del Estado de Campeche",
+                        fontSize = 14.sp,
+                        letterSpacing = 0.3.sp,
+                        textAlign = TextAlign.Justify,
+                        fontFamily = ToolBox.gmxFontRegular,
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .clickable { navC.navigate(Router.REGLAMENTO_TRANSITO.route) },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Gavel,
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = ""
+                        )
+                        Text(
+                            text = "Consulta el documento completo",
+                            fontSize = 10.sp,
+                            fontFamily = ToolBox.gmxFontRegular,
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }//Row lectura completa  de vialidad
+                } //Column
+            } //Box
 
             Spacer(modifier = Modifier.height(60.dp))
         } //Column

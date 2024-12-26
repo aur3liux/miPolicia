@@ -14,13 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.PersonPin
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -38,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,11 +50,13 @@ import com.aur3liux.mipolicia.localdatabase.AppDb
 import com.aur3liux.mipolicia.model.RequestResponse
 import com.aur3liux.mipolicia.services.LogOutRepo
 import com.aur3liux.mipolicia.ui.theme.cronosColor
+import com.aur3liux.mipolicia.ui.theme.shapePrincipalColor
+import com.aur3liux.mipolicia.ui.theme.textShapePrincipalColor
 import com.aur3liux.mipolicia.viewmodel.LogOutVM
 import com.aur3liux.mipolicia.viewmodel.LogOutVMFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun PerfilView(navC: NavController) {
     val context = LocalContext.current
@@ -73,6 +73,7 @@ fun PerfilView(navC: NavController) {
 
     val showSheetError = remember { mutableStateOf(false) }
     val messageError = remember { mutableStateOf("") }
+    val localUriHandler = LocalUriHandler.current
 
     //viewmodel
     val logoutViewModel: LogOutVM = viewModel(
@@ -86,6 +87,7 @@ fun PerfilView(navC: NavController) {
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.fillMaxSize(),
+        containerColor = shapePrincipalColor,
         topBar = {
             TopAppBar(
                 title = {
@@ -94,25 +96,25 @@ fun PerfilView(navC: NavController) {
                         fontSize = 15.sp,
                         letterSpacing = 0.3.sp,
                         fontFamily = ToolBox.gmxFontRegular,
-                        color = MaterialTheme.colorScheme.background,
+                        color = textShapePrincipalColor,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = shapePrincipalColor),
                 navigationIcon = {
                     Icon(
                         modifier = Modifier
                             .clickable { navC.popBackStack() }
                             .size(30.dp),
                         imageVector = Icons.Filled.ArrowBackIosNew,
-                        contentDescription = "", tint = Color.White)})
+                        contentDescription = "", tint = textShapePrincipalColor)})
         }) {
         Column(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .fillMaxWidth(),
+                .background(MaterialTheme.colorScheme.background)
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.Center
         ) {
 
             if (user == null) {
@@ -124,243 +126,229 @@ fun PerfilView(navC: NavController) {
                     strokeWidth = 4.dp
                 )
             } else {
-                Column {
-                    Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
+                //NOMBRE COMPLETO
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.padding(start = 10.dp),
+                        imageVector = Icons.Filled.PersonPin, contentDescription = ""
+                    )
+                    Text(
+                        modifier = Modifier.padding(10.dp),
+                        text = "${user.nombre} ${user.apellidos}" ,
+                        fontSize = 11.sp,
+                        fontFamily = ToolBox.montseFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
+                } //Row nombre completo
 
-                    Card(
+                HorizontalDivider()
+
+                //EMAIL
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.padding(10.dp, 10.dp, 0.dp, 10.dp),
+                        text = "Correo",
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.quatroSlabFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        modifier = Modifier.padding(10.dp),
+                        text = "${user.email}",
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.quatroSlabFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
+                } //Row EMAIL
+
+                HorizontalDivider()
+
+                //TELEFONO
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.padding(10.dp, 10.dp, 0.dp, 10.dp),
+                        text = "Tel.",
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.quatroSlabFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        modifier = Modifier.padding(10.dp),
+                        text = "${user.telefono}",
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.quatroSlabFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+                HorizontalDivider()
+                //Municipio
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.padding(10.dp, 10.dp, 0.dp, 10.dp),
+                        text = "Municipio",
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.quatroSlabFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        modifier = Modifier.padding(10.dp),
+                        text =  if (user.municipio == "null") "" else user.municipio,
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.quatroSlabFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
+                } //Row Municipio
+                Spacer(modifier = Modifier.height(10.dp))
+                HorizontalDivider()
+
+                //Localidad
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.padding(10.dp, 10.dp, 0.dp, 10.dp),
+                        text = "Localidad",
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.quatroSlabFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        modifier = Modifier.padding(10.dp),
+                        text = if (user.localidad == "null") "" else user.localidad,
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.quatroSlabFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
+                } //Row Localidad
+
+                Spacer(modifier = Modifier.height(10.dp))
+                HorizontalDivider()
+                //Colonia
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.padding(10.dp, 10.dp, 0.dp, 10.dp),
+                        text = "Colonia",
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.quatroSlabFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        modifier = Modifier.padding(10.dp),
+                        text = if (user.colonia == "null") "" else user.colonia,
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.quatroSlabFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
+                } //Row Municipio
+
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(0.4f),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Spacer(modifier = Modifier.height(20.dp))
-                        //NOMBRE COMPLETO
-                        Row(
+                            .padding(10.dp)
+                            .clickable {
+                                localUriHandler.openUri("http://www.segobcampeche.gob.mx/index.php/aviso-de-privacidad")
+                            },
+                        text = "Aviso de privacidad",
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.montseFont,
+                        letterSpacing = 0.5.sp,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Medium
+                    )
+
+                    Text(
+                        modifier = Modifier
+                            .padding(10.dp),
+                        text = "/",
+                        fontSize = 12.sp,
+                        fontFamily = ToolBox.montseFont,
+                        letterSpacing = 0.5.sp,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Medium
+                    )
+
+                    //CERRAR SESION
+                    if (!onCloseSession.value) {
+                        Text(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 5.dp),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                modifier = Modifier.padding(start = 10.dp),
-                                imageVector = Icons.Filled.PersonPin, contentDescription = ""
-                            )
-                            Text(
-                                modifier = Modifier.padding(10.dp),
-                                text = "${user.nombre} ${user.apellidos}" ,
-                                fontSize = 11.sp,
-                                fontFamily = ToolBox.montseFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Medium
-                            )
-                        } //Row nombre completo
-
-                        HorizontalDivider()
-
-                        //EMAIL
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 5.dp),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(10.dp, 10.dp, 0.dp, 10.dp),
-                                text = "Correo",
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.quatroSlabFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                modifier = Modifier.padding(10.dp),
-                                text = "${user.email}",
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.quatroSlabFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Medium
-                            )
-                        } //Row EMAIL
-
-                        HorizontalDivider()
-
-                        //TELEFONO
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 5.dp),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(10.dp, 10.dp, 0.dp, 10.dp),
-                                text = "Tel.",
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.quatroSlabFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                modifier = Modifier.padding(10.dp),
-                                text = "${user.telefono}",
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.quatroSlabFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-                        HorizontalDivider()
-                        //Municipio
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 5.dp),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(10.dp, 10.dp, 0.dp, 10.dp),
-                                text = "Municipio",
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.quatroSlabFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                modifier = Modifier.padding(10.dp),
-                                text =  if (user.municipio == "null") "" else user.municipio,
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.quatroSlabFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Medium
-                            )
-                        } //Row Municipio
-                        Spacer(modifier = Modifier.height(10.dp))
-                        HorizontalDivider()
-
-                        //Localidad
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 5.dp),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(10.dp, 10.dp, 0.dp, 10.dp),
-                                text = "Localidad",
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.quatroSlabFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                modifier = Modifier.padding(10.dp),
-                                text = if (user.localidad == "null") "" else user.localidad,
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.quatroSlabFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Medium
-                            )
-                        } //Row Localidad
-
-                        Spacer(modifier = Modifier.height(10.dp))
-                        HorizontalDivider()
-                        //Colonia
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 5.dp),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(10.dp, 10.dp, 0.dp, 10.dp),
-                                text = "Colonia",
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.quatroSlabFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                modifier = Modifier.padding(10.dp),
-                                text = if (user.colonia == "null") "" else user.colonia,
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.quatroSlabFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Medium
-                            )
-                        } //Row Municipio
-
-                        HorizontalDivider()
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .clickable { navC.navigate(Router.AVISO_PRIVACIDAD.route) },
-                                text = "Aviso de privacidad",
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.montseFont,
-                                letterSpacing = 0.5.sp,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                fontWeight = FontWeight.Medium
-                            )
-
-                            Text(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .clickable { navC.navigate(Router.AVISO_PRIVACIDAD.route) },
-                                text = "/",
-                                fontSize = 12.sp,
-                                fontFamily = ToolBox.montseFont,
-                                letterSpacing = 0.5.sp,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                fontWeight = FontWeight.Medium
-                            )
-
-                            //CERRAR SESION
-                            if (!onCloseSession.value) {
-                                Text(
+                                .padding( 10.dp)
+                                .clickable { confirmCloseSession.value = true },
+                            text = "Cerrar sesión",
+                            fontSize = 12.sp,
+                            fontFamily = ToolBox.montseFont,
+                            letterSpacing = 0.5.sp,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            fontWeight = FontWeight.Medium
+                        )}
+                    else {
+                            Column {
+                                CircularProgressIndicator(
                                     modifier = Modifier
-                                        .padding( 10.dp)
-                                        .clickable { confirmCloseSession.value = true },
-                                    text = "Cerrar sesión",
-                                    fontSize = 12.sp,
-                                    fontFamily = ToolBox.montseFont,
-                                    letterSpacing = 0.5.sp,
-                                    color = MaterialTheme.colorScheme.tertiary,
-                                    fontWeight = FontWeight.Medium
-                                )}
-                            else {
-                                    Column {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier
-                                                .size(60.dp)
-                                                .background(Color.Transparent),
-                                            color = cronosColor,
-                                            strokeWidth = 4.dp
-                                        )
-                                        Text(text = "Cerrando sesión")
-                                    } //Column
-                            } // if (!onCloseSession.value)
+                                        .size(60.dp)
+                                        .background(Color.Transparent),
+                                    color = cronosColor,
+                                    strokeWidth = 4.dp
+                                )
+                                Text(text = "Cerrando sesión")
+                            } //Column
+                    } // if (!onCloseSession.value)
+                } //Row
 
-                        } //Row
-                        //AVISO DE PRIVACIDAD
-
-                    }//Card
-                } //Column
             } //Validamos que el usuario no sea nulo
         } //Column
     }//Scaffold

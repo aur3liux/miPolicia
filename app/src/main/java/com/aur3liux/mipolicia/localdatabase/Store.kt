@@ -16,6 +16,10 @@ class Store {
         const val name = "Mi policía"
         const val txCiberDelito = "Ataque del que fuíste víctima"
         const val txReportes = "Seleccione el tipo de reporte"
+        const val txUbicacion = "Ubicación del problema"
+        const val txDescripcion = "Descripción de motivos"
+        const val txNombreAgente = "Si sabe su nombre, escribalo aquí"
+        const val txNumeroUnidad = "Si tiene un numero de unidad"
     }
 
     object API_URL {

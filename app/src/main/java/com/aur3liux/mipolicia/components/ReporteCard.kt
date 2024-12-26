@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,35 +36,27 @@ data class ReporteImg(
 
 @Composable
 fun ReporteCard(
-    reporte: ReporteImg,
+    reporte: String,
     modifier: Modifier, onClick: () -> Unit) {
     val onTapCard = remember { mutableStateOf(false) }
-    val colorCard = remember { mutableStateOf(Color(0xFFBBB7B7)) }
+    val colorCard = remember { mutableStateOf(Color(0xFFF1E9E9)) }
     Card(modifier = modifier.clickable {
             onClick()
             onTapCard.value = true
         },
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(5.dp),
         colors = CardDefaults.cardColors(
-            //containerColor = if(reporte.estatus) colorCard.value else Color.Red,
             containerColor = colorCard.value,
         )) {
         Column(
             modifier = Modifier
-                .padding(5.dp)
-                .width(160.dp)
-                .height(90.dp),
+                .fillMaxWidth()
+                .height(40.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.Center
         ) {
-            Image(
-                painter = painterResource(id = reporte.imageResId),
-                contentDescription = "",
-                modifier = Modifier.size(64.dp),
-                contentScale = ContentScale.Crop
-            )
             Text(
-                text = reporte.nameResId,
+                text = reporte,
                 modifier = Modifier.padding(bottom = 8.dp),
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp

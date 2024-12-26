@@ -1,13 +1,13 @@
-package com.aur3liux.mipolicia.components
+package com.aur3liux.mipolicia.view.dialogs
 
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,10 +27,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.aur3liux.mipolicia.ui.theme.shapePrincipalColor
+import com.aur3liux.mipolicia.ui.theme.textShapePrincipalColor
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -42,67 +46,86 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun MapDialog(
+    latitud : Double,
+    longitud : Double,
     onConfirmation: () -> Unit,
     spaceBetweenElements: Dp = 18.dp) {
+
+    val selectLocation = remember { mutableStateOf(LatLng(latitud, longitud)) }
 
         Dialog(onDismissRequest = {
             onConfirmation()
         }) {
             Surface(
-                modifier = Modifier.fillMaxWidth(0.92f),
+                shape = RoundedCornerShape(15.dp),
+                modifier = Modifier.fillMaxWidth(),
                 color = Color.Transparent // dialog background
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()) {
 
-                    val cameraPositionState = rememberCameraPositionState {
-                        position = CameraPosition.fromLatLngZoom(LatLng(19.8146795,-90.5311845), 17f)
-                    }
-                    val propertiesMap = remember {
-                        mutableStateOf(
-                            MapProperties(
-                                isMyLocationEnabled = true,
-                                mapType = MapType.NORMAL)
+                val cameraPositionState = rememberCameraPositionState {
+                    position = CameraPosition.fromLatLngZoom(LatLng(latitud,longitud), 17f)
+                }
+                val propertiesMap = remember {
+                    mutableStateOf(
+                        MapProperties(
+                            isMyLocationEnabled = true,
+                            mapType = MapType.NORMAL)
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .padding(top = 30.dp)
+                        .height(700.dp)
+                        .fillMaxWidth(0.6f)
+                        .background(
+                            color = shapePrincipalColor,
+                            shape = RoundedCornerShape(percent = 10)
+                        ),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(20.dp),
+                        text = "Marque en el mapa el lugar donde sucedió el evento",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        lineHeight = 17.sp,
+                        textAlign = TextAlign.Center,
+                        color = textShapePrincipalColor
+                    )
+
+                    GoogleMap(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(0.65f),
+                        contentDescription = "Seleccione",
+                        onMapClick = { location ->
+                            selectLocation.value = LatLng(location.latitude, location.longitude)
+                        },
+                        properties = propertiesMap.value,
+                        cameraPositionState = cameraPositionState) {
+                        Marker(
+                            state = MarkerState(position = selectLocation.value),
+                            title = "Mi policía",
+                            snippet = "¿Aqui sucedió su reporte?"
                         )
                     }
 
-                    Column(
-                        modifier = Modifier
-                            .padding(top = 30.dp) // this is the empty space at the top
-                            .fillMaxWidth()
-                            .background(
-                                color = Color(0xFFBCA986),
-                                shape = RoundedCornerShape(percent = 10)
-                            ),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        GoogleMap(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .weight(0.65f),
-                            contentDescription = "Seleccione",
-                            properties = propertiesMap.value,
-                            cameraPositionState = cameraPositionState) {
-                            Marker(
-                                state = MarkerState(position = LatLng(19.8146795,-90.5311845)),
-                                title = "FGECAM",
-                                snippet = "Fiscalía General del Estado de Campeche"
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(10.dp))
-                        DialogButtonMap(
-                            buttonText = "Cerrar") {
-                            onConfirmation()
-                        }
-
-                        Spacer(modifier = Modifier.height(height = spaceBetweenElements * 2))
+                    Spacer(modifier = Modifier.height(40.dp))
+                    DialogButtonMap(
+                        buttonText = "Aplicar") {
+                        onConfirmation()
                     }
 
-                    //
+                    Spacer(modifier = Modifier.height(height = spaceBetweenElements * 2))
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(), contentAlignment = Alignment.BottomEnd) {
                     Icon(
-                        imageVector = Icons.Default.Info,
+                        imageVector = Icons.Default.Close,
                         contentDescription = "",
                         tint = Color.Black,
                         modifier = Modifier
@@ -112,32 +135,12 @@ fun MapDialog(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.surface
                             )
+                            .clickable { onConfirmation() }
                             .padding(all = 16.dp)
-                            .align(alignment = Alignment.TopCenter)
                     )
                 }
             }
         }
-
-    Box(
-        modifier = Modifier
-            .clickable {
-                onConfirmation()
-            }
-            .padding(horizontal = 16.dp, vertical = 6.dp)) {
-        Icon(
-            imageVector = Icons.Filled.Info,
-            contentDescription = "",
-            tint = Color.Black,
-            modifier = Modifier
-                .size(30.dp)
-                .background(color = Color.White, shape = CircleShape)
-                .border(
-                    width = 2.dp,
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.surface
-                ))
-    }
 }
 
 

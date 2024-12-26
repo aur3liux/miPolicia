@@ -53,7 +53,6 @@ fun ArticleDialog(
                 color = Color.Transparent // dialog background
             ) {
                 ToolBox.soundEffect(context, R.raw.flash)
-                Box() {
 
                     // text and buttons
                     Column(
@@ -99,7 +98,9 @@ fun ArticleDialog(
 
                         Spacer(modifier = Modifier.height(height = spaceBetweenElements * 2))
                     }
-
+                Box(modifier = Modifier
+                    .fillMaxWidth(),
+                    contentAlignment = Alignment.BottomEnd) {
                     //
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -114,7 +115,6 @@ fun ArticleDialog(
                             )
                             .clickable { onConfirmation() }
                             .padding(all = 16.dp)
-                            .align(alignment = Alignment.TopCenter)
                     )
                 }
             }

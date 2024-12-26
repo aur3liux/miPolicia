@@ -43,6 +43,7 @@ fun MenuCard(menuOpc: MenuImg,
              modifier: Modifier,
              colorTx:Color,
              colorBack: Color,
+             colorTint: Color = colorTx,
              shape: Shape,
              fSize: TextUnit = 20.sp,
              w: Dp,
@@ -75,7 +76,7 @@ fun MenuCard(menuOpc: MenuImg,
                 modifier = Modifier.size(30.dp),
                 imageVector = menuOpc.imageRes,
                 contentDescription = "",
-                tint = colorTx
+                tint = colorTint
             )
             }
         } // Card

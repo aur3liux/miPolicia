@@ -53,6 +53,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -106,6 +107,7 @@ fun LoginView(
     val password = rememberSaveable{ mutableStateOf("") }
     val getNewPassword = rememberSaveable{ mutableStateOf(false) }
     val context = LocalContext.current
+    val localUriHandler = LocalUriHandler.current
 
     //---------
     var passwordVisibility by remember { mutableStateOf(false) }
@@ -333,30 +335,6 @@ fun LoginView(
                             horizontalArrangement = Arrangement.Center
                         ) {
 
-                            Text(
-                                modifier = Modifier
-                                    .height(40.dp)
-                                    .clickable {
-                                        navC.navigate(Router.FINISH_REGISTRO.route)
-                                    }
-                                    .height(40.dp)
-                                    .wrapContentHeight(align = Alignment.CenterVertically),
-                                text = "Crear cuenta",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Black,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.tertiary
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .height(40.dp)
-                                    .height(40.dp)
-                                    .wrapContentHeight(align = Alignment.CenterVertically),
-                                text = "  /  ",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Black,
-                                color = MaterialTheme.colorScheme.tertiary
-                            )
 
 
                             Text(
@@ -367,8 +345,33 @@ fun LoginView(
                                     }
                                     .height(40.dp)
                                     .wrapContentHeight(align = Alignment.CenterVertically),
-                                text = "Recuperar contraseña",
+                                text = "Recuperar cuenta",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Black,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+
+                            Text(
+                                modifier = Modifier
+                                    .height(40.dp)
+                                    .height(40.dp)
+                                    .wrapContentHeight(align = Alignment.CenterVertically),
+                                text = "  /  ",
                                 fontSize = 14.sp,
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .height(40.dp)
+                                    .clickable {
+                                        navC.navigate(Router.REGISTRO_VIEW.route)
+                                    }
+                                    .height(40.dp)
+                                    .wrapContentHeight(align = Alignment.CenterVertically),
+                                text = "Crear cuenta",
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Black,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.tertiary
@@ -381,7 +384,7 @@ fun LoginView(
                         Text(
                             modifier = Modifier
                                 .clickable {
-                                    //navC.navigate(Router.AVISO_PRIVACIDAD.route)
+                                    localUriHandler.openUri("http://www.segobcampeche.gob.mx/index.php/aviso-de-privacidad")
                                 },
                             text = "Ver política de privacidad",
                             fontSize = 12.sp,
@@ -389,6 +392,18 @@ fun LoginView(
                             fontFamily = ToolBox.quatroSlabFont,
                             color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Medium
+                        )
+
+                        Spacer(modifier = Modifier.height(70.dp))
+                        Text(
+                            modifier = Modifier
+                                .height(40.dp)
+                                .height(40.dp)
+                                .wrapContentHeight(align = Alignment.CenterVertically),
+                            text = "Secretaría de Protección y Seguridad Ciudadana",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Black,
+                            color = MaterialTheme.colorScheme.primary
                         )
 
                     } else {

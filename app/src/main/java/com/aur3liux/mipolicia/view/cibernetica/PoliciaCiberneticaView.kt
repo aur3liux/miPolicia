@@ -65,12 +65,7 @@ import com.aur3liux.mipolicia.R
 import com.aur3liux.mipolicia.Router
 import com.aur3liux.mipolicia.localdatabase.Store
 import com.aur3liux.mipolicia.ToolBox
-import com.aur3liux.mipolicia.components.MapDialog
-import com.aur3liux.mipolicia.components.MenuCard
-import com.aur3liux.mipolicia.components.MenuImg
 import com.aur3liux.mipolicia.localdatabase.AppDb
-import com.aur3liux.mipolicia.ui.theme.lGradient1
-import com.aur3liux.mipolicia.ui.theme.lGradient2
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -272,12 +267,5 @@ fun PoliciaCiberneticaView(navC: NavController) {
                 }//Card
         } //Column
 
-
-        if (showDialogMap.value) {
-            MapDialog(
-                onConfirmation = {
-                    showDialogMap.value = false
-                })
-        }
     }
 }

@@ -3,7 +3,6 @@ package com.aur3liux.mipolicia
 
 sealed class Router(val route: String) {
     //Estos Graph estan en Home
-    object FGECAM_VIEW: Router("FichaFgecamView")
     object PERFIL_VIEW: Router("PerfilView")
     object SECTOR_VIEW: Router("SectorView")
     object MARCOLEGAL_VIEW: Router("MarcoLegalView")
@@ -13,8 +12,7 @@ sealed class Router(val route: String) {
     object AVISO_PRIVACIDAD: Router("AvisoPrivacidad")
     object REGLAMENTO_TRANSITO: Router("ReglamentoTransito")
     object REPORTE_CIUDADANO: Router("ReporteCiudadano")
-
-    object BUZON_VIEW: Router("BuzonView")
+    object QUEJAS_FELICITACIONES: Router("QuejaFelicitacionView")
 
     object VIDEO_PLAYER: Router("VideoPlayer")
     object POLICIA_CIBERNETICA: Router("PoliciaCiberneticaView")
@@ -24,20 +22,7 @@ sealed class Router(val route: String) {
     object HOME: Router("Home")
     object LOAD_VIEW: Router("LoadView")
     object LOGIN: Router("LoginView")
-    object ACCESO_REGISTRO: Router("AccesoRegistroView")
-    object FINISH_REGISTRO: Router("RegistroFinishView")
+    object REGISTRO_VIEW: Router("RegistroView")
     object CLOSE_SESSION: Router("CloseSessionConfirm")
 
-    object PREDENUNCIA: Router("Predenuncia")
-    object HELP_VIEW: Router("HelpView")
-    object EXPEDIENTE_LIST: Router("Expediente")
-    object SUBCATEGORIA_DELITOS: Router("ListSubcategoriaDenuncia/{index}"){
-        fun createRoute(index: Int) = "ListSubcategoriaDenuncia/$index"
-    }
-    object FINISH_PREDENUNCIA: Router("FinishPredenuncia/{folio}"){
-        fun finishPredenuncia(folio: String) = "FinishPredenuncia/$folio"
-    }
-    object DETALLES_PREDENUNCIA: Router("DetallesPredenuncia/{folio}"){
-        fun detallesPredenuncia(folio: String) = "DetallesPredenuncia/$folio"
-    }
 }

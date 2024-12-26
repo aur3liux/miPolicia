@@ -142,7 +142,7 @@ class Vial() {
                 )
             ) {
                 append(
-                    "Prohibe obstruir o utilizar los espacios destinados al estacionamiento de los vehículos de personas con discapacidad, así como los de sus\n" +
+                    "Prohibe obstruir o utilizar los espacios destinados al estacionamiento de los vehículos de personas con discapacidad, así como los de sus " +
                     "rampas de acceso a las banquetas y vías peatonales"
                 )
             }

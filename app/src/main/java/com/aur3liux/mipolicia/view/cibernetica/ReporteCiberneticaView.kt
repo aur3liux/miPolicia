@@ -84,8 +84,6 @@ import com.aur3liux.mipolicia.model.RequestPredenuncia
 import com.aur3liux.mipolicia.services.PredenunciaRepo
 import com.aur3liux.mipolicia.ui.theme.botonColor
 import com.aur3liux.mipolicia.ui.theme.lGradient1
-import com.aur3liux.mipolicia.viewmodel.PredenunciaVM
-import com.aur3liux.mipolicia.viewmodel.PredenunciaVMFactory
 import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -130,12 +128,7 @@ fun ReporteCiberneticaView(navC: NavController) {
         contentScale = ContentScale.Crop,
     )
 
-    //viewmodel
-    val predViewModel: PredenunciaVM = viewModel(
-        factory = PredenunciaVMFactory(predenunciaRepository = PredenunciaRepo())
-    )
 
-    val predState = remember(predViewModel) {predViewModel.PredenunciaMetaData}.observeAsState() //LiveData
     val onPrepareSend = remember{ mutableStateOf(false) }
     val onProccesing = remember{ mutableStateOf(false) }
     val onCancel = remember{ mutableStateOf(false) }
@@ -367,7 +360,7 @@ fun ReporteCiberneticaView(navC: NavController) {
             jsonObj.put("township", "Campeche")
             jsonObj.put("place", "San Francisco de Campeche")
             jsonObj.put("complaint_type", 1)
-            predViewModel.DoSendPredenuncia(context, jsonObj)
+            //predViewModel.DoSendPredenuncia(context, jsonObj)
             enabledInput.value = false
         }else {
             onPrepareSend.value = false
@@ -418,47 +411,4 @@ fun ReporteCiberneticaView(navC: NavController) {
             })
     }
 
-    if(onProccesing.value) {
-        Spacer(modifier = Modifier.padding(horizontal = 16.dp))
-        predState.value?.let {
-            when(predState.value){
-                is RequestPredenuncia.Succes -> {
-                    Log.i("NAATS","SUCCES" )
-                    val mData = predState.value as RequestPredenuncia.Succes
-                    onProccesing.value = false
-                    db.myPredenunciaDao().insertPredenuncia(MyPredenunciaData(
-                        folio = mData.metadata.folio,
-                        estatus = mData.metadata.estatus,
-                        delito = currentPredTmp.delito,
-                        subDelito = currentPredTmp.subDelito,
-                        modulo = mData.metadata.modulo,
-                        ciudad = "Campeche",
-                        descripcion = descripcion.value,
-                        fecha = ToolBox.getLocalDate(),
-                        hora = ToolBox.getCurrentTime(),
-                        fechaModif = ToolBox.getLocalDate(),
-                        horaModif = ToolBox.getCurrentTime() )
-                    )
-                   // db.predenunciaTmp().clearPredenunciasTmp()
-                    navC.navigate(Router.FINISH_PREDENUNCIA.finishPredenuncia(folio = mData.metadata.folio)) {
-                        popUpTo(navC.graph.id) { inclusive = true }
-                    }
-                } //Succes
-                is RequestPredenuncia.Error -> {
-                    Log.i("NAATS","ERROR" )
-                    onProccesing.value = false
-                    val errorLogin = predState.value as RequestPredenuncia.Error
-                    messageError.value = "${errorLogin.errorMessage}"
-                    showSheetError.value = true
-                    onProccesing.value = false
-                    predViewModel.resetPredenuncia()
-                    enabledInput.value = true
-                }//Error
-                else -> {
-                    onProccesing.value = false
-                    enabledInput.value = true
-                }
-            }//when
-        }//observable let
-    }//onProccesing
 }
