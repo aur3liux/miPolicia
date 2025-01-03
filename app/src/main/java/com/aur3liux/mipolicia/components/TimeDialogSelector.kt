@@ -1,5 +1,6 @@
 package com.aur3liux.mipolicia.components
 
+import android.util.Log
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,11 +11,13 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialWithDialogExample(
+    txTime: MutableState<String>,
     onConfirm: (TimePickerState) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -31,8 +34,10 @@ fun DialWithDialogExample(
         onConfirm = { onConfirm(timePickerState) }
     ) {
         TimePicker(
-            state = timePickerState,
+            state = timePickerState
         )
+        txTime.value = timePickerState.hour.toString() + ":" + timePickerState.minute.toString()
+        Log.i("TIME", timePickerState.hour.toString() + ":" + timePickerState.minute.toString())
     }
 }
 
@@ -58,10 +63,14 @@ fun TimePickerDialog(
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = MaterialTheme.colorScheme.secondary
                 ),
-                onClick = { onConfirm() }) {
+                onClick = {
+                    onConfirm()
+                }) {
                 Text("OK")
             }
         },
-        text = { content() }
+        text = {
+            content()
+        }
     )
 }

@@ -13,6 +13,7 @@ sealed class Router(val route: String) {
     object REGLAMENTO_TRANSITO: Router("ReglamentoTransito")
     object REPORTE_CIUDADANO: Router("ReporteCiudadano")
     object QUEJAS_FELICITACIONES: Router("QuejaFelicitacionView")
+    object ACOMPANAMIENTO_BANCARIO_VIEW: Router("AcompanamientoBancarioView")
 
     object VIDEO_PLAYER: Router("VideoPlayer")
     object POLICIA_CIBERNETICA: Router("PoliciaCiberneticaView")

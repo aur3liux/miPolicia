@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,13 +18,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -49,7 +50,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,22 +58,26 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.room.Room.databaseBuilder
-import com.aur3liux.mipolicia.R
+import coil.compose.AsyncImage
 import com.aur3liux.mipolicia.localdatabase.Store
 import com.aur3liux.mipolicia.ToolBox
 import com.aur3liux.mipolicia.localdatabase.AppDb
-import com.aur3liux.mipolicia.model.RequestResponse
 import com.aur3liux.mipolicia.model.SectorResponse
 import com.aur3liux.mipolicia.services.ConsultaSectorRepo
 import com.aur3liux.mipolicia.ui.theme.cronosColor
 import com.aur3liux.mipolicia.ui.theme.shapePrincipalColor
 import com.aur3liux.mipolicia.ui.theme.textShapePrincipalColor
-import com.aur3liux.mipolicia.ui.theme.titleShapePrincipalColor
 import com.aur3liux.mipolicia.view.dialogs.ErrorDialog
+import com.aur3liux.mipolicia.view.dialogs.PhotoDialog
 import com.aur3liux.mipolicia.viewmodel.ConsultaSectorVM
 import com.aur3liux.mipolicia.viewmodel.ConsultaSectorVMFactory
 import kotlinx.coroutines.delay
 import java.io.IOException
+
+data class ComandanteCard(
+    val urlImg: String,
+    val nombre: String
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
@@ -90,10 +94,15 @@ fun SectorView(navC: NavController) {
     val user = db.userDao().getUserData()
 
     val nombreSector = remember { mutableStateOf("") }
-    val nombreResponsable = remember { mutableStateOf("") }
+    val nombreDirector = remember { mutableStateOf("") }
+    val nombreResponsableA = remember { mutableStateOf("") }
+    val nombreResponsableB = remember { mutableStateOf("") }
     val direccion = remember { mutableStateOf("") }
     val telefono = remember { mutableStateOf("") }
-    val photoUrl = remember { mutableStateOf("") }
+    val telefonoDir = remember { mutableStateOf("") }
+    val photoDirector = remember { mutableStateOf("") }
+    val photoUrlA = remember { mutableStateOf("") }
+    val photoUrlB = remember { mutableStateOf("") }
 
     val onProccessing = rememberSaveable { mutableStateOf(false) }
     val visible = remember { mutableStateOf(false) }
@@ -101,9 +110,16 @@ fun SectorView(navC: NavController) {
     val showSheetError = remember { mutableStateOf(false) }
     val messageError = remember { mutableStateOf("") }
 
+    val showPhotoDialog = remember { mutableStateOf(false) }
+    val currentPhoto = remember { mutableStateOf("") }
+    val currentName = remember { mutableStateOf("") }
+
     val info = buildAnnotatedString {
         append(messageError.value)
     }
+
+    //Lista de opciones
+    val listaComandantes = ArrayList<ComandanteCard>()
 
     //viewmodel
     val consultaSectorViewModel: ConsultaSectorVM = viewModel(
@@ -136,7 +152,7 @@ fun SectorView(navC: NavController) {
                         modifier = Modifier
                             .size(30.dp)
                             .clickable { navC.popBackStack() },
-                        imageVector = Icons.Filled.ArrowBackIosNew,
+                        imageVector = Icons.Filled.Close,
                         contentDescription = "", tint = textShapePrincipalColor)})
         }) {
         Column(
@@ -144,14 +160,13 @@ fun SectorView(navC: NavController) {
                 .background(MaterialTheme.colorScheme.background)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             LaunchedEffect(key1 = true) {
                 delay(300L)
                 try {
-                    consultaSectorViewModel.DoIntentoLlamada(context, locationDb.latitud, locationDb.longitud)
+                    consultaSectorViewModel.DoIntentoLlamada(context, locationDb.latitud, locationDb.longitud, user.device)
                     onProccessing.value = true
                 }catch (e: IOException) {
 
@@ -161,7 +176,7 @@ fun SectorView(navC: NavController) {
                 if (!visible.value) {
                     CircularProgressIndicator(
                         modifier = Modifier
-                            .size(60.dp)
+                            .size(70.dp)
                             .background(Color.Transparent),
                         color = cronosColor,
                         strokeWidth = 4.dp
@@ -175,89 +190,105 @@ fun SectorView(navC: NavController) {
                         color = MaterialTheme.colorScheme.primary
                     )
                 } else {
+                    listaComandantes.add(ComandanteCard(urlImg = photoDirector.value, nombre = nombreDirector.value))
+                    listaComandantes.add(ComandanteCard(urlImg = photoUrlA.value, nombre = nombreResponsableA.value))
+                    listaComandantes.add(ComandanteCard(urlImg = photoUrlB.value, nombre = nombreResponsableB.value))
+
+                    Spacer(modifier = Modifier.height(80.dp))
+                    Column(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(0.9f),
+                            text = "Su ubicación aproximada",
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Start,
+                            fontFamily = ToolBox.quatroSlabFont,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold)
+
+                        Text(
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp),
+                            text = direccion.value,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 12.sp,
+                            lineHeight = 15.sp,
+                            color = MaterialTheme.colorScheme.primary)
+                    }
+                    HorizontalDivider()
+
+                    Row(modifier = Modifier.fillMaxWidth(0.9f),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Sector ",
+                            fontWeight = FontWeight.Bold,
+                            lineHeight = 15.sp,
+                            fontSize = 15.sp,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.primary)
+                        Text(
+                            text = nombreSector.value,
+                            fontSize = 14.sp,
+                            fontFamily = ToolBox.montseFont,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Medium)
+                    }
+
                     Spacer(modifier = Modifier.height(20.dp))
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 10.dp),
-                        text = "Usted se encuentra aproximadamente:",
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 15.sp,
-                        fontSize = 15.sp,
-                        textAlign = TextAlign.Start,
-                        color = titleShapePrincipalColor
-                    )
 
                     Text(
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp),
-                        text = direccion.value,
-                        fontWeight = FontWeight.Normal,
+                        modifier = Modifier.fillMaxWidth(0.9f),
+                        text = "Responsables del sector",
                         fontSize = 12.sp,
-                        lineHeight = 15.sp,
+                        textAlign = TextAlign.Start,
+                        fontFamily = ToolBox.quatroSlabFont,
                         color = MaterialTheme.colorScheme.primary,
-                    )
+                        fontWeight = FontWeight.Bold)
+
+                    //RESPONSABLES
+                    LazyRow(modifier = Modifier.fillMaxWidth()) {
+                        itemsIndexed(listaComandantes) { posicion, comandante ->
+                            Column(modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .padding(horizontal = 10.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally) {
+
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .width(300.dp)
+                                        .clip(RoundedCornerShape(10.dp)),
+                                    contentScale = ContentScale.FillWidth,
+                                    model = comandante.urlImg,
+                                    contentDescription = "")
+
+                                Text(
+                                    modifier = Modifier
+                                        .width(300.dp)
+                                        .height(60.dp),
+                                    text = comandante.nombre,
+                                    fontSize = 10.sp,
+                                    textAlign = TextAlign.Center,
+                                    fontFamily = ToolBox.quatroSlabFont,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Medium,
+                                    lineHeight = 15.sp)
+                            }
+                        }
+                    }//LazyRo
 
                     HorizontalDivider()
 
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp, 10.dp, 20.dp, 5.dp),
-                        text = "En este sector puede pedir apoyo",
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 15.sp,
-                        fontSize = 15.sp,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.primary
+                        modifier = Modifier.fillMaxWidth(0.9f),
+                        text = "Teléfono de atención 24 hrs.",
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Start,
+                        fontFamily = ToolBox.quatroSlabFont,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
                     )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Sector: ",
-                            fontSize = 12.sp,
-                            fontFamily = ToolBox.quatroSlabFont,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = nombreSector.value,
-                            fontSize = 11.sp,
-                            fontFamily = ToolBox.montseFont,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Medium
-                        )
-                    } //Row nombre completo
-
-                    //DATOS
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Responsable: ",
-                            fontSize = 12.sp,
-                            fontFamily = ToolBox.quatroSlabFont,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = nombreResponsable.value,
-                            fontSize = 12.sp,
-                            fontFamily = ToolBox.quatroSlabFont,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Medium
-                        )
-                    } //Row
 
                     Text(
                         modifier = Modifier.padding(5.dp),
@@ -278,8 +309,11 @@ fun SectorView(navC: NavController) {
                     ) {
                         //Whatsapp
                         Button(
-                            modifier = Modifier.width(120.dp).height(40.dp),
-                            onClick = {                                          try {
+                            modifier = Modifier
+                                .width(120.dp)
+                                .height(40.dp),
+                            onClick = {
+                                try {
                                 context.startActivity(
                                     Intent(
                                         Intent.ACTION_VIEW, Uri.parse(
@@ -316,7 +350,9 @@ fun SectorView(navC: NavController) {
 
                         //Llamada
                         Button(
-                            modifier = Modifier.width(120.dp).height(40.dp),
+                            modifier = Modifier
+                                .width(120.dp)
+                                .height(40.dp),
                             onClick = {
                                 val u = Uri.parse("tel:${telefono.value}")
                                 val i = Intent(Intent.ACTION_DIAL, u)
@@ -350,19 +386,6 @@ fun SectorView(navC: NavController) {
                         }//Button
                     } //Row
 
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    //Foto
-                    Image(
-                        painter = painterResource(id = R.drawable.agente),
-                        contentDescription = "",
-                        contentScale = ContentScale.FillWidth,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(15.dp))
-                            .size(300.dp)
-                            .padding(bottom = 20.dp)
-                    )
-
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -374,25 +397,19 @@ fun SectorView(navC: NavController) {
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    /*   Image(
-                 painter = rememberAsyncImagePainter("https://images.vexels.com/media/users/3/148636/isolated/lists/d43fb2408da613edbe2e664e01729c03-mapa-del-estado-de-campeche.png" ),
-                 contentDescription = "",
-                 modifier = Modifier
-                     .wrapContentHeight()
-                     .wrapContentWidth() )
-
-                AsyncImage(
-                     modifier = Modifier
-                         .padding(top = 20.dp),
-                        // .fillMaxWidth(),
-                    // model = photoUrl.value,
-                     model = "https://images.vexels.com/media/users/3/148636/isolated/lists/d43fb2408da613edbe2e664e01729c03-mapa-del-estado-de-campeche.png",
-                     contentDescription = ""
-                 )
-                */
                 } //Validamos que el usuario no sea nulo
+            Spacer(modifier = Modifier.height(40.dp))
         } //Column
     }//Scaffold
+
+    if (showPhotoDialog.value) {
+        PhotoDialog(
+            nombre = currentName.value,
+            photoUrl = currentPhoto.value,
+            onConfirmation = {
+                showPhotoDialog.value = false
+         })
+    }
 
     if (showSheetError.value) {
         ErrorDialog(
@@ -414,10 +431,15 @@ fun SectorView(navC: NavController) {
                     Log.i("MIPOLICIA","SUCCES" )
                     val infoSector = sectorState.value as SectorResponse.Succes
                     nombreSector.value = infoSector.sectorData.nombreSector
-                    nombreResponsable.value = infoSector.sectorData.nombreResponsable
+                    nombreDirector.value = infoSector.sectorData.nombreDirector
+                    nombreResponsableA.value = infoSector.sectorData.nombreResponsable_A
+                    nombreResponsableB.value = infoSector.sectorData.nombreResponsable_B
                     direccion.value = infoSector.sectorData.address
+                    telefonoDir.value = infoSector.sectorData.phone_do
                     telefono.value = infoSector.sectorData.phone
-                    photoUrl.value = infoSector.sectorData.photo
+                    photoDirector.value = infoSector.sectorData.photo_Director
+                    photoUrlA.value = infoSector.sectorData.photo_A
+                    photoUrlB.value = infoSector.sectorData.photo_B
                     onProccessing.value = false
                     visible.value = true
                     consultaSectorViewModel.resetConsultaSector()

@@ -28,11 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
-data class ReporteImg(
-    @DrawableRes val imageResId: Int,
-    val nameResId: String,
-    val estatus: Boolean
-)
 
 @Composable
 fun ReporteCard(

@@ -1,6 +1,7 @@
 package com.aur3liux.mipolicia.view.dialogs
 
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -28,12 +31,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil.compose.AsyncImage
+import com.aur3liux.mipolicia.components.DialogButton
 import com.aur3liux.mipolicia.ui.theme.shapePrincipalColor
 import com.aur3liux.mipolicia.ui.theme.textShapePrincipalColor
 import com.google.android.gms.maps.model.CameraPosition
@@ -46,10 +52,9 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-fun MapDialog(
-    latitud : Double,
-    longitud : Double,
-    selectLocation: MutableState<LatLng>,
+fun PhotoDialog(
+    nombre : String,
+    photoUrl : String,
     onConfirmation: () -> Unit,
     spaceBetweenElements: Dp = 18.dp) {
 
@@ -61,33 +66,21 @@ fun MapDialog(
                 modifier = Modifier.fillMaxWidth(),
                 color = Color.Transparent // dialog background
             ) {
-
-                val cameraPositionState = rememberCameraPositionState {
-                    position = CameraPosition.fromLatLngZoom(LatLng(latitud,longitud), 17f)
-                }
-                val propertiesMap = remember {
-                    mutableStateOf(
-                        MapProperties(
-                            isMyLocationEnabled = true,
-                            mapType = MapType.NORMAL)
-                    )
-                }
-
                 Column(
                     modifier = Modifier
                         .padding(top = 30.dp)
-                        .height(700.dp)
-                        .fillMaxWidth(0.6f)
+                        .fillMaxWidth()
                         .background(
                             color = shapePrincipalColor,
                             shape = RoundedCornerShape(percent = 10)
                         ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Spacer(modifier = Modifier.height(height = spaceBetweenElements))
                     Text(
                         modifier = Modifier
                             .padding(20.dp),
-                        text = "Para aplicar la ubicación marque en el mapa el lugar donde sucedió el evento",
+                        text = nombre,
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
                         lineHeight = 17.sp,
@@ -95,26 +88,19 @@ fun MapDialog(
                         color = textShapePrincipalColor
                     )
 
-                    GoogleMap(
+                    AsyncImage(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(0.65f),
-                        contentDescription = "Seleccione",
-                        onMapClick = { location ->
-                            selectLocation.value = LatLng(location.latitude, location.longitude)
-                        },
-                        properties = propertiesMap.value,
-                        cameraPositionState = cameraPositionState) {
-                        Marker(
-                            state = MarkerState(position = selectLocation.value),
-                            title = "Mi policía",
-                            snippet = "¿Aqui sucedió su reporte?"
-                        )
-                    }
+                            .padding(top = 20.dp)
+                            .fillMaxWidth(),
+                        contentScale = ContentScale.FillWidth,
+                        model = photoUrl,
+                        contentDescription = ""
+                    )
+
 
                     Spacer(modifier = Modifier.height(40.dp))
-                    DialogButtonMap(
-                        buttonText = "Aplicar") {
+                    DialogButton(
+                        buttonText = "Aceptar") {
                         onConfirmation()
                     }
 
@@ -141,33 +127,4 @@ fun MapDialog(
                 }
             }
         }
-}
-
-
-@Composable
-fun DialogButtonMap(
-    cornerRadiusPercent: Int = 26,
-    buttonText: String,
-    onDismiss: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .width(200.dp)
-            .background(
-                color = MaterialTheme.colorScheme.inverseSurface,
-                shape = RoundedCornerShape(percent = cornerRadiusPercent)
-            )
-            .clickable {
-                onDismiss()
-            }
-            .padding(horizontal = 16.dp, vertical = 6.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = buttonText,
-            color = Color.White,
-            fontSize = 18.sp,
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
 }

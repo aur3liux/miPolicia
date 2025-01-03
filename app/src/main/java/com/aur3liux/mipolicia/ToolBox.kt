@@ -1,14 +1,17 @@
 package com.aur3liux.mipolicia
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.media.MediaPlayer
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Base64
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -136,6 +139,17 @@ object ToolBox {
         return hora
     }
 
+    fun mergeDateTime(date: String, time: String): String {
+        if(date.isBlank() || time.isBlank())
+            return ""
+        else {
+            val clearDate  = date.replace("-", "")
+            val clearTime = time.replace(":", "")
+            return "$clearDate $clearTime"
+        }
+   }
+
+
     //Recibe un string on fecha
     fun getDateFromStr(d:String):String {
         return d.substring(0, 10)
@@ -144,5 +158,13 @@ object ToolBox {
     //Recibe un string on fecha
     fun getTimeFromStr(d:String):String {
         return d.substring(11, 19)
+    }
+
+    // convierte una Imagen bitmap a Base64
+    fun BitmaptoBase64(bm: Bitmap): String? {
+        val baos = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val b = baos.toByteArray()
+        return Base64.encodeToString(b, Base64.DEFAULT)
     }
 }

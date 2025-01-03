@@ -3,48 +3,47 @@ package com.aur3liux.mipolicia.services
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.aur3liux.mipolicia.model.RequestResponse
 import androidx.room.Room
+import com.android.volley.AuthFailureError
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
+import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.aur3liux.mipolicia.localdatabase.AppDb
 import com.aur3liux.mipolicia.localdatabase.Store
-import com.aur3liux.mipolicia.model.PredenunciaMetaData
-import com.aur3liux.mipolicia.model.RequestPredenuncia
 import org.json.JSONObject
 import java.lang.Exception
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 
-class PredenunciaRepo @Inject constructor() {
+class ReporteRepo @Inject constructor() {
 
     //-- INICIO DE SESION
-    fun doPredenuncia(context: Context, jsonObj: JSONObject): MutableLiveData<RequestPredenuncia> {
-        val _userData: MutableLiveData<RequestPredenuncia> = MutableLiveData<RequestPredenuncia>()
-        val url = "${Store.API_URL.BASE_URL}/api/complaints/register"
+    fun doSendReport(context: Context, json: JSONObject): MutableLiveData<RequestResponse> {
+        val _userData: MutableLiveData<RequestResponse> = MutableLiveData<RequestResponse>()
+        val url = "${Store.API_URL.BASE_URL}/api/citizen/report"
 
         //-- DATOS PARA LA BASE DE DATOS LOCAL
         val db = Room.databaseBuilder(context, AppDb::class.java, Store.DB.NAME)
             .allowMainThreadQueries()
             .build()
+        val dataUser = db.userDao().getUserData()
+        val credentials = dataUser.tokenAccess
         try {
             var queue = Volley.newRequestQueue(context)
-            val jsonObjectRequest =
-                JsonObjectRequest(Request.Method.POST, url, jsonObj, { response ->
-                    Log.i("NAATS", "Response %s".format(response.toString()))
-                    if (response.getBoolean("permitido")) {
-                        val dataResponse = response.getJSONObject("data")
-                        _userData.postValue(RequestPredenuncia.Succes(
-                            PredenunciaMetaData(
-                                folio = dataResponse.getString("folio"),
-                                estatus = dataResponse.getString("estatus"),
-                                modulo = dataResponse.getString("modulo")
-                            )))
+            val jsonObjectRequest = DoRequestSentReport(
+                method = Request.Method.POST,
+                json = json,
+                url = url, { response ->
+                    Log.i("MI POLICIA", "Response %s".format(response.toString()))
+                    if (response.getBoolean("success")) {
+                        _userData.postValue(RequestResponse.Succes())
                     } else {
                         val errMg = response.getString("message")
                         _userData.postValue(
-                            RequestPredenuncia.Error(
+                            RequestResponse.Error(
                                 estatusCode = -1,
                                 errorMessage = errMg.toString()
                             )
@@ -53,7 +52,7 @@ class PredenunciaRepo @Inject constructor() {
                 }, { error ->
                     if (error.networkResponse == null) {
                         _userData.postValue(
-                            RequestPredenuncia.Error(
+                            RequestResponse.Error(
                                 estatusCode = -1,
                                 errorMessage = "Problemas de conexión con el servidor"
                             )
@@ -63,7 +62,7 @@ class PredenunciaRepo @Inject constructor() {
                         when(errorCode){
                             400 ->{
                                 _userData.postValue(
-                                    RequestPredenuncia.Error(
+                                    RequestResponse.Error(
                                         estatusCode = errorCode,
                                         errorMessage = "No se puede procesar la información que envías, verifica tus datos si error persiste reportalo a soporte técnico."
                                     )
@@ -71,7 +70,7 @@ class PredenunciaRepo @Inject constructor() {
                             } // BAD REQUEST
                             401 -> {
                                 _userData.postValue(
-                                    RequestPredenuncia.Error(
+                                    RequestResponse.Error(
                                         estatusCode = errorCode,
                                         errorMessage = "Las credenciales de acceso no tienen permiso, verifica que estén correctas o intenta con otra."
                                     )
@@ -79,7 +78,7 @@ class PredenunciaRepo @Inject constructor() {
                             }//NO AUTORIZADO
                             404 -> {
                                 _userData.postValue(
-                                    RequestPredenuncia.Error(
+                                    RequestResponse.Error(
                                         estatusCode = errorCode,
                                         errorMessage = "El recurso solicitado no existe, repórtalo a soporte técnico"
                                     )
@@ -87,7 +86,7 @@ class PredenunciaRepo @Inject constructor() {
                             }//RECURSO NO ENCONTRADO
                             else -> {
                                 _userData.postValue(
-                                    RequestPredenuncia.Error(
+                                    RequestResponse.Error(
                                         estatusCode = errorCode,
                                         errorMessage = "El recurso solicitado no fue encontrado en el servidor"
                                     )
@@ -95,30 +94,55 @@ class PredenunciaRepo @Inject constructor() {
                             } //else del when
                         }// when
                     } // else
-                })
+                },
+                credentials = credentials)
             jsonObjectRequest.setRetryPolicy(
                 DefaultRetryPolicy(
-                    90000,
+                    60000,
                     DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
                 )
             )
             queue.add(jsonObjectRequest)
         } catch (e: Exception) {
             _userData.postValue(
-                RequestPredenuncia.Error(
+                RequestResponse.Error(
                     estatusCode = 0,
                     errorMessage = "No se puede procesar la información"
                 )
             )
         } catch (ex: SocketTimeoutException) {
             _userData.postValue(
-                RequestPredenuncia.Error(
+                RequestResponse.Error(
                     estatusCode = 6000,
                     errorMessage = "Tiempo de conexión excedido"
                 )
             )
         }
         return _userData
-    } // INICIO DE SESION
+    } // CIERRE DE SESION
+
+
+    class DoRequestSentReport(
+        method:Int,
+        json: JSONObject?,
+        url: String,
+        listener: Response.Listener<JSONObject>,
+        errorListener: Response.ErrorListener,
+        credentials:String
+    ) : JsonObjectRequest(method,url, json, listener, errorListener) {
+
+        private var mCredentials:String = credentials
+
+        @Throws(AuthFailureError::class)
+        override fun getHeaders(): Map<String, String> {
+            val headers = HashMap<String, String>()
+            headers["Content-Type"] = "application/json"
+            val auth = "Bearer $mCredentials"
+            headers["Authorization"] = auth
+            return headers
+        }
+    }
+
+
 }
 

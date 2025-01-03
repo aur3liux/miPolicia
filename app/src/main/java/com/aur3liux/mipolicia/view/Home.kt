@@ -5,10 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,22 +22,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.ShareLocation
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -49,6 +47,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -66,7 +65,6 @@ import com.aur3liux.mipolicia.Router
 import com.aur3liux.mipolicia.ToolBox
 import com.aur3liux.mipolicia.components.MenuCard
 import com.aur3liux.mipolicia.components.MenuImg
-import com.aur3liux.mipolicia.components.RoundedButtonH
 import com.aur3liux.mipolicia.view.dialogs.ConfirmDialog
 import com.aur3liux.mipolicia.localdatabase.AppDb
 import com.aur3liux.mipolicia.localdatabase.Store
@@ -87,6 +85,7 @@ import com.aur3liux.mipolicia.viewmodel.LogOutVM
 import com.aur3liux.mipolicia.viewmodel.LogOutVMFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
@@ -94,7 +93,7 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
 import org.json.JSONObject
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun Home(navC: NavController) {
@@ -117,7 +116,7 @@ fun Home(navC: NavController) {
     val showSheetError = remember { mutableStateOf(false) }
     val messageError = remember { mutableStateOf("") }
 
-    val confirmCall911 = rememberSaveable { mutableStateOf(false) }
+    val confirmCallZazil = rememberSaveable { mutableStateOf(false) }
 
     val onConfirmQuejaReporte = rememberSaveable { mutableStateOf(false) }
     val confirmCloseSession = rememberSaveable { mutableStateOf(false) }
@@ -157,7 +156,7 @@ fun Home(navC: NavController) {
             MapProperties(
                 isMyLocationEnabled = true,
                 mapType = MapType.NORMAL,
-               // mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, if(darkTheme) R.raw.dark_maps else R.raw.light_map)
+                mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.dark_maps_origin )
                // mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, if(darkTheme) R.raw.dark_maps else R.raw.light_map)
             )
         )
@@ -171,7 +170,7 @@ fun Home(navC: NavController) {
         )
     }
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(selectLocation.value, 14f)
+        position = CameraPosition.fromLatLngZoom(selectLocation.value, 15f)
     }
 
 
@@ -179,22 +178,7 @@ fun Home(navC: NavController) {
         modifier = Modifier
             .fillMaxSize(),
         containerColor = shapePrincipalColor,
-        floatingActionButtonPosition = FabPosition.End,
-        floatingActionButton = {
-            //BOTON PARA EL MENU PRINCIPAL DESPLEGABLE
-            FloatingActionButton(
-                modifier = Modifier
-                    .size(60.dp),
-                shape = CircleShape,
-                onClick = {
-                    showMenuPrincipal.value = true
-                },
-                containerColor = MaterialTheme.colorScheme.inverseSurface,
-                contentColor = MaterialTheme.colorScheme.surface
-            ) {
-                Icon(imageVector = Icons.Filled.Menu, contentDescription = "")
-            }
-        }) {
+        floatingActionButtonPosition = FabPosition.Start) {
 
         Column(
             modifier = Modifier
@@ -225,7 +209,7 @@ fun Home(navC: NavController) {
                         fontSize = 24.sp,
                         letterSpacing = 0.3.sp,
                         fontFamily = ToolBox.gmxFontRegular,
-                        color = textShapePrincipalColor,
+                        color = titleShapePrincipalColor,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                     Text(
@@ -233,140 +217,209 @@ fun Home(navC: NavController) {
                         fontSize = 10.sp,
                         letterSpacing = 0.2.sp,
                         fontFamily = ToolBox.gmxFontRegular,
-                        color = Color.White,
+                        color = titleShapePrincipalColor,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 } //Column encabezado titulos
-
             } //Row encabezado titulos
 
-            //FILA DE BOTONES
-            Row(modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .height(120.dp),
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.SpaceEvenly){
-                //Llamada 911
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.Call,
-                        "Emergencias 911"
-                    ),
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .weight(0.33f)
-                        .padding(8.dp),
-                    colorBack = titleShapePrincipalColor,
-                    fSize = 12.sp,
-                    w = 60.dp,
-                    h = 60.dp,
-                    colorTx = textShapePrincipalColor,
-                    colorTint = shapePrincipalColor
-                ) {
-                    confirmCall911.value = true
-                }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background),
+                shape = RoundedCornerShape(15.dp)
+            ) {
+                Box(modifier = Modifier
+                    .fillMaxWidth(),
+                    contentAlignment = Alignment.BottomCenter){
+                    if(onCloseSession.value){
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(60.dp)
+                                .background(Color.Transparent),
+                            color = botonColor,
+                            strokeWidth = 4.dp
+                        )
+                        Text(
+                            modifier = Modifier
+                                .padding(vertical = 5.dp)
+                                .padding(bottom = 100.dp),
+                            text = "Solicitando",
+                            fontSize = 10.sp,
+                            fontFamily = ToolBox.montseFont,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Medium
+                        )
+                    } //if onCloseSession
+                    else {
+                        GoogleMap(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .border(1.dp, Color.Black),
+                            contentDescription = "",
+                            properties = propertiesMap.value,
+                            uiSettings = settingsMap.value,
+                            cameraPositionState = cameraPositionState
+                        ) {} //Maps
 
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.Gavel,
-                        "Reglamento y ley de  vialidad"
-                    ),
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .weight(0.33f)
-                        .padding(8.dp),
-                    colorBack = titleShapePrincipalColor,
-                    fSize = 12.sp,
-                    w = 60.dp,
-                    h = 60.dp,
-                    colorTx = textShapePrincipalColor,
-                    colorTint = shapePrincipalColor
-                ) {
-                    navC.navigate(Router.MARCOLEGAL_VIEW.route)
-                }
-
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.ShareLocation,
-                        "Consulta tu sector"
-                    ),
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .weight(0.33f)
-                        .padding(8.dp),
-                    colorBack = titleShapePrincipalColor,
-                    fSize = 12.sp,
-                    w = 60.dp,
-                    h = 60.dp,
-                    colorTx = textShapePrincipalColor,
-                    colorTint = shapePrincipalColor
-                ) {
-                    navC.navigate(Router.SECTOR_VIEW.route)
-                }
-
-            } //Primera fila de botones
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background),
-                    shape = RoundedCornerShape(15.dp)
-                ) {
-                    Box(modifier = Modifier
-                        .fillMaxWidth(),
-                        contentAlignment = Alignment.Center){
-                        if(onCloseSession.value){
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .size(60.dp)
-                                    //.padding(bottom = 100.dp)
-                                    .background(Color.Transparent),
-                                color = botonColor,
-                                strokeWidth = 4.dp
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(vertical = 5.dp)
-                                    .padding(bottom = 100.dp),
-                                text = "Solicitando",
-                                fontSize = 10.sp,
-                                fontFamily = ToolBox.montseFont,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Medium
-                            )
-                        } //if onCloseSession
-                        else {
-                            GoogleMap(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .border(1.dp, Color.Black),
-                                contentDescription = "",
-                                properties = propertiesMap.value,
-                                uiSettings = settingsMap.value,
-                                cameraPositionState = cameraPositionState
-                            ) {} //Maps
+                            Column(modifier = Modifier
+                                .fillMaxWidth()
+                                .offset(x = 0.dp, y = -60.dp),
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.CenterHorizontally) {
 
                             Box(modifier = Modifier
-                                     .offset(x = -130.dp, y = 140.dp),
-                                contentAlignment = Alignment.Center) {
-                                Icon(
+                                .offset(x = 0.dp, y = -20.dp)
+                                .fillMaxWidth(0.9f),
+                                contentAlignment = Alignment.BottomCenter) {
+                                Button(
+                                    onClick = {
+                                        confirmCallZazil.value = true
+                                              },
                                     modifier = Modifier
-                                        .width(120.dp)
-                                        .height(120.dp)
-                                        .clip(CircleShape),
-                                    painter = painterResource(id = R.drawable.ic_gob),
-                                    contentDescription = "",
-                                    tint = Color.Gray
-                                )
+                                        .size(100.dp)
+                                        .border(
+                                            width = 3.dp,
+                                            color = Color(0xFF6D1A32),
+                                            shape = CircleShape
+                                        )
+                                        .shadow(
+                                            elevation = 10.dp,
+                                            shape = CircleShape,
+                                            ambientColor = Color.Red,
+                                            spotColor = Color.Red,
+                                        ),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(0xFF6D1A32)
+                                    )
+                                ) {
+                                    Text(
+                                        text = "#Zazil",
+                                        fontSize = 15.sp,
+                                        color = textShapePrincipalColor,
+                                        lineHeight = 15.sp,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                             }
-                        }
-                    } //Box para el boton 911 y el mapa
-                }//Card
 
-            Spacer(modifier = Modifier.height(80.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.9f),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+
+                                MenuCard(
+                                    menuOpc = MenuImg(
+                                        Icons.Filled.ShareLocation,
+                                        ""
+                                    ),
+                                    shape = CircleShape,
+                                    modifier = Modifier
+                                        .offset(x = 0.dp, y = -40.dp)
+                                        .padding(8.dp),
+                                    colorBack = titleShapePrincipalColor,
+                                    iconSize = 30.dp,
+                                    fSize = 12.sp,
+                                    w = 50.dp,
+                                    h = 50.dp,
+                                    colorTx = textShapePrincipalColor,
+                                    colorTint = shapePrincipalColor
+                                ) {
+                                    navC.navigate(Router.SECTOR_VIEW.route)
+                                }
+                                    //Boton para llamadas al 911
+                                    Column(
+                                        modifier = Modifier
+                                            .size(140.dp)
+                                            .border(
+                                                width = 3.dp,
+                                                color = Color(0xFFC50000),
+                                                shape = CircleShape
+                                            )
+                                            .shadow(
+                                                elevation = 10.dp,
+                                                shape = CircleShape,
+                                                ambientColor = Color.Red,
+                                                spotColor = Color.Red,
+                                            )
+                                            .combinedClickable(
+                                                onClick = {},
+                                                onLongClick = {
+                                                    //Redirigimos a la llamada
+                                                    confirmCallZazil.value = false
+                                                    ToolBox.soundEffect(context, R.raw.tap)
+                                                    val u = Uri.parse("tel:911")
+                                                    val i = Intent(Intent.ACTION_DIAL, u)
+                                                    try {
+                                                        context.startActivity(i)
+                                                    } catch (s: SecurityException) {
+                                                        Toast
+                                                            .makeText(
+                                                                context,
+                                                                "No se pudo realizar la llamada",
+                                                                Toast.LENGTH_LONG
+                                                            )
+                                                            .show()
+                                                    }
+                                                }
+                                            )
+                                            .background(Color(0xFFC50000))
+                                            .clip(CircleShape),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier.size(30.dp),
+                                            imageVector = Icons.Filled.Call,
+                                            contentDescription = "",
+                                            tint = textShapePrincipalColor
+                                        )
+                                        Text(
+                                            text = "911",
+                                            fontSize = 30.sp,
+                                            color = textShapePrincipalColor,
+                                            lineHeight = 15.sp,
+                                            textAlign = TextAlign.Center,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    } //Column
+                                MenuCard(
+                                    menuOpc = MenuImg(
+                                        Icons.Filled.Menu,
+                                        ""
+                                    ),
+                                    shape = CircleShape,
+                                    modifier = Modifier
+                                        .offset(x = 0.dp, y = -40.dp)
+                                        .padding(8.dp),
+                                    colorBack = titleShapePrincipalColor,
+                                    iconSize = 30.dp,
+                                    fSize = 12.sp,
+                                    w = 50.dp,
+                                    h = 50.dp,
+                                    colorTx = textShapePrincipalColor,
+                                    colorTint = shapePrincipalColor
+                                ) {
+                                    showMenuPrincipal.value = true
+                                }
+                            } //Row
+                                Text(
+                                    text = "Presione un instante para llamar al 911",
+                                    fontSize = 10.sp,
+                                    color = textShapePrincipalColor,
+                                    lineHeight = 15.sp,
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.Bold
+                                )
+                        }//Column
+                    } //else
+                } //Box para el boton 911 y el mapa
+            }//Card
+
+            Spacer(modifier = Modifier.height(200.dp))
         } //Column principal
 
 
@@ -454,7 +507,6 @@ fun Home(navC: NavController) {
             }
         }
 
-
         if(showMenuPrincipal.value){
             BottomSheetMenu(
                 onConfirmQuejaReporte = onConfirmQuejaReporte,
@@ -463,7 +515,6 @@ fun Home(navC: NavController) {
                 },
                 navC = navC)
         }
-
 
         //DIALOGO PARA CONFIRMAR SI QUIERE ENVIAR QUEJA O FELICITACION
         if(onConfirmQuejaReporte.value){
@@ -480,10 +531,10 @@ fun Home(navC: NavController) {
                 onCancelar = { onConfirmQuejaReporte.value = false})
         } //  if queja o felicitacion dialog
 
-        if(confirmCall911.value){
+        if(confirmCallZazil.value){
             ConfirmDialog(
                 title = "Confirmación",
-                info = "Será redirigido a la aplicacion de llamadas de su dispositivo.\n\nConfirme que desea llamar al 911",
+                info = "Para activar el código #Zazil llame al 911 y mencione la palabra 'Zazil' y una unidad de la policía, la más cercana, acudirá de inmediato a su reporte.. \n\nConfirme que desea dirigirse a la aplicación de llamada de su dispositivo.",
                 titleAceptar = "Si",
                 titleCancelar = "No",
                 onAceptar = {
@@ -491,7 +542,7 @@ fun Home(navC: NavController) {
                     onPrepareCall.value = true
 
                     //Redirigimos a la llamada
-                    confirmCall911.value = false
+                    confirmCallZazil.value = false
                     ToolBox.soundEffect(context, R.raw.tap)
                     val u = Uri.parse("tel:911")
                     val i = Intent(Intent.ACTION_DIAL, u)
@@ -508,7 +559,7 @@ fun Home(navC: NavController) {
                     }
                 },
                 onCancelar = {
-                    confirmCall911.value = false
+                    confirmCallZazil.value = false
                 })
         }
 

@@ -146,5 +146,5 @@ dependencies {
     implementation("androidx.media3:media3-ui:1.4.1")
 
     //Imagenes
-    implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }

@@ -7,7 +7,6 @@ package com.aur3liux.mipolicia.view.cibernetica
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -46,7 +45,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -64,10 +62,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.room.Room
-import coil3.compose.AsyncImage
+import coil.compose.AsyncImage
 import com.aur3liux.mipolicia.R
 import com.aur3liux.mipolicia.Router
 import com.aur3liux.mipolicia.localdatabase.Store
@@ -79,9 +76,6 @@ import com.aur3liux.mipolicia.components.MenuCard
 import com.aur3liux.mipolicia.components.MenuImg
 import com.aur3liux.mipolicia.components.RoundedButton
 import com.aur3liux.mipolicia.localdatabase.AppDb
-import com.aur3liux.mipolicia.localdatabase.MyPredenunciaData
-import com.aur3liux.mipolicia.model.RequestPredenuncia
-import com.aur3liux.mipolicia.services.PredenunciaRepo
 import com.aur3liux.mipolicia.ui.theme.botonColor
 import com.aur3liux.mipolicia.ui.theme.lGradient1
 import org.json.JSONObject

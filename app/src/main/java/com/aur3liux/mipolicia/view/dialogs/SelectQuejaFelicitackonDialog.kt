@@ -34,6 +34,7 @@ import com.aur3liux.mipolicia.ToolBox
 import com.aur3liux.mipolicia.components.MenuCard
 import com.aur3liux.mipolicia.components.MenuCardH
 import com.aur3liux.mipolicia.components.MenuImg
+import com.aur3liux.mipolicia.ui.theme.shapePrincipalColor
 
 
 @Composable
@@ -51,7 +52,6 @@ fun SelectQuejaFelicitacionDialog(
                 modifier = Modifier.fillMaxWidth(),
                 color = Color.Transparent // dialog background
             ) {
-
                     Column(
                         modifier = Modifier
                             .padding(top = 30.dp) // this is the empty space at the top
@@ -95,7 +95,8 @@ fun SelectQuejaFelicitacionDialog(
                                 fSize = 12.sp,
                                 h = 50.dp,
                                 w = 220.dp,
-                                colorBack = MaterialTheme.colorScheme.inverseSurface,
+                                colorTint = MaterialTheme.colorScheme.surfaceVariant,
+                                colorBack = shapePrincipalColor,
                                 colorTx = MaterialTheme.colorScheme.surfaceVariant
                             ) {
                                 sendQueja()
@@ -111,6 +112,7 @@ fun SelectQuejaFelicitacionDialog(
                                 fSize = 12.sp,
                                 h = 50.dp,
                                 w = 220.dp,
+                                colorTint = MaterialTheme.colorScheme.surfaceVariant,
                                 colorBack = MaterialTheme.colorScheme.inverseSurface,
                                 colorTx = MaterialTheme.colorScheme.surfaceVariant
                             ) {

@@ -21,7 +21,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DirectionsCarFilled
 import androidx.compose.material.icons.filled.EmojiPeople
+import androidx.compose.material.icons.filled.Gavel
+import androidx.compose.material.icons.filled.LiveHelp
+import androidx.compose.material.icons.filled.LocalPolice
+import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Policy
 import androidx.compose.material.icons.filled.Report
@@ -68,7 +73,7 @@ fun BottomSheetMenu(
 
     ModalBottomSheet(
         modifier = Modifier
-            .fillMaxHeight(0.3f),
+            .fillMaxHeight(0.7f),
         onDismissRequest = { onDismiss() },
         containerColor = Color.Transparent,
         sheetState = modalBottomSheetState,
@@ -78,11 +83,13 @@ fun BottomSheetMenu(
         Column(modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
 
             Row(modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .height(50.dp)
+                .weight(0.2f)
                 .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically) {
@@ -106,74 +113,179 @@ fun BottomSheetMenu(
 
             } //Row
 
-            Spacer(modifier = Modifier.height(10.dp))
+           // Spacer(modifier = Modifier.height(10.dp))
             //Primera fila de opciones
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+            Column(
+                modifier = Modifier
+                    .weight(0.8f)
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.Report,
-                        "Reporte ciudadano"
-                    ),
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .weight(0.33f)
-                        .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.surface,
-                    fSize = 12.sp,
-                    w = 60.dp,
-                    h = 60.dp,
-                    colorTx = MaterialTheme.colorScheme.surface,
-                    colorTint = MaterialTheme.colorScheme.background
-                ) {
-                    onDismiss()
-                    navC.navigate(Router.REPORTE_CIUDADANO.route)
-                }
 
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.EmojiPeople,
-                        "Quejas y felicitaciones"
-                    ),
-                    shape = CircleShape,
+                //PRIMERA FILA
+                Row(
                     modifier = Modifier
-                        .weight(0.33f)
-                        .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.surface,
-                    fSize = 12.sp,
-                    w = 60.dp,
-                    h = 60.dp,
-                    colorTx = MaterialTheme.colorScheme.surface,
-                    colorTint = MaterialTheme.colorScheme.background
+                        .background(MaterialTheme.colorScheme.background)
+                        .fillMaxWidth()
+                        .padding(start = 10.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    onConfirmQuejaReporte.value = true
-                    onDismiss()
-                }
 
-                MenuCard(
-                    menuOpc = MenuImg(
-                        Icons.Filled.Person,
-                        "Perfil del usuario"
-                    ),
-                    shape = CircleShape,
+                    MenuCard(
+                        menuOpc = MenuImg(
+                            Icons.Filled.DirectionsCarFilled,
+                            "Conduce sin alcohol"
+                        ),
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .weight(0.33f)
+                            .padding(8.dp),
+                        colorBack = MaterialTheme.colorScheme.primary,
+                        fSize = 12.sp,
+                        w = 60.dp,
+                        h = 60.dp,
+                        colorTx = MaterialTheme.colorScheme.primary,
+                        colorTint = MaterialTheme.colorScheme.background
+                    ) {
+                        onDismiss()
+
+                    }
+
+                    MenuCard(
+                        menuOpc = MenuImg(
+                            Icons.Filled.LocalPolice,
+                            "Acompañamiento bancario"
+                        ),
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .weight(0.33f)
+                            .padding(8.dp),
+                        colorBack = MaterialTheme.colorScheme.primary,
+                        fSize = 12.sp,
+                        w = 60.dp,
+                        h = 60.dp,
+                        colorTx = MaterialTheme.colorScheme.primary,
+                        colorTint = MaterialTheme.colorScheme.background
+                    ) {
+                        onDismiss()
+                        navC.navigate(Router.ACOMPANAMIENTO_BANCARIO_VIEW.route)
+                    }
+                } //Primera fila
+
+                Spacer(modifier = Modifier.height(10.dp))
+                HorizontalDivider(modifier = Modifier.fillMaxWidth(0.8f))
+                Spacer(modifier = Modifier.height(10.dp))
+
+                //SEGUNDA FILA
+                Row(
                     modifier = Modifier
-                        .weight(0.33f)
-                        .padding(8.dp),
-                    colorBack = MaterialTheme.colorScheme.surface,
-                    fSize = 12.sp,
-                    w = 60.dp,
-                    h = 60.dp,
-                    colorTx = MaterialTheme.colorScheme.surface,
-                    colorTint = MaterialTheme.colorScheme.background
+                        .background(MaterialTheme.colorScheme.background)
+                        .fillMaxWidth()
+                        .padding(start = 10.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    onDismiss()
-                    navC.navigate(Router.PERFIL_VIEW.route)
-                }
 
-            }//Row segunda fila
-            Spacer(modifier = Modifier.height(70.dp))
+                    MenuCard(
+                        menuOpc = MenuImg(
+                            Icons.Filled.LocationCity,
+                            "Reporte ciudadano"
+                        ),
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .weight(0.33f)
+                            .padding(8.dp),
+                        colorBack = MaterialTheme.colorScheme.primary,
+                        fSize = 12.sp,
+                        w = 60.dp,
+                        h = 60.dp,
+                        colorTx = MaterialTheme.colorScheme.primary,
+                        colorTint = MaterialTheme.colorScheme.background
+                    ) {
+                        onDismiss()
+                        navC.navigate(Router.REPORTE_CIUDADANO.route)
+                    }
+
+                    MenuCard(
+                        menuOpc = MenuImg(
+                            Icons.Filled.EmojiPeople,
+                            "Quejas y felicitaciones"
+                        ),
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .weight(0.33f)
+                            .padding(8.dp),
+                        colorBack = MaterialTheme.colorScheme.primary,
+                        fSize = 12.sp,
+                        w = 60.dp,
+                        h = 60.dp,
+                        colorTx = MaterialTheme.colorScheme.primary,
+                        colorTint = MaterialTheme.colorScheme.background
+                    ) {
+                        onConfirmQuejaReporte.value = true
+                        onDismiss()
+                    }
+                } //Segunda fila
+
+                Spacer(modifier = Modifier.height(10.dp))
+                HorizontalDivider(modifier = Modifier.fillMaxWidth(0.8f))
+                Spacer(modifier = Modifier.height(10.dp))
+
+                //TERCERA FILA
+                Row(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .fillMaxWidth()
+                        .padding(start = 10.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    MenuCard(
+                        menuOpc = MenuImg(
+                            Icons.Filled.Gavel,
+                            "Reglamento y Ley de vialidad"
+                        ),
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .weight(0.33f)
+                            .padding(8.dp),
+                        colorBack = MaterialTheme.colorScheme.primary,
+                        fSize = 12.sp,
+                        w = 60.dp,
+                        h = 60.dp,
+                        colorTx = MaterialTheme.colorScheme.primary,
+                        colorTint = MaterialTheme.colorScheme.background
+                    ) {
+                        onDismiss()
+                        navC.navigate(Router.MARCOLEGAL_VIEW.route)
+                    }
+
+
+                    MenuCard(
+                        menuOpc = MenuImg(
+                            Icons.Filled.Person,
+                            "Perfil del usuario"
+                        ),
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .weight(0.33f)
+                            .padding(8.dp),
+                        colorBack = MaterialTheme.colorScheme.primary,
+                        fSize = 12.sp,
+                        w = 60.dp,
+                        h = 60.dp,
+                        colorTx = MaterialTheme.colorScheme.primary,
+                        colorTint = MaterialTheme.colorScheme.background
+                    ) {
+                        onDismiss()
+                        navC.navigate(Router.PERFIL_VIEW.route)
+                    }
+                }//Row tercera fila
+            }
+           // Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }

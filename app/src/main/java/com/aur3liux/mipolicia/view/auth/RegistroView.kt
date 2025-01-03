@@ -7,6 +7,7 @@ import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +17,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -28,8 +28,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -144,7 +142,7 @@ fun RegistroView(navC: NavController) {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Mi policía",
+                        text = "Registro",
                         fontSize = 15.sp,
                         letterSpacing = 0.3.sp,
                         fontFamily = ToolBox.gmxFontRegular,
@@ -164,9 +162,10 @@ fun RegistroView(navC: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(state = rememberScrollState())
                 .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top) {
+            verticalArrangement = Arrangement.Center) {
             Box(modifier = Modifier
                 .background(shapePrincipalColor)
                 .fillMaxWidth()
@@ -303,6 +302,8 @@ fun RegistroView(navC: NavController) {
                 imeAction = ImeAction.Next
             )
 
+            Spacer(modifier = Modifier.height(7.dp))
+
             //CONTRASEÑA
             TextFieldData(
                 modifier = Modifier
@@ -310,7 +311,7 @@ fun RegistroView(navC: NavController) {
                     .padding(horizontal = 20.dp),
                 textFieldValue = password,
                 textLabel = "Contraseña*",
-                txColor = Color.Black,
+                txColor = MaterialTheme.colorScheme.primary,
                 maxChar = 25,
                 enabled = enabledInput.value,
                 keyboardType = KeyboardType.Password,
@@ -359,7 +360,7 @@ fun RegistroView(navC: NavController) {
                     .padding(horizontal = 20.dp),
                 textFieldValue = passwordConfirm,
                 textLabel = "Confirmar contraseña*",
-                txColor = Color.Black,
+                txColor = MaterialTheme.colorScheme.primary,
                 maxChar = 25,
                 enabled = enabledInput.value,
                 keyboardType = KeyboardType.Password,
@@ -399,12 +400,12 @@ fun RegistroView(navC: NavController) {
                 modifier = Modifier
                     .padding(horizontal = 30.dp, vertical = 10.dp)
                     .fillMaxWidth()
-                    .height(50.dp),
+                    .height(40.dp),
                 text = "Crear cuenta",
                 fSize = 15.sp,
                 textColor = Color.White,
-                backColor = botonColor,
-                shape =   RoundedCornerShape(15.dp),
+                backColor = MaterialTheme.colorScheme.surface,
+                shape =   RoundedCornerShape(8.dp),
                 estatus = onProccesing,
                 onClick = {
                     if (hasRead.value)

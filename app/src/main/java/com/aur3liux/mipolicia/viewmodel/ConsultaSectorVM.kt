@@ -27,12 +27,13 @@ class ConsultaSectorVM @Inject constructor(private val masterRepository: Consult
     var SectorData: LiveData<SectorResponse> = _callData
 
     //******************  Iniciar sesion
-    fun DoIntentoLlamada(context: Context, latitud: Double, longitud: Double): SectorResponse {
+    fun DoIntentoLlamada(context: Context, latitud: Double, longitud: Double, device: String): SectorResponse {
         try {
             val result = masterRepository.doConsultaSector(
                 context = context,
                 latitud = latitud,
-                longitud = longitud
+                longitud = longitud,
+                device = device
             )
             MediatorLiveData<SectorResponse>().apply {
                 addSource(result) {

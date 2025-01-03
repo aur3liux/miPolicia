@@ -29,15 +29,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.aur3liux.mipolicia.R
 import com.aur3liux.mipolicia.components.ReporteCard
-import com.aur3liux.mipolicia.components.ReporteImg
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -60,6 +56,9 @@ fun MenuReporteDialog(
         "Vehículo abandonado",
         "Solicitud de rondín",
         "Abuso de autoridad",
+        "Venta de droga",
+        "Venta de alcohol de manera clandestina",
+        "Solicitar una red vecinal"
     )
 
     Dialog(onDismissRequest = {
@@ -114,62 +113,77 @@ fun MenuReporteDialog(
                             when (pos) {
                                 0 -> {
                                     reporteTx.value = "Fallas de semáforo"
-                                    index.value = 0
+                                    index.value = 1
                                 }
 
                                 1 -> {
                                     reporteTx.value = "Vialidad en mal estado"
-                                    index.value = 1
+                                    index.value = 2
                                 }
 
                                 2 -> {
                                     reporteTx.value = "Alcantarilla sin tapa"
-                                    index.value = 2
+                                    index.value = 3
                                 }
 
                                 3 -> {
                                     reporteTx.value = "Alcantarilla obstruida"
-                                    index.value = 3
+                                    index.value = 4
                                 }
 
                                 4 -> {
                                     reporteTx.value = "Falla de alumbrado público"
-                                    index.value = 4
+                                    index.value = 5
                                 }
 
                                 5 -> {
                                     reporteTx.value = "Afectación de servicios básicos (agua, drenajes, combustible, etc.)"
-                                    index.value = 5
+                                    index.value = 6
                                 }
 
                                 6 -> {
                                     reporteTx.value = "Contaminación del suelo, aire y agua"
-                                    index.value = 6
+                                    index.value = 7
                                 }
 
                                 7 -> {
                                     reporteTx.value = "Animal muerto"
-                                    index.value = 7
+                                    index.value = 8
                                 }
 
                                 8 -> {
                                     reporteTx.value = "Maltrato de animales"
-                                    index.value = 8
+                                    index.value = 9
                                 }
 
                                 9 -> {
                                     reporteTx.value = "Vehículo abandonado"
-                                    index.value = 9
+                                    index.value = 10
                                 }
 
                                 10 -> {
                                     reporteTx.value = "Solicitud de rondín"
-                                    index.value = 10
+                                    index.value = 11
                                 }
 
                                 11 -> {
                                     reporteTx.value = "Abuso de autoridad"
-                                    index.value = 11
+                                    index.value = 12
+                                }
+
+                                12 ->{
+                                    reporteTx.value = "Venta de droga"
+                                    index.value = 13
+                                }
+
+                                13 -> {
+                                    reporteTx.value = "Venta de alcohol de manera clandestina"
+                                   index.value = 14
+                                }
+
+                                14 -> {
+                                    reporteTx.value =  "Solicitar una red vecinal"
+                                    index.value = 15
                                 }
                             }
                         })

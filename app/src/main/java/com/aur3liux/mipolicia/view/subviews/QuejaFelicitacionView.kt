@@ -102,7 +102,7 @@ fun QuejaFelicitacionView(navC: NavController) {
 
     val locationDb = db.locationDao().getLocationData()
     val selectLocation =
-        remember { mutableStateOf(LatLng(locationDb.latitud, locationDb.longitud)) }
+        remember { mutableStateOf(LatLng(0.0, 0.0)) }
     val showMenuReportesDialog = rememberSaveable { mutableStateOf(false) }
     val showMapReporte = rememberSaveable { mutableStateOf(false) }
     val showDescripcionDialog = rememberSaveable { mutableStateOf(false) }
@@ -414,6 +414,7 @@ fun QuejaFelicitacionView(navC: NavController) {
         MapDialog(
             latitud = locationDb.latitud,
             longitud = locationDb.longitud,
+            selectLocation = selectLocation,
             onConfirmation = { showMapReporte.value = false })
     }
 

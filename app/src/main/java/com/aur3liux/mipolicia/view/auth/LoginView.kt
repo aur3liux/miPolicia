@@ -11,7 +11,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -318,7 +317,7 @@ fun LoginView(
                                 .height(40.dp),
                             text = "Iniciar sesión",
                             fSize = 15.sp,
-                            shape = RoundedCornerShape(15),
+                            shape = RoundedCornerShape(8.dp),
                             textColor = Color.White,
                             backColor = MaterialTheme.colorScheme.surface,
                             estatus = onProccesing,
@@ -334,9 +333,6 @@ fun LoginView(
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center
                         ) {
-
-
-
                             Text(
                                 modifier = Modifier
                                     .height(40.dp)
@@ -346,7 +342,7 @@ fun LoginView(
                                     .height(40.dp)
                                     .wrapContentHeight(align = Alignment.CenterVertically),
                                 text = "Recuperar cuenta",
-                                fontSize = 12.sp,
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.Black,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.tertiary
@@ -371,7 +367,7 @@ fun LoginView(
                                     .height(40.dp)
                                     .wrapContentHeight(align = Alignment.CenterVertically),
                                 text = "Crear cuenta",
-                                fontSize = 12.sp,
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.Black,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.tertiary
@@ -483,13 +479,14 @@ fun LoginView(
                 messageError.value = testInput
             } else {
                 if (ToolBox.testConectivity(context)) {
+                    var d = "${Build.MODEL}  ${Build.MANUFACTURER}"
                     prepareLogin.value = false
                     textoBotonLogin.value = "Iniciando"
                     onProccesing.value = true
                     val jsonObj = JSONObject()
                     jsonObj.put("email", email.value)
                     jsonObj.put("password", password.value)
-                    jsonObj.put("device", Build.MODEL)
+                    jsonObj.put("device", d)
                     jsonObj.put("notificationUserToken", dbAuth.tokenPushDao().getTokenPushNotif())
                     loginViewModel.DoLoginUser(context, jsonObj)
                     enabledInput.value = false

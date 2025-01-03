@@ -23,9 +23,9 @@ import kotlin.Exception
 
 class ConsultaSectorRepo @Inject constructor() {
     //-- CONSULTA SECTOR
-    fun doConsultaSector(context: Context, latitud: Double, longitud: Double): MutableLiveData<SectorResponse> {
+    fun doConsultaSector(context: Context, latitud: Double, longitud: Double, device: String): MutableLiveData<SectorResponse> {
         val _userData: MutableLiveData<SectorResponse> = MutableLiveData<SectorResponse>()
-        val url = "${Store.API_URL.BASE_URL}/api/sector/current?=latitude=${latitud}&longitude=${longitud}"
+        val url = "${Store.API_URL.BASE_URL}/api/sector/current?latitude=${latitud}&longitude=${longitud}&device=$device"
 
         //-- DATOS PARA LA BASE DE DATOS LOCAL
         val db = Room.databaseBuilder(context, AppDb::class.java, Store.DB.NAME)
@@ -44,11 +44,16 @@ class ConsultaSectorRepo @Inject constructor() {
                         try {
                                val dataResponse = response.getJSONObject("data")
                             val sectorInfo= SectorInfo(
-                                nombreSector = dataResponse.getJSONObject("sector").getString("name"),
-                                nombreResponsable = "${dataResponse.getJSONObject("responsable").getString("name")}  ${dataResponse.getJSONObject("responsable").getString("last_name")}",
+                                nombreSector = dataResponse.getJSONObject("sector").getString("sectores"),
+                                nombreDirector = "${dataResponse.getJSONObject("responsable").getString("fullname_do")}",
+                                nombreResponsable_A = "${dataResponse.getJSONObject("responsable").getString("fullname_schedule_a")}",
+                                nombreResponsable_B = "${dataResponse.getJSONObject("responsable").getString("fullname_schedule_b")}",
                                 address = dataResponse.getJSONObject("sector").getString("address"),
-                                phone = dataResponse.getJSONObject("sector").getString("phone"),
-                                photo = dataResponse.getJSONObject("responsable").getString("photo_url")
+                                phone = dataResponse.getJSONObject("responsable").getString("phone"),
+                                phone_do = dataResponse.getJSONObject("responsable").getString("phone_do"),
+                                photo_Director =dataResponse.getJSONObject("responsable").getString("photo_url_do"),
+                                photo_A = dataResponse.getJSONObject("responsable").getString("photo_url_a"),
+                                photo_B = dataResponse.getJSONObject("responsable").getString("photo_url_b")
                             )
 
                             _userData.postValue(SectorResponse.Succes(sectorInfo))

@@ -30,6 +30,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun MenuCardH(menuOpc: MenuImg,
              modifier: Modifier,
+             colorTint: Color,
              colorTx:Color,
              colorBack: Color,
              shape: Shape,
@@ -62,7 +63,7 @@ fun MenuCardH(menuOpc: MenuImg,
                 modifier = Modifier.size(30.dp),
                 imageVector = menuOpc.imageRes,
                 contentDescription = "",
-                tint = colorTx
+                tint = colorTint
             )
             Text(
                 text = menuOpc.texto,

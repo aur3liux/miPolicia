@@ -26,8 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.aur3liux.mipolicia.components.RoundedButton
 import com.aur3liux.mipolicia.ui.theme.botonColor
 

@@ -4,8 +4,10 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.net.Uri
-import android.widget.TimePicker
+import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,32 +37,26 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,11 +64,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.room.Room
 import com.aur3liux.mipolicia.R
@@ -84,20 +82,23 @@ import com.aur3liux.mipolicia.components.MenuImg
 import com.aur3liux.mipolicia.components.RoundedButton
 import com.aur3liux.mipolicia.localdatabase.AppDb
 import com.aur3liux.mipolicia.localdatabase.Store
+import com.aur3liux.mipolicia.model.RequestResponse
+import com.aur3liux.mipolicia.services.ReporteRepo
 import com.aur3liux.mipolicia.ui.theme.shapePrincipalColor
 import com.aur3liux.mipolicia.ui.theme.textShapePrincipalColor
+import com.aur3liux.mipolicia.view.auth.checkDataInputRegister
 import com.aur3liux.mipolicia.view.bottomsheets.BottomSheetImage
 import com.aur3liux.mipolicia.view.dialogs.AddEvienciaDialog
 import com.aur3liux.mipolicia.view.dialogs.ConfirmDialog
 import com.aur3liux.mipolicia.view.dialogs.DescripcionDialog
+import com.aur3liux.mipolicia.view.dialogs.ErrorDialog
 import com.aur3liux.mipolicia.view.dialogs.MapDialog
 import com.aur3liux.mipolicia.view.dialogs.MenuReporteDialog
-import com.google.android.gms.maps.model.CameraPosition
+import com.aur3liux.mipolicia.viewmodel.ReportVM
+import com.aur3liux.mipolicia.viewmodel.ReportVMFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapType
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.delay
+import org.json.JSONObject
 import java.io.File
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -118,27 +119,31 @@ fun ReporteCiudadano(navC: NavController) {
         .allowMainThreadQueries()
         .build()
 
-    val user = db.userDao().getUserData()
-
     val locationDb = db.locationDao().getLocationData()
-    val selectLocation = remember { mutableStateOf(LatLng(locationDb.latitud, locationDb.longitud)) }
+    val selectLocation = remember { mutableStateOf(LatLng(0.0, 0.0)) }
     val showMenuReportesDialog = rememberSaveable { mutableStateOf(false) }
     val showMapReporte = rememberSaveable { mutableStateOf(false) }
     val showDescripcionDialog = rememberSaveable { mutableStateOf(false) }
-    val txDescription = rememberSaveable { mutableStateOf(Store.APP.txDescripcion) }
+    val txDescription = rememberSaveable { mutableStateOf("") }
     val txReporte = rememberSaveable { mutableStateOf(Store.APP.txReportes) }
     val txUbicacion = rememberSaveable { mutableStateOf(Store.APP.txUbicacion) }
     val txFechaEvento = rememberSaveable { mutableStateOf("") }
+    val currentTimeEvento = rememberSaveable { mutableStateOf("") }
     val txHoraEvento = rememberSaveable { mutableStateOf("") }
     val indexReporte = rememberSaveable { mutableStateOf(0) }
 
     val onProccessing = rememberSaveable { mutableStateOf(false) }
+    val onPrepareSend = remember{ mutableStateOf(false) }
     val onConfirmSentReport = remember{ mutableStateOf(false) }
     val onAddEvicencia = remember{ mutableStateOf(false) }
 
     val showSheetError = remember { mutableStateOf(false) }
     val showSheetImage = remember { mutableStateOf(false) }
     val messageError = remember { mutableStateOf("") }
+
+    val info = buildAnnotatedString {
+        append(messageError.value)
+    }
 
     //CARGAR imagenes
     var imageUri1 = remember { mutableStateOf<Uri?>(Uri.EMPTY) }
@@ -150,8 +155,15 @@ fun ReporteCiudadano(navC: NavController) {
     val showTimePicker = remember { mutableStateOf(false) }
     val showDatePicker = remember { mutableStateOf(false) }
 
-    val snackState = remember { SnackbarHostState() }
-    val snackScope = rememberCoroutineScope()
+    //viewmodel
+    val reporteViewModel: ReportVM = viewModel(
+        factory = ReportVMFactory(reportRepository = ReporteRepo())
+    )
+
+    //LiveData
+    val reportState = remember(reporteViewModel) {
+        reporteViewModel.ReportData
+    }.observeAsState()
 
     //ABRIR LA CAMARA
     val launcher = rememberLauncherForActivityResult(
@@ -198,28 +210,6 @@ fun ReporteCiudadano(navC: NavController) {
             } else {
                 Toast.makeText(context, "Sin permiso para usar la cámara", Toast.LENGTH_SHORT).show()
             }
-        }
-
-    val propertiesMap = remember {
-        mutableStateOf(
-            MapProperties(
-                isMyLocationEnabled = true,
-                mapType = MapType.NORMAL,
-                // mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, if(darkTheme) R.raw.dark_maps else R.raw.light_map)
-                // mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, if(darkTheme) R.raw.dark_maps else R.raw.light_map)
-            )
-        )
-    }
-
-    val settingsMap = remember {
-        mutableStateOf(
-            MapUiSettings(
-                zoomControlsEnabled = false
-            )
-        )
-    }
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(selectLocation.value, 14f)
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp),
@@ -242,7 +232,7 @@ fun ReporteCiudadano(navC: NavController) {
                         modifier = Modifier
                             .clickable { navC.popBackStack() }
                             .size(30.dp),
-                        imageVector = Icons.Filled.ArrowBackIosNew,
+                        imageVector = Icons.Filled.Close,
                         contentDescription = "", tint = textShapePrincipalColor)
                 })
         }) {
@@ -252,16 +242,16 @@ fun ReporteCiudadano(navC: NavController) {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top) {
+            verticalArrangement = Arrangement.SpaceEvenly) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            //TIPO DE REPORTE
             Row(modifier = Modifier
                 .fillMaxWidth(0.9f),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically) {
 
-                //TIPO DE REPORTE
                 OutlinedTextField(
                     modifier = Modifier
                         .weight(0.8f)
@@ -307,19 +297,19 @@ fun ReporteCiudadano(navC: NavController) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            //UBICACION DE REPORTE
             Row(modifier = Modifier
                 .fillMaxWidth(0.9f),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically) {
 
-                //UBICACION DE REPORTE
                 OutlinedTextField(
                     modifier = Modifier
                         .weight(0.8f)
                         .padding(end = 10.dp),
                     readOnly = true,
                     value = txUbicacion.value,
-                    label = {Text(text = "Ubicación")},
+                    label = {Text("Ubicación del problema")},
                     textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
                     onValueChange = {},
                     placeholder = { Text(text = "Ubicación del problema") },
@@ -330,7 +320,6 @@ fun ReporteCiudadano(navC: NavController) {
                         focusedPlaceholderColor = Color.Gray
                     )
                 )
-
                 Card(
                     modifier = Modifier
                         .weight(0.1f)
@@ -349,6 +338,58 @@ fun ReporteCiudadano(navC: NavController) {
                         Icon(
                             modifier = Modifier.size(30.dp),
                             imageVector = Icons.Filled.LocationOn,
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.background
+                        )
+                    }
+                } // Card
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            //DESCRIPCION DE LOS HECHOS
+            Row(modifier = Modifier
+                .fillMaxWidth(0.9f),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically) {
+
+                OutlinedTextField(
+                    modifier = Modifier
+                        .weight(0.8f)
+                        .padding(end = 10.dp),
+                    readOnly = true,
+                    maxLines = 1,
+                    label = {Text(text = "Descripción de motivos")},
+                    value = txDescription.value,
+                    textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
+                    onValueChange = {},
+                    placeholder = { Text(text = "Motivos") },
+                    shape = RoundedCornerShape(percent = 10),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.primary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                        focusedPlaceholderColor = Color.Gray
+                    )
+                )
+
+                Card(
+                    modifier = Modifier
+                        .weight(0.1f)
+                        .clickable {
+                            showDescripcionDialog.value = !showDescripcionDialog.value
+                        },
+                    shape = CircleShape,
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    )
+                ) {
+                    Box(modifier = Modifier
+                        .size(40.dp),
+                        contentAlignment = Alignment.Center){
+                        Icon(
+                            modifier = Modifier.size(30.dp),
+                            imageVector = Icons.Filled.EditNote,
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.background
                         )
@@ -456,63 +497,12 @@ fun ReporteCiudadano(navC: NavController) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            //DESCRIPCION DE LOS HECHOS
-            Row(modifier = Modifier
-                .fillMaxWidth(0.9f),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically) {
-
-                //TIPO DE REPORTE
-                OutlinedTextField(
-                    modifier = Modifier
-                        .weight(0.8f)
-                        .padding(end = 10.dp),
-                    readOnly = true,
-                    maxLines = 1,
-                    label = {Text(text = "Descripción de motivos")},
-                    value = txDescription.value,
-                    textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
-                    onValueChange = {},
-                    placeholder = { Text(text = "Motivos") },
-                    shape = RoundedCornerShape(percent = 10),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = MaterialTheme.colorScheme.primary,
-                        unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
-                        focusedPlaceholderColor = Color.Gray
-                    )
-                )
-
-                Card(
-                    modifier = Modifier
-                        .weight(0.1f)
-                        .clickable {
-                            showDescripcionDialog.value = !showDescripcionDialog.value
-                        },
-                    shape = CircleShape,
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                    )
-                ) {
-                    Box(modifier = Modifier
-                        .size(40.dp),
-                        contentAlignment = Alignment.Center){
-                        Icon(
-                            modifier = Modifier.size(30.dp),
-                            imageVector = Icons.Filled.EditNote,
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.background
-                        )
-                    }
-                } // Card
-            }
-
             //EVIDENCIAS
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 modifier = Modifier
                     .padding(horizontal = 5.dp),
-                text = "Evidencias (Opcional)",
+                text = "Evidencias (Opcionales)",
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.primary
@@ -520,13 +510,13 @@ fun ReporteCiudadano(navC: NavController) {
 
             //CONTROL PARA VER LAS EVIDENCIAS
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly) {
+                modifier = Modifier.fillMaxWidth(0.9f),
+                horizontalArrangement = Arrangement.SpaceBetween) {
                 if (!onProccessing.value) {
                     MenuCard(
                         menuOpc = MenuImg(
                             if (chekImg1.value) Icons.Filled.Check else Icons.Filled.Image,
-                            "Imagen"
+                            "Imagen 1"
                         ),
                         fSize = 12.sp,
                         shape = CircleShape,
@@ -546,7 +536,7 @@ fun ReporteCiudadano(navC: NavController) {
                     MenuCard(
                         menuOpc = MenuImg(
                             if (chekImg2.value) Icons.Filled.Check else Icons.Filled.Image,
-                            "Imagen"
+                            "Imagen 2"
                         ),
                         fSize = 12.sp,
                         shape = CircleShape,
@@ -579,7 +569,8 @@ fun ReporteCiudadano(navC: NavController) {
                 backColor = MaterialTheme.colorScheme.surface,
                 estatus = onConfirmSentReport,
                 onClick = {
-                    onConfirmSentReport.value = !onConfirmSentReport.value
+                    currentTimeEvento.value = ToolBox.mergeDateTime(txFechaEvento.value, txHoraEvento.value)
+                    onConfirmSentReport.value = true
                 } //onClick
             )
 
@@ -597,72 +588,36 @@ fun ReporteCiudadano(navC: NavController) {
                 )
             }
         } //Column
-        if(showMapReporte.value){
-            MapDialog(
-                latitud = locationDb.latitud,
-                longitud = locationDb.longitud,
-                onConfirmation = { showMapReporte.value = false })
+
+        //DIALOGO PARA CONFIRMAR CIERRE DE SESION
+        if(onConfirmSentReport.value){
+            ConfirmDialog(
+                title = "Confirmación",
+                info = "Confirme que desea enviar el reporte",
+                titleAceptar = "Si",
+                titleCancelar = "No",
+                onAceptar = {
+                    onConfirmSentReport.value = false
+                    onPrepareSend.value = true
+                },
+                onCancelar = {
+                    onConfirmSentReport.value = false
+                }
+            )
         }
 
-        if(showMenuReportesDialog.value){
-            MenuReporteDialog(
-                reporteTx = txReporte,
-                index = indexReporte,
-                onConfirmation = { showMenuReportesDialog.value = false})
-        }//show menu horizontal
-
-
-        if (showSheetImage.value) {
-            if(indexEvidencia.value == 1) {
-                BottomSheetImage(imageUri = imageUri1.value) {
-                    showSheetImage.value = false
-                }
-            }
-            if(indexEvidencia.value == 2) {
-                BottomSheetImage(imageUri = imageUri2.value) {
-                    showSheetImage.value = false
-                }
-            }
-        }
-
-        if(onAddEvicencia.value) {
-            AddEvienciaDialog(
-                title = "Evidencia",
-                openGallery = {
-                    launcher.launch("image/*")
-                    onAddEvicencia.value = false
-                },
-                openCamera = {
-                    val permissionCheckResult =
-                        ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                    if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                        uriPhoto.value = context.getUri(context, context.createImageFile())
-                        cameraLauncher.launch(uriPhoto.value)
-                    } else {
-                        // Request a permission
-                        permissionLauncherCamera.launch(Manifest.permission.CAMERA)
-                    }
-                    onAddEvicencia.value = false
-                },
-                onCancelar = { onAddEvicencia.value = false})
-        } //if Dialog add evidencia
     }//Scaffold
 
-    //DIALOGO PARA CONFIRMAR CIERRE DE SESION
-    if(onConfirmSentReport.value){
-        ConfirmDialog(
-            title = "Confirmación",
-            info = "Confirme que desea enviar el reporte",
-            titleAceptar = "Si",
-            titleCancelar = "No",
-            onAceptar = {
-                onConfirmSentReport.value = false
-            },
-            onCancelar = {
-                onConfirmSentReport.value = false
-            }
-        )
-    }
+
+
+    //CATALOGO - LISTADO DE OPCIONES DE REPORTE
+    if(showMenuReportesDialog.value){
+        MenuReporteDialog(
+            reporteTx = txReporte,
+            index = indexReporte,
+            onConfirmation = { showMenuReportesDialog.value = false})
+    }//show menu horizontal
+
 
     //DIALOGO PARA ESCRIBIR LOS MOTIVOS DE LA QUEJA
     if(showDescripcionDialog.value){
@@ -674,6 +629,115 @@ fun ReporteCiudadano(navC: NavController) {
             }
         )
     }
+
+
+    if(onAddEvicencia.value) {
+        AddEvienciaDialog(
+            title = "Evidencia",
+            openGallery = {
+                launcher.launch("image/*")
+                onAddEvicencia.value = false
+            },
+            openCamera = {
+                val permissionCheckResult =
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                    uriPhoto.value = context.getUri(context, context.createImageFile())
+                    cameraLauncher.launch(uriPhoto.value)
+                } else {
+                    // Request a permission
+                    permissionLauncherCamera.launch(Manifest.permission.CAMERA)
+                }
+                onAddEvicencia.value = false
+            },
+            onCancelar = { onAddEvicencia.value = false})
+    } //if Dialog add evidencia
+
+    if(showMapReporte.value){
+        MapDialog(
+            latitud = locationDb.latitud,
+            longitud = locationDb.longitud,
+            selectLocation = selectLocation,
+            onConfirmation = {
+                showMapReporte.value = false
+                if(selectLocation.value.latitude != 0.0)
+                    txUbicacion.value = "Ubicación marcada"
+            }
+        )
+    }
+
+    if (showSheetImage.value) {
+        if(indexEvidencia.value == 1) {
+            BottomSheetImage(imageUri = imageUri1.value) {
+                showSheetImage.value = false
+            }
+        }
+        if(indexEvidencia.value == 2) {
+            BottomSheetImage(imageUri = imageUri2.value) {
+                showSheetImage.value = false
+            }
+        }
+    }
+
+
+    if(onPrepareSend.value) {
+        var testInput = checkDataInputReport(
+            latiEvent = selectLocation.value.latitude,
+            lonEvent = selectLocation.value.longitude,
+            tipoReporte = indexReporte.value,
+            fechaHora = currentTimeEvento.value
+        )
+        if(testInput.length > 0){
+            onPrepareSend.value = false
+            showSheetError.value = true
+            messageError.value = testInput
+        }else {
+            onPrepareSend.value = false
+            if(ToolBox.testConectivity(context)){
+                // delayed.value = false
+                LaunchedEffect(key1 = true) {
+                    val jsonObj = JSONObject()
+                    jsonObj.put("event_latitude", selectLocation.value.latitude)
+                    jsonObj.put("event_longitude", selectLocation.value.longitude)
+                    jsonObj.put("description", txDescription.value)
+                    jsonObj.put("citizen_report_type_id", indexReporte.value)
+                    jsonObj.put("user_latitude", locationDb.latitud)
+                    jsonObj.put("user_longitude", locationDb.longitud)
+                    jsonObj.put("event_at", "")
+                    if (chekImg1.value) {
+                        val bitmap1 = BitmapFactory.decodeStream(
+                            context
+                                .getContentResolver().openInputStream(imageUri1.value!!)
+                        );
+                        jsonObj.put(
+                            "photo_evidence_1",
+                            "data:image/png;base64,${ToolBox.BitmaptoBase64(bitmap1)}"
+                        )
+                    }
+                    if (chekImg2.value) {
+                        val bitmap2 = BitmapFactory.decodeStream(
+                            context
+                                .getContentResolver().openInputStream(imageUri2.value!!)
+                        );
+                        jsonObj.put(
+                            "photo_evidence_1",
+                            "data:image/png;base64,${ToolBox.BitmaptoBase64(bitmap2)}"
+                        )
+                    }
+                    reporteViewModel.DoSentReport(context, jsonObj)
+                    onProccessing.value = true
+                }
+
+                // delayed.value = true
+                //enabledInput.value = false
+            }else {
+                onPrepareSend.value = false
+                showSheetError.value = true
+                messageError.value = "No tienes acceso a internet, conéctate a una red y vuelve a intentarlo"
+            }
+        } //Validacion de datos no vacíos
+    }  //onPrepareSend
+
 
     // date picker component
     if (showDatePicker.value) {
@@ -696,13 +760,57 @@ fun ReporteCiudadano(navC: NavController) {
 
     // time picker component
     if (showTimePicker.value) {
-        DialWithDialogExample(onConfirm = {showTimePicker.value = false}) {
+        DialWithDialogExample(
+            txTime = txHoraEvento,
+            onConfirm = {showTimePicker.value = false}) {
         }
     }
 
-}
+    if (showSheetError.value) {
+        ErrorDialog(
+            title = "Error de envío",
+            info = info,
+            context = context, onConfirmation = {
+                onPrepareSend.value = false
+                showSheetError.value = false
+                onProccessing.value = false
+            }
+        )
+    }
 
 
+    //LIVEDATA PARA ENVIAR EL REPORTE
+    if(onProccessing.value) {
+        Spacer(modifier = Modifier.padding(horizontal = 16.dp))
+        reportState.value?.let {
+            when(reportState.value){
+                is RequestResponse.Succes -> {
+                    Log.i("MIPOLICIA","SUCCES" )
+                    onProccessing.value = false
+                    navC.popBackStack()
+                    Toast.makeText(context, "Reporte enviado", Toast.LENGTH_SHORT).show()
+                } //Succes
+                is RequestResponse.Error -> {
+                    Log.i("MIPOLICIA","ERROR" )
+                    onProccessing.value = false
+                    val errorReport = reportState.value as RequestResponse.Error
+                    messageError.value = "${errorReport.errorMessage}"
+                    showSheetError.value = true
+                    onProccessing.value = false
+                    reporteViewModel.resetSentReport()
+                }//Error
+                else -> {
+                    onProccessing.value = false
+                }
+            }//when
+        }//observable let
+    }//onProccesing
+
+}  //Composable
+
+
+
+/********************/
 fun Context.createImageFile(): File {
     // Create an image file name
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
@@ -719,4 +827,19 @@ fun Context.getUri(context: Context, file: File): Uri{
         Objects.requireNonNull(context),
         "com.aur3liux.mipolicia.provider", file
     )
+}
+
+fun checkDataInputReport(
+    latiEvent: Double,
+    lonEvent: Double,
+    tipoReporte: Int,
+    fechaHora: String): String{
+    var valueReturn = ""
+    if(latiEvent == 0.0 || lonEvent == 0.0)
+        valueReturn = "Debe seleccionar en el mapa el lugar donde ocurrió el evento del reporte"
+    else if(tipoReporte == 0)
+        valueReturn = "Indique que tipo de problema desea reportar"
+    else if(fechaHora.isNullOrBlank())
+        valueReturn = "Debe selecionar la fecha y hora aproximada en que sucedió."
+    return valueReturn
 }

@@ -36,6 +36,7 @@ import com.aur3liux.mipolicia.view.VideoPlayer
 import com.aur3liux.mipolicia.view.auth.RegistroView
 import com.aur3liux.mipolicia.view.cibernetica.PoliciaCiberneticaView
 import com.aur3liux.mipolicia.view.cibernetica.ReporteCiberneticaView
+import com.aur3liux.mipolicia.view.subviews.AcompanamientoBancarioView
 import com.aur3liux.mipolicia.view.subviews.DetallesMarcoLegal
 import com.aur3liux.mipolicia.view.subviews.MarcoLegalView
 import com.aur3liux.mipolicia.view.subviews.PerfilView
@@ -185,6 +186,23 @@ class MainActivity : ComponentActivity() {
                             )},
                         route = Router.SECTOR_VIEW.route){
                         SectorView(navC = navController)
+                    }//Datos del sector
+
+
+                    //ACOMPAÑAMIENTO BANCARIO
+                    composable(
+                        enterTransition = {
+                            fadeIn(
+                                animationSpec = tween(
+                                    delayMillis = 0,
+                                    durationMillis = 500,
+                                    easing = LinearEasing)) + slideIntoContainer(
+                                animationSpec = tween(200, easing = LinearEasing),
+                                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                                initialOffset = { it }
+                            )},
+                        route = Router.ACOMPANAMIENTO_BANCARIO_VIEW.route){
+                        AcompanamientoBancarioView(navC = navController)
                     }//Datos del sector
 
 
